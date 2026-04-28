@@ -1,0 +1,572 @@
+{
+	"Enable":	1,
+	"EmailCfg":	{
+		"Sender":	{
+			"User":	"",
+			"Password":	"",
+			"SMTPServer":	"",
+			"SMTPPort":	0,
+			"EnableSSL":	0,
+			"ServerVerify":	0
+		},
+		"Receiver":	[{
+				"Name":	"",
+				"Addr":	""
+			}, {
+				"Name":	"",
+				"Addr":	""
+			}, {
+				"Name":	"",
+				"Addr":	""
+			}],
+		"Attachment":	0,
+		"MailInterval":	0
+	},
+	"FTPSnapCfg":	{
+		"SchedTime":	{
+			"AlarmMode":	1,
+			"WeekList":	[1, 1, 1, 1, 1, 0, 0],
+			"TimeList":	[[0, 2359], [0, 0], [0, 0], [0, 0]]
+		},
+		"SnapInterval":	0,
+		"SnapStreamIndex":	0
+	},
+	"Motion":	{
+		"LinkageCfg":	{
+			"Ftp":	{
+				"Enable":	0
+			},
+			"Email":	{
+				"Enable":	0
+			},
+			"Snap":	{
+				"Enable":	0,
+				"Count":	1,
+				"Interval":	1
+			},
+			"Ptz":	{
+				"Enable":	0,
+				"PresetNo":	0
+			},
+			"AlarmOut":	{
+				"Enable":	0,
+				"List":	[0, 0]
+			},
+			"AlarmMode":	1,
+			"WeekList":	[1, 1, 1, 1, 1, 0, 0],
+			"TimeList":	[[0, 2359], [0, 0], [0, 0], [0, 0]]
+		},
+		"LightCfg":	{
+			"Enable":	0,
+			"Duration":	10,
+			"AlarmMode":	1,
+			"WeekList":	[1, 1, 1, 1, 1, 0, 0],
+			"TimeList":	[[0, 2359], [0, 0], [0, 0], [0, 0]]
+		},
+		"AudioCfg":	{
+			"Enable":	0,
+			"PlayCount":	3,
+			"AudioSelected":	0,
+			"AlarmMode":	1,
+			"WeekList":	[1, 1, 1, 1, 1, 0, 0],
+			"TimeList":	[[0, 2359], [0, 0], [0, 0], [0, 0]]
+		}
+	},
+	"Vhide":	{
+		"LinkageCfg":	{
+			"Ftp":	{
+				"Enable":	0
+			},
+			"Email":	{
+				"Enable":	0
+			},
+			"Snap":	{
+				"Enable":	0,
+				"Count":	1,
+				"Interval":	1
+			},
+			"Ptz":	{
+				"Enable":	0,
+				"PresetNo":	0
+			},
+			"AlarmOut":	{
+				"Enable":	0,
+				"List":	[0, 0]
+			},
+			"AlarmMode":	1,
+			"WeekList":	[1, 1, 1, 1, 1, 0, 0],
+			"TimeList":	[[0, 2359], [0, 0], [0, 0], [0, 0]]
+		},
+		"LightCfg":	{
+			"Enable":	0,
+			"Duration":	10,
+			"AlarmMode":	1,
+			"WeekList":	[1, 1, 1, 1, 1, 0, 0],
+			"TimeList":	[[0, 2359], [0, 0], [0, 0], [0, 0]]
+		},
+		"AudioCfg":	{
+			"Enable":	0,
+			"PlayCount":	3,
+			"AudioSelected":	0,
+			"AlarmMode":	1,
+			"WeekList":	[1, 1, 1, 1, 1, 0, 0],
+			"TimeList":	[[0, 2359], [0, 0], [0, 0], [0, 0]]
+		}
+	},
+	"AlarmIn":	{
+		"LinkageCfg":	{
+			"Ftp":	{
+				"Enable":	0
+			},
+			"Email":	{
+				"Enable":	0
+			},
+			"Snap":	{
+				"Enable":	0,
+				"Count":	1,
+				"Interval":	1
+			},
+			"Ptz":	{
+				"Enable":	0,
+				"PresetNo":	0
+			},
+			"AlarmOut":	{
+				"Enable":	0,
+				"List":	[0, 0]
+			},
+			"AlarmMode":	1,
+			"WeekList":	[1, 1, 1, 1, 1, 0, 0],
+			"TimeList":	[[0, 2359], [0, 0], [0, 0], [0, 0]]
+		},
+		"LightCfg":	{
+			"Enable":	0,
+			"Duration":	10,
+			"AlarmMode":	1,
+			"WeekList":	[1, 1, 1, 1, 1, 0, 0],
+			"TimeList":	[[0, 2359], [0, 0], [0, 0], [0, 0]]
+		},
+		"AudioCfg":	{
+			"Enable":	0,
+			"PlayCount":	3,
+			"AudioSelected":	0,
+			"AlarmMode":	1,
+			"WeekList":	[1, 1, 1, 1, 1, 0, 0],
+			"TimeList":	[[0, 2359], [0, 0], [0, 0], [0, 0]]
+		}
+	},
+	"RegionalInvasion":	{
+		"LinkageCfg":	{
+			"Ftp":	{
+				"Enable":	0
+			},
+			"Email":	{
+				"Enable":	0
+			},
+			"Snap":	{
+				"Enable":	0,
+				"Count":	1,
+				"Interval":	1
+			},
+			"Ptz":	{
+				"Enable":	0,
+				"PresetNo":	0
+			},
+			"AlarmOut":	{
+				"Enable":	0,
+				"List":	[0, 0]
+			},
+			"AlarmMode":	1,
+			"WeekList":	[1, 1, 1, 1, 1, 0, 0],
+			"TimeList":	[[0, 2359], [0, 0], [0, 0], [0, 0]]
+		},
+		"LightCfg":	{
+			"Enable":	0,
+			"Duration":	10,
+			"AlarmMode":	1,
+			"WeekList":	[1, 1, 1, 1, 1, 0, 0],
+			"TimeList":	[[0, 2359], [0, 0], [0, 0], [0, 0]]
+		},
+		"AudioCfg":	{
+			"Enable":	0,
+			"PlayCount":	3,
+			"AudioSelected":	0,
+			"AlarmMode":	1,
+			"WeekList":	[1, 1, 1, 1, 1, 0, 0],
+			"TimeList":	[[0, 2359], [0, 0], [0, 0], [0, 0]]
+		}
+	},
+	"DetectWire":	{
+		"LinkageCfg":	{
+			"Ftp":	{
+				"Enable":	0
+			},
+			"Email":	{
+				"Enable":	0
+			},
+			"Snap":	{
+				"Enable":	0,
+				"Count":	1,
+				"Interval":	1
+			},
+			"Ptz":	{
+				"Enable":	0,
+				"PresetNo":	0
+			},
+			"AlarmOut":	{
+				"Enable":	0,
+				"List":	[0, 0]
+			},
+			"AlarmMode":	1,
+			"WeekList":	[1, 1, 1, 1, 1, 0, 0],
+			"TimeList":	[[0, 2359], [0, 0], [0, 0], [0, 0]]
+		},
+		"LightCfg":	{
+			"Enable":	0,
+			"Duration":	10,
+			"AlarmMode":	1,
+			"WeekList":	[1, 1, 1, 1, 1, 0, 0],
+			"TimeList":	[[0, 2359], [0, 0], [0, 0], [0, 0]]
+		},
+		"AudioCfg":	{
+			"Enable":	0,
+			"PlayCount":	3,
+			"AudioSelected":	0,
+			"AlarmMode":	1,
+			"WeekList":	[1, 1, 1, 1, 1, 0, 0],
+			"TimeList":	[[0, 2359], [0, 0], [0, 0], [0, 0]]
+		}
+	},
+	"PersonStaying":	{
+		"LinkageCfg":	{
+			"Ftp":	{
+				"Enable":	0
+			},
+			"Email":	{
+				"Enable":	0
+			},
+			"Snap":	{
+				"Enable":	0,
+				"Count":	1,
+				"Interval":	1
+			},
+			"Ptz":	{
+				"Enable":	0,
+				"PresetNo":	0
+			},
+			"AlarmOut":	{
+				"Enable":	0,
+				"List":	[0, 0]
+			},
+			"AlarmMode":	1,
+			"WeekList":	[1, 1, 1, 1, 1, 0, 0],
+			"TimeList":	[[0, 2359], [0, 0], [0, 0], [0, 0]]
+		},
+		"LightCfg":	{
+			"Enable":	0,
+			"Duration":	10,
+			"AlarmMode":	1,
+			"WeekList":	[1, 1, 1, 1, 1, 0, 0],
+			"TimeList":	[[0, 2359], [0, 0], [0, 0], [0, 0]]
+		},
+		"AudioCfg":	{
+			"Enable":	0,
+			"PlayCount":	3,
+			"AudioSelected":	0,
+			"AlarmMode":	1,
+			"WeekList":	[1, 1, 1, 1, 1, 0, 0],
+			"TimeList":	[[0, 2359], [0, 0], [0, 0], [0, 0]]
+		}
+	},
+	"DetectAbsent":	{
+		"LinkageCfg":	{
+			"Ftp":	{
+				"Enable":	0
+			},
+			"Email":	{
+				"Enable":	0
+			},
+			"Snap":	{
+				"Enable":	0,
+				"Count":	1,
+				"Interval":	1
+			},
+			"Ptz":	{
+				"Enable":	0,
+				"PresetNo":	0
+			},
+			"AlarmOut":	{
+				"Enable":	0,
+				"List":	[0, 0]
+			},
+			"AlarmMode":	1,
+			"WeekList":	[1, 1, 1, 1, 1, 0, 0],
+			"TimeList":	[[0, 2359], [0, 0], [0, 0], [0, 0]]
+		},
+		"LightCfg":	{
+			"Enable":	0,
+			"Duration":	10,
+			"AlarmMode":	1,
+			"WeekList":	[1, 1, 1, 1, 1, 0, 0],
+			"TimeList":	[[0, 2359], [0, 0], [0, 0], [0, 0]]
+		},
+		"AudioCfg":	{
+			"Enable":	0,
+			"PlayCount":	3,
+			"AudioSelected":	0,
+			"AlarmMode":	1,
+			"WeekList":	[1, 1, 1, 1, 1, 0, 0],
+			"TimeList":	[[0, 2359], [0, 0], [0, 0], [0, 0]]
+		}
+	},
+	"ParkingViolation":	{
+		"LinkageCfg":	{
+			"Ftp":	{
+				"Enable":	0
+			},
+			"Email":	{
+				"Enable":	0
+			},
+			"Snap":	{
+				"Enable":	0,
+				"Count":	1,
+				"Interval":	1
+			},
+			"Ptz":	{
+				"Enable":	0,
+				"PresetNo":	0
+			},
+			"AlarmOut":	{
+				"Enable":	0,
+				"List":	[0, 0]
+			},
+			"AlarmMode":	1,
+			"WeekList":	[1, 1, 1, 1, 1, 0, 0],
+			"TimeList":	[[0, 2359], [0, 0], [0, 0], [0, 0]]
+		},
+		"LightCfg":	{
+			"Enable":	0,
+			"Duration":	10,
+			"AlarmMode":	1,
+			"WeekList":	[1, 1, 1, 1, 1, 0, 0],
+			"TimeList":	[[0, 2359], [0, 0], [0, 0], [0, 0]]
+		},
+		"AudioCfg":	{
+			"Enable":	0,
+			"PlayCount":	3,
+			"AudioSelected":	0,
+			"AlarmMode":	1,
+			"WeekList":	[1, 1, 1, 1, 1, 0, 0],
+			"TimeList":	[[0, 2359], [0, 0], [0, 0], [0, 0]]
+		}
+	},
+	"Retrograde":	{
+		"LinkageCfg":	{
+			"Ftp":	{
+				"Enable":	0
+			},
+			"Email":	{
+				"Enable":	0
+			},
+			"Snap":	{
+				"Enable":	0,
+				"Count":	1,
+				"Interval":	1
+			},
+			"Ptz":	{
+				"Enable":	0,
+				"PresetNo":	0
+			},
+			"AlarmOut":	{
+				"Enable":	0,
+				"List":	[0, 0]
+			},
+			"AlarmMode":	1,
+			"WeekList":	[1, 1, 1, 1, 1, 0, 0],
+			"TimeList":	[[0, 2359], [0, 0], [0, 0], [0, 0]]
+		},
+		"LightCfg":	{
+			"Enable":	0,
+			"Duration":	10,
+			"AlarmMode":	1,
+			"WeekList":	[1, 1, 1, 1, 1, 0, 0],
+			"TimeList":	[[0, 2359], [0, 0], [0, 0], [0, 0]]
+		},
+		"AudioCfg":	{
+			"Enable":	0,
+			"PlayCount":	3,
+			"AudioSelected":	0,
+			"AlarmMode":	1,
+			"WeekList":	[1, 1, 1, 1, 1, 0, 0],
+			"TimeList":	[[0, 2359], [0, 0], [0, 0], [0, 0]]
+		}
+	},
+	"SensorAlarm":	{
+		"LinkageCfg":	{
+			"Ftp":	{
+				"Enable":	0
+			},
+			"Email":	{
+				"Enable":	0
+			},
+			"Snap":	{
+				"Enable":	0,
+				"Count":	1,
+				"Interval":	1
+			},
+			"Ptz":	{
+				"Enable":	0,
+				"PresetNo":	0
+			},
+			"AlarmOut":	{
+				"Enable":	0,
+				"List":	[0, 0]
+			},
+			"AlarmMode":	1,
+			"WeekList":	[1, 1, 1, 1, 1, 0, 0],
+			"TimeList":	[[0, 2359], [0, 0], [0, 0], [0, 0]]
+		},
+		"LightCfg":	{
+			"Enable":	0,
+			"Duration":	10,
+			"AlarmMode":	1,
+			"WeekList":	[1, 1, 1, 1, 1, 0, 0],
+			"TimeList":	[[0, 2359], [0, 0], [0, 0], [0, 0]]
+		},
+		"AudioCfg":	{
+			"Enable":	0,
+			"PlayCount":	3,
+			"AudioSelected":	0,
+			"AlarmMode":	1,
+			"WeekList":	[1, 1, 1, 1, 1, 0, 0],
+			"TimeList":	[[0, 2359], [0, 0], [0, 0], [0, 0]]
+		}
+	},
+	"NetCableBreak":	{
+		"LinkageCfg":	{
+			"Ftp":	{
+				"Enable":	0
+			},
+			"Email":	{
+				"Enable":	0
+			},
+			"Snap":	{
+				"Enable":	0,
+				"Count":	0,
+				"Interval":	0
+			},
+			"Ptz":	{
+				"Enable":	0,
+				"PresetNo":	0
+			},
+			"AlarmOut":	{
+				"Enable":	0,
+				"List":	[0, 0]
+			},
+			"AlarmMode":	1,
+			"WeekList":	[1, 1, 1, 1, 1, 0, 0],
+			"TimeList":	[[0, 2359], [0, 0], [0, 0], [0, 0]]
+		},
+		"LightCfg":	{
+			"Enable":	0,
+			"Duration":	10,
+			"AlarmMode":	1,
+			"WeekList":	[1, 1, 1, 1, 1, 0, 0],
+			"TimeList":	[[0, 2359], [0, 0], [0, 0], [0, 0]]
+		},
+		"AudioCfg":	{
+			"Enable":	0,
+			"PlayCount":	3,
+			"AudioSelected":	0,
+			"AlarmMode":	1,
+			"WeekList":	[1, 1, 1, 1, 1, 0, 0],
+			"TimeList":	[[0, 2359], [0, 0], [0, 0], [0, 0]]
+		}
+	},
+	"IpConflict":	{
+		"LinkageCfg":	{
+			"Ftp":	{
+				"Enable":	0
+			},
+			"Email":	{
+				"Enable":	0
+			},
+			"Snap":	{
+				"Enable":	0,
+				"Count":	1,
+				"Interval":	1
+			},
+			"Ptz":	{
+				"Enable":	0,
+				"PresetNo":	0
+			},
+			"AlarmOut":	{
+				"Enable":	0,
+				"List":	[0, 0]
+			},
+			"AlarmMode":	1,
+			"WeekList":	[1, 1, 1, 1, 1, 0, 0],
+			"TimeList":	[[0, 2359], [0, 0], [0, 0], [0, 0]]
+		},
+		"LightCfg":	{
+			"Enable":	0,
+			"Duration":	10,
+			"AlarmMode":	1,
+			"WeekList":	[1, 1, 1, 1, 1, 0, 0],
+			"TimeList":	[[0, 2359], [0, 0], [0, 0], [0, 0]]
+		},
+		"AudioCfg":	{
+			"Enable":	0,
+			"PlayCount":	3,
+			"AudioSelected":	0,
+			"AlarmMode":	1,
+			"WeekList":	[1, 1, 1, 1, 1, 0, 0],
+			"TimeList":	[[0, 2359], [0, 0], [0, 0], [0, 0]]
+		}
+	},
+	"IllegallyAcc":	{
+		"LinkageCfg":	{
+			"Ftp":	{
+				"Enable":	0
+			},
+			"Email":	{
+				"Enable":	0
+			},
+			"Snap":	{
+				"Enable":	0,
+				"Count":	1,
+				"Interval":	1
+			},
+			"Ptz":	{
+				"Enable":	0,
+				"PresetNo":	0
+			},
+			"AlarmOut":	{
+				"Enable":	0,
+				"List":	[0, 0]
+			},
+			"AlarmMode":	1,
+			"WeekList":	[1, 1, 1, 1, 1, 0, 0],
+			"TimeList":	[[0, 2359], [0, 0], [0, 0], [0, 0]]
+		},
+		"LightCfg":	{
+			"Enable":	0,
+			"Duration":	10,
+			"AlarmMode":	1,
+			"WeekList":	[1, 1, 1, 1, 1, 0, 0],
+			"TimeList":	[[0, 2359], [0, 0], [0, 0], [0, 0]]
+		},
+		"AudioCfg":	{
+			"Enable":	0,
+			"PlayCount":	3,
+			"AudioSelected":	0,
+			"AlarmMode":	1,
+			"WeekList":	[1, 1, 1, 1, 1, 0, 0],
+			"TimeList":	[[0, 2359], [0, 0], [0, 0], [0, 0]]
+		}
+	},
+	"OneKeyDriveCfg":	{
+		"Duration":	60,
+		"EnableAudio":	1,
+		"EnableLight":	1
+	}
+} 

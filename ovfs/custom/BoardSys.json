@@ -1,0 +1,13 @@
+{
+"RoiSupport":0,
+"ThirdStreamSupport":0,
+"H264+Support":0,
+"H265Support":1,
+"H265+Support":1,
+"MjpegSupport":0,
+"AlarmIn":1,
+"AlarmOut":2,
+"MaxMultiOsdLen":32,
+"MaxMultiOsdLine":4,
+"IrBoardType":  "Ir_Warm"
+}

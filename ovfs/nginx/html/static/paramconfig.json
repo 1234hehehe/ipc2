@@ -1,0 +1,26 @@
+{
+  "CVConfigVideoShow":{
+    "Min_MainOSDFontSize":10,
+    "Max_MainOSDFontSize":50,
+    "Min_SubOSDFontSize":10,
+    "Max_SubOSDFontSize":15,
+    "Min_ThirdOSDFontSize":10,
+    "Max_ThirdOSDFontSize":50
+  },
+  "CVConfigVideoPara":{
+    "ShutterList":[
+        [32,"1/5"],[1,"1/30(1/25)"],[2,"1/60(1/50)"],[33,"1/75"],[3,"1/120(1/100)"],[34,"1/125"],[35,"1/150"],[36,"1/175"],[4,"1/200"],
+      [37,"1/225"],[5,"1/250"],[38,"1/300"],[39,"1/400"],[6,"1/500"],[40,"1/750"],
+        [7,"1/1000"],[8,"1/2000"],[41,"1/4000"],[9,"1/5000"],[10,"1/10000"],[42,"1/100000"]
+    ]
+  },
+  "CVIndex": {
+    "Date_Format":"yyyy-MM-dd"
+  },
+  "CVConfigVideoSet":{
+    "FrameRateMaxOnly":false
+  },
+  "Calendar_theme":"default",
+  "Default_language":"zh",
+  "rtsps": true
+}

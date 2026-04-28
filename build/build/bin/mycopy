@@ -1,0 +1,28 @@
+#!/bin/sh
+
+# usage: mycopy <a> [b]
+# copy file a or files in folder a to folder b. dest folder is current path if b is ommited.
+
+argc=$#
+argv=$@
+#echo argc=$argc argv=[$argv]
+
+case $argc in
+0)
+echo "too less arguments." && exit -1;;
+1)
+src=$1;dst=.;;
+*)
+let snum=$argc-1;
+src=$(echo $argv | cut -d ' ' -f 1-$snum);
+#echo src=$src;
+dst=$(echo $argv | cut -d ' ' -f $argc);
+#echo dst=$dst;
+;;
+esac
+
+for f in $src ; do
+[ -d $f ] && cp -afT $f $dst;
+[ -d $f ] || cp -af $f $dst;
+done
+

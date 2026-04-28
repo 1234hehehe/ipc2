@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="cn">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        html {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        .notsupport {
+            position: relative;
+            top: 160px;
+        }
+        .notsupport-forbidden-tip {
+            margin-top: 40px;
+            font-size: 28px;
+            color: #000000;
+            text-align: center;
+        }
+        .notsupport-allowed-tip {
+            margin-top: 30px;
+            font-size: 20px;
+            color: #000000;
+            text-align: center;
+        }
+
+    </style>
+    <script>
+        var cur_lang;
+
+        function GetFile(url,callback){
+            var xhr = new XMLHttpRequest();
+            xhr.open("get", url, true);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == 4) {
+                    if ((xhr.status >= 200 && xhr.status < 300) || xhr.status == 304) {
+                        callback(xhr.responseText);
+                    }else{
+                        callback(null);
+                    }
+                }
+            };
+            xhr.send(null);
+        }
+
+        function SetText(){
+            if (!cur_lang){
+                cur_lang = {
+                    i18n_NotSupportedForbiddenTips:"Current browser is not supported! Please use the browser based on chromium!",
+                    i18n_NotSupportedAllowedTips:"Recommended: Google Chrome and Microsoft Edge"
+                }
+            }
+            document.getElementById("notsupport-forbidden-tip").innerText = cur_lang.i18n_NotSupportedForbiddenTips
+            document.getElementById("notsupport-allowed-tip").innerText = cur_lang.i18n_NotSupportedAllowedTips
+        }
+
+        function GetLang(value){
+            if (value){
+                cur_lang = eval("("+value+")")
+            }
+            SetText();
+        }
+
+        function GetLanguageList(value){
+            var text = JSON.parse(value);
+            if (text){
+                for (var i = 0; i< text.length; i++) {
+                    if (cur_lang == text[0].option_value){
+                        break;
+                    }
+                }
+
+                if (i < text.length){
+                    GetFile("static/lang/"+text[i].filename,GetLang)
+                    return;
+                }
+
+                cur_lang = null;
+            }
+
+            SetText();
+        }
+
+        function GetDefaultLanguage(value){
+            var text = JSON.parse(value);
+            if (text){
+                cur_lang = text.Default_language;
+            }
+
+            if (!cur_lang){
+                cur_lang = "zh";
+            }
+
+            GetFile("static/lang_map.json",GetLanguageList)
+        }
+
+        GetFile("static/paramconfig.json",GetDefaultLanguage);
+
+    </script>
+</head>
+<body>
+<div class="notsupport">
+    <div class="notsupport-icon"></div>
+    <div id="notsupport-forbidden-tip" class="notsupport-forbidden-tip">
+    </div>
+    <div id="notsupport-allowed-tip" class="notsupport-allowed-tip">
+    </div>
+</div>
+</body>
+</html>

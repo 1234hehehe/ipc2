@@ -1,0 +1,39 @@
+{
+	"FactoryInfo":	{
+		"DeviceName":	"",
+		"ProductName":	"",
+		"DeviceType":	"IPC",
+		"DeviceModel":	"",
+		"Web":	"",
+		"Tel":	"",
+		"Copyright":	"",
+		"ManufacturerName":	"",
+		"Brand":	"",
+		"Country":	"",
+		"City":	"",
+		"Customer":"HDT",
+		"IsFaceSnap":	0,
+		"SensorModel":"AUTO",
+		"SensorModelSec":"NONE",		
+		"SwVersion":	"1.0.0",
+		"HwVersion":	"1.0.0",
+		"BuildDate":"20210525",
+		"ProductDate":"20210525",
+		"SvnNumber":	0,
+		"IsofDome":	"n",
+		"IsofIr":	"y",
+		"AutoLens":	{
+			"LensSupport": 0,
+			"LensDrvType":"NONE",
+			"LensType":"NONE"
+		},
+		"AutoIris":	{
+			"IrisSupport":	0,
+			"IrisType":	"DC-IRIS",
+			"IrisAddtion":	""
+		},
+		"Platform":"JZT33",
+		"Hardware":"JZT33L_D51_Q38",
+		"Project":"T32L_PERSON"
+	}
+}

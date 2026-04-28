@@ -1,0 +1,4 @@
+#!/bin/sh
+
+cp -af /root/lib/libstdc* /lib/;
+rm -rf /update/ddns_libs /update/host_libs /update/protocol /update/nginx/html/static/*.exe;

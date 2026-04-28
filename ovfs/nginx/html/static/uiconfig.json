@@ -1,0 +1,954 @@
+{
+	"CVLogin": {
+		"modify_pwd": {
+			"visible": false
+		},
+		"forgot_pwd": {
+			"visible": true
+		}
+	},
+	"CVLoginBanner": {
+		"serno": {
+			"visible": false
+		},
+		"model": {
+			"visible": false
+		},
+		"version": {
+			"visible": false
+		}
+	},
+	"CVIndex": {
+		"topmenu": {
+			"visible": true
+		}
+	},
+	"CVTopMenu": {
+		"tab_preview": {
+			"visible": true
+		},
+		"tab_playback": {
+			"visible": true
+		},
+		"tab_file": {
+			"visible": false
+		},
+		"tab_config": {
+			"visible": true
+		},
+		"tab_log": {
+			"visible": true
+		},
+		"tab_alarmlog": {
+			"visible": true
+		},
+		"tab_alarm": {
+			"visible": true
+		},
+		"brand": {
+			"visible": true
+		},
+		"lblmolNO": {
+			"visible": true
+		}
+	},
+	"CVStreamSelect": {
+		"mainStream": {
+			"visible": true
+		},
+		"subStream": {
+			"visible": true
+		},
+		"eventStream": {
+			"visible": false
+		},
+		"thirdStream": {
+			"visible": false
+		}
+	},
+	"CVFramePreview": {
+		"framerate_avr": {
+			"visible": true
+		},
+		"device_name": {
+			"visible": true
+		},
+		"right_panel": {
+			"visible": true
+		},
+		"ptz": {
+			"visible": true
+		},
+		"ptz_panel": {
+			"visible": false
+		},
+		"ptz_control": {
+			"visible": true
+		},
+		"video_effect": {
+			"visible": true
+		},
+		"preset_cruise_track": {
+			"visible": false
+		},
+		"preset": {
+			"visible": false
+		},
+		"cruise": {
+			"visible": false
+		},
+		"track": {
+			"visible": false
+		},
+		"ptz_extend": {
+			"visible": false
+		}
+	},
+	"CVPanelShortcutBar": {
+		"capture": {
+			"visible": true
+		},
+		"voicecom": {
+			"visible": true
+		},
+		"fullscreen": {
+			"visible": true
+		}
+	},
+	"CVPanelCruise": {
+		"cruise_set": {
+			"visible": true
+		}
+	},
+	"CVPanelControl": {
+		"speed_slider": {
+			"visible": true
+		}
+	},
+	"CVFramePlayback": {
+		"showSmart": {
+			"visible": true
+		},
+		"showCapture": {
+			"visible": true
+		},
+		"showBackup": {
+			"visible": true
+		},
+		"IvsVideo": {
+			"visible": false
+		}
+	},
+	"CVFrameConfig": {
+		"FoldMenu": {
+			"visible": true
+		}
+	},
+	"CVConfigMenu": {
+		 "CVConfigExpandAlarmOut": {
+	            "visible": true
+	        },
+	        "CVConfigSensorAlarm": {
+	            "visible": true
+	        },
+		"CVConfigUart": {
+			"visible": true
+		},
+		"CVConfigRecordCfgWifi": {
+			"visible": true
+		},
+		"CVConfigLightCfgWifi": {
+			"visible": true
+		},
+		"CVConfigDeviceInfo": {
+			"visible": true
+		},
+		"CVConfigDecoder": {
+			"visible": false
+		},
+		"CVConfigQRCode": {
+			"visible": false
+		},
+		"CVConfigTimeSet": {
+			"visible": true
+		},
+		"CVConfigAudioSet": {
+			"visible": true
+		},
+		"CVConfigAudioUpload": {
+			"visible": false
+		},
+		"CVConfigLightAlarm": {
+			"visible": false
+		},
+		"CVConfigDeveloper": {
+			"visible": true
+		},
+		"CVConfigVideoShow": {
+			"visible": true
+		},
+		"CVConfigVideoSet": {
+			"visible": true
+		},
+		"CVConfigVideoPara": {
+			"visible": true
+		},
+		"CVConfigMovement": {
+			"visible": true
+		},
+		"CVConfigMotionDetection": {
+			"visible": true
+		},
+		"CVConfigVideoHide": {
+			"visible": true
+		},
+		"CVConfigVideoShelter": {
+			"visible": true
+		},
+		"CVConfigVideoPlan": {
+			"visible": false
+		},
+		"CVConfigVideoCounter": {
+			"visible": false
+		},
+		"CVConfigVideoObject": {
+			"visible": false
+		},
+		"CVConfigVideoAreaDetect": {
+			"visible": false
+		},
+		"CVConfigSoundAlarm": {
+			"visible": false
+		},
+		"CVConfigVideoVirtualLine": {
+			"visible": false
+		},
+		"CVConfigSmartMotion": {
+			"visible": false
+		},
+		"CVConfigVideoDiagnose": {
+			"visible": false
+		},
+		"CVConfigFireDetect": {
+			"visible": false
+		},
+		"CVConfigFaceDetect": {
+			"visible": false
+		},
+		"CVConfigVideoHumanDetect": {
+			"visible": false
+		},
+		"CVConfigHumanDetect": {
+			"visible": false
+		},
+		"CVConfigPlateDetect": {
+			"visible": false
+		},
+		"networkSetting": {
+			"visible": true
+		},
+		"CVConfigHttpUpload": {
+			"visible": true
+		},
+		"wifi": {
+			"visible": false
+		},
+		"platForm": {
+			"visible": false
+		},
+		"CVConfigHttpPush": {
+			"visible": true
+		},
+		"rtmp": {
+			"visible": false
+		},
+		"multicast": {
+			"visible": true
+		},
+		"CVConfigAliIoTCfg": {
+			"visible": true
+		},
+		"DDNS": {
+			"visible": false
+		},
+		"ntp": {
+			"visible": true
+		},
+		"email": {
+			"visible": true
+		},
+		"ftp": {
+			"visible": true
+		},
+		"snmp": {
+			"visible": false
+		},
+		"httphttps": {
+			"visible": true
+		},
+		"sip": {
+			"visible": false
+		},
+		"alarmIn": {
+			"visible": true
+		},
+		"alarmOut": {
+			"visible": true
+		},
+		"alarmException": {
+			"visible": false
+		},
+		"CVConfigROI": {
+			"visible": false
+		},
+		"userManage": {
+			"visible": true
+		},
+		"update": {
+			"visible": true
+		},
+		"autoReboot": {
+			"visible": true
+		},
+		"HD": {
+			"visible": false
+		},
+		"restore": {
+			"visible": true
+		},
+		"localSettings": {
+			"visible": true
+		}
+	},
+	"CVFrameFile": {
+		"showCapture": {
+			"visible": true
+		}
+	},
+	"CVConfigDeviceInfo": {
+		"showFps25": {
+			"visible": true
+		},
+		"showFps30": {
+			"visible": true
+		},
+		"showFps50": {
+			"visible": false
+		},
+		"showFps60": {
+			"visible": false
+		},
+		"showFps120": {
+			"visible": false
+		}
+	},
+	"CVConfigDecoder": {
+		"decoderType": {
+			"visible": true
+		},
+		"decoderAddr": {
+			"visible": true
+		},
+		"baudRate": {
+			"visible": true
+		}
+	},
+	"CVConfigTimeSet": {
+		"ntp": {
+			"visible": true
+		},
+		"dst": {
+			"visible": true
+		}
+	},
+	"CVConfigVideoShow": {
+		"singleOSD": {
+			"visible": true
+		},
+		"mainOSDFontSize": {
+			"visible": true
+		},
+		"subOSDFontSize": {
+			"visible": true
+		},
+		"thirdOSDFontSize": {
+			"visible": false
+		},
+		"MultiOSD": {
+			"visible": true
+		},
+		"hourFormat": {
+			"visible": true
+		},
+		"datetimeFormat": {
+			"visible": true
+		},
+		"brightness": {
+			"visible": true
+		},
+		"contrast": {
+			"visible": true
+		},
+		"saturation": {
+			"visible": true
+		},
+		"hue": {
+			"visible": true
+		},
+		"singleOSDPosition": {
+			"visible": true
+		},
+		"datetimePosition": {
+			"visible": true
+		},
+		"multiOSDPosition": {
+			"visible": false
+		},
+		"colorPicker": {
+			"visible": true
+		},
+		"ExtendOSD": {
+			"visible": false
+		}
+	},
+	"CVConfigVideoPara": {
+		"ExposureLight": {
+			"visible": true
+		},
+		"DayNightMode": {
+			"visible": false
+		},
+		"MinorModeSelf": {
+			"visible": true
+		},
+		"MinorMode": {
+			"90Rotation": {
+				"visible": false
+			},
+			"270Rotation": {
+				"visible": false
+			}
+		},
+		"WDModeWay": {
+			"visible": true
+		},
+		"defog": {
+			"visible": true
+		},
+		"whiteBalance": {
+			"visible": true
+		},
+		"LightCorrectMode": {
+			"visible": false
+		},
+		"LightCorrectLevel": {
+			"visible": false
+		},
+		"AECompensation": {
+			"visible": false
+		},
+		"Lens": {
+			"visible": false
+		},
+		"checkLens": {
+			"visible": false
+		},
+		"Iris": {
+			"visible": false
+		},
+		"3DNRTfcode": {
+			"visible": true
+		},
+		"IcrLight": {
+			"visible": false
+		},
+		"AutoSlowShutter": {
+			"visible": true
+		},
+		"PicQualityMode": {
+			"visible": false
+		},
+		"BackLightMode": {
+			"visible": true
+		},
+		"LightType": {
+			"visible": true
+		},
+		"ircutOutTrig": {
+			"visible": true
+		}
+	},
+	"CVConfigMovement": {},
+	"CVConfigVideoSet": {
+		"stream_type": {
+			"visible": true
+		},
+		"resolution": {
+			"visible": true
+		},
+		"framerate": {
+			"visible": true
+		},
+		"i_frame_interval": {
+			"visible": true
+		},
+		"bitrate_type": {
+			"visible": true
+		},
+		"bitrate": {
+			"visible": true
+		},
+		"quality": {
+			"visible": true
+		}
+	},
+	"CVConfigMotionDetectionV2": {
+		"email": {
+			"visible": true
+		},
+		"snap": {
+			"visible": false
+		},
+		"alarmout": {
+			"visible": true
+		},
+		"expandalarmout": {
+			"visible": true
+		},
+		"ptz": {
+			"visible": false
+		},
+		"ftp": {
+			"visible": true
+		},
+		"light": {
+			"visible": true
+		},
+		"audio": {
+			"visible": true
+		},
+		"audio_select": {
+			"visible": true
+		}
+	},
+	"CVConfigVideoHideV2": {
+		"email": {
+			"visible": true
+		},
+		"snap": {
+			"visible": false
+		},
+		"alarmout": {
+			"visible": true
+		},
+		"expandalarmout": {
+			"visible": true
+		},
+		"ptz": {
+			"visible": false
+		},
+		"ftp": {
+			"visible": true
+		},
+		"light": {
+			"visible": true
+		},
+		"audio": {
+			"visible": true
+		},
+		"audio_select": {
+			"visible": true
+		}
+	},
+	"CVConfigAlarmInV2": {
+		"email": {
+			"visible": true
+		},
+		"snap": {
+			"visible": false
+		},
+		"alarmout": {
+			"visible": true
+		},
+		"expandalarmout": {
+			"visible": true
+		},
+		"ptz": {
+			"visible": false
+		},
+		"ftp": {
+			"visible": true
+		},
+		"light": {
+			"visible": true
+		},
+		"audio": {
+			"visible": true
+		},
+		"audio_select": {
+			"visible": true
+		}
+	},
+	"CVConfigRegionalInvasion": {
+		"email": {
+			"visible": true
+		},
+		"snap": {
+			"visible": false
+		},
+		"alarmout": {
+			"visible": true
+		},
+		"expandalarmout": {
+			"visible": true
+		},
+		"ptz": {
+			"visible": false
+		},
+		"ftp": {
+			"visible": true
+		},
+		"light": {
+			"visible": true
+		},
+		"audio": {
+			"visible": true
+		},
+		"audio_select": {
+			"visible": true
+		}
+	},
+	"CVConfigTraverseDetect": {
+		"email": {
+			"visible": true
+		},
+		"snap": {
+			"visible": false
+		},
+		"alarmout": {
+			"visible": true
+		},
+		"expandalarmout": {
+			"visible": true
+		},
+		"ptz": {
+			"visible": false
+		},
+		"ftp": {
+			"visible": true
+		},
+		"light": {
+			"visible": true
+		},
+		"audio": {
+			"visible": true
+		},
+		"audio_select": {
+			"visible": true
+		}
+	},
+	"CVConfigPersonStaying": {
+		"email": {
+			"visible": true
+		},
+		"snap": {
+			"visible": false
+		},
+		"alarmout": {
+			"visible": true
+		},
+		"expandalarmout": {
+			"visible": true
+		},
+		"ptz": {
+			"visible": false
+		},
+		"ftp": {
+			"visible": true
+		},
+		"light": {
+			"visible": true
+		},
+		"audio": {
+			"visible": true
+		},
+		"audio_select": {
+			"visible": true
+		}
+	},
+	"CVConfigPersonAbsent": {
+		"email": {
+			"visible": true
+		},
+		"snap": {
+			"visible": false
+		},
+		"alarmout": {
+			"visible": true
+		},
+		"expandalarmout": {
+			"visible": true
+		},
+		"ptz": {
+			"visible": false
+		},
+		"ftp": {
+			"visible": true
+		},
+		"light": {
+			"visible": true
+		},
+		"audio": {
+			"visible": true
+		},
+		"audio_select": {
+			"visible": true
+		}
+	},
+	"CVConfigParkingViolation": {
+		"email": {
+			"visible": true
+		},
+		"snap": {
+			"visible": false
+		},
+		"alarmout": {
+			"visible": true
+		},
+		"expandalarmout": {
+			"visible": true
+		},
+		"ptz": {
+			"visible": false
+		},
+		"ftp": {
+			"visible": true
+		},
+		"light": {
+			"visible": true
+		},
+		"audio": {
+			"visible": true
+		},
+		"audio_select": {
+			"visible": true
+		}
+	},
+	"CVConfigVehicleRetrograde": {
+		"email": {
+			"visible": false
+		},
+		"snap": {
+			"visible": false
+		},
+		"alarmout": {
+			"visible": false
+		},
+		"expandalarmout": {
+			"visible": true
+		},
+		"ptz": {
+			"visible": false
+		},
+		"ftp": {
+			"visible": false
+		}
+	},
+	"CVConfigNetworkSetting": {
+		"ipaddr": {
+			"visible": true
+		},
+		"netmask": {
+			"visible": true
+		},
+		"gateway": {
+			"visible": true
+		},
+		"dns1": {
+			"visible": true
+		},
+		"dns2": {
+			"visible": true
+		},
+		"mac": {
+			"visible": true
+		},
+		"snmp_enable": {
+			"visible": false
+		},
+		"snmp_hostip": {
+			"visible": false
+		},
+		"snmp_count": {
+			"visible": false
+		},
+		"snmp_interval": {
+			"visible": false
+		},
+		"httpport": {
+			"visible": true
+		},
+		"httpsport": {
+			"visible": false
+		},
+		"rtspport": {
+			"visible": true
+		},
+		"rtspauth": {
+			"visible": true
+		},
+		"rtmpport": {
+			"visible": false
+		},
+		"upnp_enable": {
+			"visible": false
+		},
+		"devport": {
+			"visible": true
+		},
+		"pppoe": {
+			"visible": false
+		},
+		"pppoe_enable": {
+			"visible": false
+		},
+		"pppoe_username": {
+			"visible": false
+		},
+		"pppoe_password": {
+			"visible": false
+		},
+		"pppoe_confirm_pwd": {
+			"visible": false
+		},
+		"pppoe_addr": {
+			"visible": false
+		},
+		"onvif_all_net": {
+			"visible": true
+		},
+		"onvif_no_valid": {
+			"visible": true
+		}
+	},
+	"CVConfigHttpHttps": {
+		"https": {
+			"visible": true
+		}
+	},
+	"CVConfigUserManage": {
+		"remotePtz": {
+			"visible": false
+		},
+		"remotePlayback": {
+			"visible": true
+		},
+		"remoteSetCfg": {
+			"visible": true
+		},
+		"remoteSeeStateLog": {
+			"visible": true
+		},
+		"remoteAdvanced": {
+			"visible": true
+		},
+		"voiceCom": {
+			"visible": true
+		},
+		"remotePrev": {
+			"visible": true
+		},
+		"remoteRestart": {
+			"visible": true
+		}
+	},
+	"CVConfigUpdate": {
+		"update_size": 4,
+		"update_size_is": {
+			"visible": false
+		}
+	},
+	"CVConfigAlarmIn": {
+		"linkAll": {
+			"visible": true
+		},
+		"upload_email": {
+			"visible": false
+		},
+		"snap": {
+			"visible": false
+		},
+		"link_record": {
+			"visible": false
+		},
+		"alarmout": {
+			"visible": false
+		},
+		"ptz": {
+			"visible": false
+		},
+		"link_audio": {
+			"visible": true
+		},
+		"light_alarm": {
+			"visible": true
+		}
+	},
+	"CVConfigAlarmException": {
+		"link_record": {
+			"visible": false
+		},
+		"alarmout": {
+			"visible": false
+		}
+	},
+	"CVConfigRestore": {
+		"export": {
+			"visible": true
+		},
+		"inport": {
+			"visible": true
+		},
+		"restore": {
+			"visible": true
+		}
+	},
+	"CVConfigLocalSettings": {
+		"recFileFormat": {
+			"visible": false
+		}
+	},
+	"CVConfigAudioSet": {
+		"audio_source": {
+			"visible": true
+		},
+		"audio_invol": {
+			"visible": true
+		},
+		"audio_outvol": {
+			"visible": true
+		},
+		"audio_upload": {
+			"visible": true
+		},
+		"audio_enc_format": {
+			"visible": true
+		}
+	},
+	"CVConfigAudioUpload": {
+		"audio_lang": {
+			"visible": false
+		}
+	},
+	"CVConfigSensorAlarm": {
+		"snap": {
+			"visible": false
+		},
+		"ptz": {
+			"visible": false
+		},
+		"expandalarmout": {
+			"visible": true
+		}
+	}
+}

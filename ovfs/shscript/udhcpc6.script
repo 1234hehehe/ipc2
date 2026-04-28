@@ -1,0 +1,39 @@
+#!/bin/sh
+# udhcpc6 script edited by Tim Riker <Tim@Rikers.org>
+
+RESOLV_CONF="/tmp/udhcpc6_resolv_${interface}.conf"
+IP_CONF="/tmp/udhcpc6_ip_${interface}.conf"
+
+[ -n "$1" ] || { echo "udhcpc6:Error: should be called from udhcpc"; exit 1; }
+
+case "$1" in
+	deconfig)
+		[ -f $RESOLV_CONF ] && mv $RESOLV_CONF $RESOLV_CONF.bak
+		[ -f $IP_CONF ] && mv $IP_CONF $IP_CONF.bak
+		;;
+
+	renew|bound)
+		#echo "udhcpc6:Setting IP address $ipv6 on $interface | [$dns] [$ipv6prefix] [$ipv6prefix_lease]"
+		#echo "--[$search] [$fqdn] [$pxepathprefix] | [$router]"
+
+		for line in `ip -6 addr show eth0 | grep 'global' | awk '{print $2}'`; do
+			echo "arr $line"
+			ip -6 addr del $line dev $interface
+		done
+
+		ifconfig $interface $ipv6/64
+		echo $interface $ipv6 '64' > $IP_CONF
+
+
+		for i in $dns ; do
+			echo "udhcpc: Adding DNS server $i"
+			echo "nameserver $i" >> $RESOLV_CONF
+		done
+		;;
+	*)
+		echo "udhcpc6 response $1";
+		;;
+
+esac
+
+exit 0

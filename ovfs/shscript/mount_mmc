@@ -1,0 +1,143 @@
+#!/bin/sh
+# Designed by yuliang.
+# (1)检查sd卡分区数目,应该为1个. 如果分区数目大于1或少于1,则会删除分区重新划分为1个分区,并且重新格式化为指定格式(可选vfat,ext4)的文件系统.
+# (2)挂载文件系统(优先按照指定格式挂载),如果挂载失败则会调用fsck.fat或者fsck.ext4尝试修复,之后再挂载.
+
+#mmcDevNames=$(find /dev -name "mmcblk[0-9]" -maxdepth 1);
+#mmcDevNums=$(echo "$mmcDevNames" | sed -e "s/\/dev\/mmcblk//g" | sort);
+
+mmcPartNames=$(find /dev -name "mmcblk0p[0-9]" -maxdepth 1 | sort);
+mmcPartCount=$(echo $mmcPartNames | wc -w);
+mmcDevPoint="/dev/mmcblk0p1";
+mmcMountPoint="/tmp/mmc/mmc1";
+
+# mmcFsType可选为vfat,ext4.表示优先挂载的文件系统类型.
+mmcFsType="ext4";
+
+mmc_resize()
+{
+# 重划分区
+local mmcPartNums=$(echo $mmcPartNames | sed -e "s/\/dev\/mmcblk0p//g");
+
+local partDeleteStr=$(for partnum in $mmcPartNums ; do echo -ne "d\n$partnum\n"; done);
+local partCreateStr=$(echo -ne "n\np\n1\n \n \n");
+
+echo "mmc parts resizing..."
+
+fdisk /dev/mmcblk0 1>/dev/null 2>/dev/null <<EOF
+${partDeleteStr}
+${partCreateStr}
+w
+EOF
+
+return 0;
+}
+
+mmc_mkfs()
+{
+# 格式化mmc1分区.
+local ret=0;
+if [ "$mmcFsType" == "ext4" ] ; then
+mkfs.ext4 -F -j $mmcDevPoint; ret=$?;
+
+else
+mkfs.fat -n "IpCamera" $mmcDevPoint; ret=$?;
+fi
+return $ret;
+}
+
+mmc_fsck()
+{
+# 修复文件系统.
+local ret=0;
+if [ "$mmcFsType" == "ext4" ] ; then
+fsck.ext4 -y $mmcDevPoint; ret=$?;
+
+else
+fsck.fat -a $mmcDevPoint; ret=$?;
+fi
+return $ret;
+}
+
+mmc_mount()
+{
+# 挂载文件系统.
+local ret=0;
+
+mkdir -p $mmcMountPoint;
+if [ "$mmcFsType" == "ext4" ] ; then
+mount -t ext4 $mmcDevPoint $mmcMountPoint; ret=$?;
+
+else
+mount -t vfat $mmcDevPoint $mmcMountPoint; ret=$?;
+fi
+
+if [ $ret -ne 0 ] ; then
+rm -rf $mmcMountPoint;
+fi
+
+return $ret;
+}
+
+mmc_check_format()
+{
+local ret=0;
+if [ "$mmcFsType" == "ext4" ] ; then
+fdisk -l /dev/mmcblk0 | tail -n1 | grep -q "83 Linux"; ret=$?;
+else
+fdisk -l /dev/mmcblk0 | tail -n1 | grep -q "FAT32"; ret=$?;
+fi
+return $ret;
+}
+
+mmc_fsck_mount()
+{
+# 修复,并挂载tf卡.
+mmc_fsck;
+
+mmc_mount; ret=$?;
+return $ret;
+}
+
+mmc_mkfs_mount()
+{
+# 格式化,并挂载tf卡.
+mmc_mkfs;
+
+mmc_mount; ret=$?;
+
+return $ret;
+}
+
+mmc_resize_mkfs_fsck_mount()
+{
+# 重划分区,格式化,修复文件系统,挂载文件系统.
+mmc_resize;
+mmc_mkfs;
+mmc_fsck;
+mmc_mount;ret=$?;
+return $ret;
+}
+
+mmc_check_mounting()
+{
+# 检查分区数目,是否需要重划分区.
+local ret=0;
+
+mmc_check_format; ret=$?;
+
+if [ $ret -ne 0 ] || [ $mmcPartCount -ne 1 ] ; then
+mmc_resize_mkfs_fsck_mount; ret=$?;
+else
+mmc_fsck_mount || mmc_mkfs_mount || mmc_resize_mkfs_fsck_mount || ret=1;
+fi
+
+if [ -f /usr/etc/diskFormat ] ; then
+  rm -rf /tmp/mmc/mmc1/*;rm /usr/etc/diskFormat;
+fi
+
+return $ret;
+}
+
+mmc_check_mounting
+

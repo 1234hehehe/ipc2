@@ -1,0 +1,105 @@
+{
+	"Ptz": {
+		"Attribute": {
+			"All": {
+				"ProtocolIdx": 1,
+				"Address": 1,
+				"BaudRate": 2400,
+				"DataLen": 8,
+				"StopLen": 1,
+				"Parity": 0,
+				"FlowCtl": 0
+			}
+		}
+	},
+	"UartOsd": [
+		{
+			"UartOsdId": 0,
+			"Enable": 0,
+			"X": 0,
+			"Y": 80,
+			"MainSize": 40,
+			"SubSize": 10,
+			"TextColor": 32767,
+			"IsUpperThreshold": 0,
+			"ThresholdValue": 2.1111
+		},
+		{
+			"UartOsdId": 1,
+			"Enable": 0,
+			"X": 0,
+			"Y": 160,
+			"MainSize": 40,
+			"SubSize": 10,
+			"TextColor": 32767,
+			"IsUpperThreshold": 0,
+			"ThresholdValue": 0
+		},
+		{
+			"UartOsdId": 2,
+			"Enable": 0,
+			"X": 0,
+			"Y": 240,
+			"MainSize": 40,
+			"SubSize": 10,
+			"TextColor": 32767,
+			"IsUpperThreshold": 0,
+			"ThresholdValue": 0
+		},
+		{
+			"UartOsdId": 3,
+			"Enable": 0,
+			"X": 0,
+			"Y": 320,
+			"MainSize": 40,
+			"SubSize": 10,
+			"TextColor": 32767,
+			"IsUpperThreshold": 0,
+			"ThresholdValue": 0
+		},
+		{
+			"UartOsdId": 4,
+			"Enable": 0,
+			"X": 0,
+			"Y": 400,
+			"MainSize": 40,
+			"SubSize": 10,
+			"TextColor": 32767,
+			"IsUpperThreshold": 0,
+			"ThresholdValue": 0
+		},
+		{
+			"UartOsdId": 5,
+			"Enable": 0,
+			"X": 0,
+			"Y": 480,
+			"MainSize": 40,
+			"SubSize": 10,
+			"TextColor": 32767,
+			"IsUpperThreshold": 0,
+			"ThresholdValue": 0
+		},
+		{
+			"UartOsdId": 6,
+			"Enable": 0,
+			"X": 0,
+			"Y": 560,
+			"MainSize": 40,
+			"SubSize": 10,
+			"TextColor": 32767,
+			"IsUpperThreshold": 0,
+			"ThresholdValue": 0
+		},
+		{
+			"UartOsdId": 7,
+			"Enable": 0,
+			"X": 0,
+			"Y": 640,
+			"MainSize": 40,
+			"SubSize": 10,
+			"TextColor": 32767,
+			"IsUpperThreshold": 0,
+			"ThresholdValue": 0
+		}
+	]
+}

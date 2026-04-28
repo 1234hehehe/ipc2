@@ -1,0 +1,205 @@
+#!/bin/sh
+
+delete_part()
+{
+echo "delete_part  $partnum...."
+fdisk /dev/mmcblk0 <<EOF
+d
+$partnum
+w
+EOF
+}
+
+new_part()
+{
+echo "new_part  num=$partnum size=$partsize...."
+
+fdisk /dev/mmcblk0 <<EOF
+n
+p
+$partnum
+
+if [ $partnum eq 1 ]; then
++$(($partsize))M
+else
+
+fi
+w
+EOF
+}
+
+check_dev()
+{
+local linux_fs=0
+local exist_part1=0
+local exist_part2=0
+local exist_part3=0
+local exist_part4=0
+local totalsize=0
+
+local ret=0
+local ret1=0
+local ret2=0
+
+if [ ! -e /dev/mmcblk0 ] ; then
+return 0;
+fi
+
+fdisk -l /dev/mmcblk0 | grep -q "83 Linux"; 
+if [ $? -eq 0 ] ; then
+linux_fs=1;
+fi
+
+fdisk -l /dev/mmcblk0 | grep "/dev/mmcblk0p1" | grep -q "83 Linux"; 
+if [ $? -eq 1 ] ; then
+linux_fs=0;
+fi
+
+fdisk -l /dev/mmcblk0 | grep "/dev/mmcblk0p2" | grep -q "83 Linux"; 
+if [ $? -eq 1 ] ; then
+linux_fs=0;
+fi
+
+echo "========linux_fs=$linux_fs"
+
+if [ -e /dev/mmcblk0p4 ] ; then
+exist_part4=1
+fi
+
+if [ -e /dev/mmcblk0p3 ] ; then
+exist_part3=1
+fi
+
+if [ -e /dev/mmcblk0p2 ] ; then
+exist_part2=1
+fi
+
+if [ -e /dev/mmcblk0p1 ] ; then
+exist_part1=1
+fi
+
+echo "check_dev.....$exist_part2 $exist_part3 $exist_part4"
+
+partnum=1
+maxpart=4
+if [ $exist_part4 -eq 1 -o $exist_part3 -eq 1 -o $exist_part2 -eq 0 -o $exist_part1 -eq 0 -o $linux_fs -eq 0 ] ; then
+	ls /dev/mmcblk0*;
+	
+	while [ $partnum -le $maxpart ] ;
+	do
+		checkpart=/dev/mmcblk0p$partnum;
+		
+		echo "checkpart= $checkpart";
+
+		fdisk -l /dev/mmcblk0 | grep -q "$checkpart";ret=$?;
+		if [ $ret -eq 0 ] ; then
+		delete_part > /dev/null;
+		fi
+		let partnum++;
+	done
+	
+	fdisk -l /dev/mmcblk0
+	
+	let totalsize=$(($(fdisk -l /dev/mmcblk0 | grep "Disk /dev/mmcblk0: " | cut -d ' ' -f 5)>>20))
+	
+	echo "totalsize = $totalsize ..."
+	
+	partnum=1
+	if [ $totalsize -ge 8192 ] ; then
+	partsize=4096;
+	else
+	partsize=$totalsize/2;
+	fi
+	new_part;
+	
+	partnum=2;
+	partsize=$(($totalsize-$partsize));
+	new_part;
+fi
+
+fdisk -l /dev/mmcblk0
+
+if [ -e /dev/mmcblk0p1 ] ; then
+mkdir -p /tmp/mmc/mmc1;
+mount -t ext4 /dev/mmcblk0p1 /tmp/mmc/mmc1; ret1=$?;
+umount /tmp/mmc/mmc1; rm -rf /tmp/mmc/mmc1;
+fi
+
+if [ ! -e /dev/mmcblk0p2 ] ; then
+echo "part2 is not exist!!!"
+ret2=1
+fi
+
+if [ $linux_fs -eq 0 -o $ret1 -ne 0 -o $ret2 -ne 0 ] ; then
+    echo "formatting the partition...."
+#    mke2fs /dev/mmcblk0p1; ret=$?;
+#	mkfs.vfat /dev/mmcblk0p1; ret=$?;
+	mkfs.ext4 -F -j /dev/mmcblk0p1; ret=$?;
+fi
+}
+
+
+
+check_part()
+{
+local ret=0
+fdisk -l /dev/mmcblk0 | grep -q "83 Linux"; ret=$?
+if [ $ret -eq 0 ] ; then
+    e2fsck -y $checkpart; ret=$?
+    echo "fschecking ret $ret"
+fi
+
+return $ret
+}
+
+mount_dev()
+{
+mount -t ext4 $checkpart $mountpath; return $?
+}
+
+format_dev()
+{
+mke2fs $checkpart; return $?
+}
+
+detect_and_mount_mmc()
+{ 
+check_dev
+
+local ret=0
+local index=0
+
+checkpart=/dev/mmcblk0p1
+mountpath=/tmp/mmc/mmc1
+
+if [ -e $checkpart ] ; then
+	echo "fschecking $checkpart...."
+	check_part
+	echo "mounting for $checkpart...."
+	mkdir -p $mountpath;
+	mount_dev; ret=$?
+	echo "mount_dev $mountpath;ret=$ret"
+	if [ $ret -ne 0 ] ; then
+		echo "formating $checkpart...."
+		rm -rf $mountpath
+		
+		format_dev;
+		mkdir -p $mountpath
+		mount_dev; ret=$?
+		if [ $ret -ne 0 ] ; then
+			rm -rf $mountpath
+			echo "failed to mount $checkpart."
+		else
+			echo "success to mount $checkpart."
+		fi
+	else
+		echo "success to mount $checkpart."
+	fi
+else
+	rm -rf $mountpath
+fi
+}
+
+echo "check_dev....."
+detect_and_mount_mmc;
+

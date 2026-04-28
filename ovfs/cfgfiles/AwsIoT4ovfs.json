@@ -1,0 +1,13 @@
+{
+        "Data": {
+                                        "EnableIoT":    1,
+                                        "EnableAlarm":  1, 
+                                        "ApkUrl": "http://ai.yeelinkvision.com/apk/LINKEASY",
+                                        "LicenseDir":"/usr/erc",
+                                        "DeviceHostAddr":"http://device-api.yeelinkvision.com",
+                                        "UpgradeHostAddr":"http://firmware-api.yeelinkvision.com",
+                                        "AlarmHostAddr":"alarm-api.yeelinkvision.com",
+                                        "AlarmHostPort":14000,
+                                        "RtcAppId":"bbbf22550da94300b20cc0255997f21b"
+        }
+}

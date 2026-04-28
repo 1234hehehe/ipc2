@@ -1,0 +1,373 @@
+{
+	"RecycleRecord":	0,
+	"PreserveMode":	0,
+	"PreserveTime":	0,
+	"PreserveVolume":	0,
+	"PreservePercent":	0,
+	"HistoryStreamMaxNum":  1,
+	"Channel0":	{
+		"RecordMode":	1,
+		"ManualStreamMask":	13,
+		"PreRecordMode":	1,
+		"PreRecordTime":	0,
+		"PreRecordSpace":	1048576,
+		"PreRecordDelayTime":	180,
+		"Weekday0":	{
+			"AlldayEnable":	0,
+			"Sched0":	{
+				"StartTime":	0,
+				"StopTime":	2359,
+				"SchedMode":	3,
+				"StreamMask":	13
+			},
+			"Sched1":	{
+				"StartTime":	0,
+				"StopTime":	0,
+				"SchedMode":	3,
+				"StreamMask":	13
+			},
+			"Sched2":	{
+				"StartTime":	0,
+				"StopTime":	0,
+				"SchedMode":	3,
+				"StreamMask":	13
+			},
+			"Sched3":	{
+				"StartTime":	0,
+				"StopTime":	0,
+				"SchedMode":	3,
+				"StreamMask":	13
+			},
+			"Sched4":	{
+				"StartTime":	0,
+				"StopTime":	0,
+				"SchedMode":	3,
+				"StreamMask":	13
+			},
+			"Sched5":	{
+				"StartTime":	0,
+				"StopTime":	0,
+				"SchedMode":	3,
+				"StreamMask":	13
+			},
+			"Sched6":	{
+				"StartTime":	0,
+				"StopTime":	0,
+				"SchedMode":	3,
+				"StreamMask":	13
+			},
+			"Sched7":	{
+				"StartTime":	0,
+				"StopTime":	0,
+				"SchedMode":	3,
+				"StreamMask":	13
+			}
+		},
+		"Weekday1":	{
+			"AlldayEnable":	0,
+			"Sched0":	{
+				"StartTime":	0,
+				"StopTime":	2359,
+				"SchedMode":	3,
+				"StreamMask":	13
+			},
+			"Sched1":	{
+				"StartTime":	0,
+				"StopTime":	0,
+				"SchedMode":	3,
+				"StreamMask":	13
+			},
+			"Sched2":	{
+				"StartTime":	0,
+				"StopTime":	0,
+				"SchedMode":	3,
+				"StreamMask":	13
+			},
+			"Sched3":	{
+				"StartTime":	0,
+				"StopTime":	0,
+				"SchedMode":	3,
+				"StreamMask":	13
+			},
+			"Sched4":	{
+				"StartTime":	0,
+				"StopTime":	0,
+				"SchedMode":	3,
+				"StreamMask":	13
+			},
+			"Sched5":	{
+				"StartTime":	0,
+				"StopTime":	0,
+				"SchedMode":	3,
+				"StreamMask":	13
+			},
+			"Sched6":	{
+				"StartTime":	0,
+				"StopTime":	0,
+				"SchedMode":	3,
+				"StreamMask":	13
+			},
+			"Sched7":	{
+				"StartTime":	0,
+				"StopTime":	0,
+				"SchedMode":	3,
+				"StreamMask":	13
+			}
+		},
+		"Weekday2":	{
+			"AlldayEnable":	0,
+			"Sched0":	{
+				"StartTime":	0,
+				"StopTime":	2359,
+				"SchedMode":	3,
+				"StreamMask":	13
+			},
+			"Sched1":	{
+				"StartTime":	0,
+				"StopTime":	0,
+				"SchedMode":	3,
+				"StreamMask":	13
+			},
+			"Sched2":	{
+				"StartTime":	0,
+				"StopTime":	0,
+				"SchedMode":	3,
+				"StreamMask":	13
+			},
+			"Sched3":	{
+				"StartTime":	0,
+				"StopTime":	0,
+				"SchedMode":	3,
+				"StreamMask":	13
+			},
+			"Sched4":	{
+				"StartTime":	0,
+				"StopTime":	0,
+				"SchedMode":	3,
+				"StreamMask":	13
+			},
+			"Sched5":	{
+				"StartTime":	0,
+				"StopTime":	0,
+				"SchedMode":	3,
+				"StreamMask":	13
+			},
+			"Sched6":	{
+				"StartTime":	0,
+				"StopTime":	0,
+				"SchedMode":	3,
+				"StreamMask":	13
+			},
+			"Sched7":	{
+				"StartTime":	0,
+				"StopTime":	0,
+				"SchedMode":	3,
+				"StreamMask":	13
+			}
+		},
+		"Weekday3":	{
+			"AlldayEnable":	0,
+			"Sched0":	{
+				"StartTime":	0,
+				"StopTime":	2359,
+				"SchedMode":	3,
+				"StreamMask":	13
+			},
+			"Sched1":	{
+				"StartTime":	0,
+				"StopTime":	0,
+				"SchedMode":	3,
+				"StreamMask":	13
+			},
+			"Sched2":	{
+				"StartTime":	0,
+				"StopTime":	0,
+				"SchedMode":	3,
+				"StreamMask":	13
+			},
+			"Sched3":	{
+				"StartTime":	0,
+				"StopTime":	0,
+				"SchedMode":	3,
+				"StreamMask":	13
+			},
+			"Sched4":	{
+				"StartTime":	0,
+				"StopTime":	0,
+				"SchedMode":	3,
+				"StreamMask":	13
+			},
+			"Sched5":	{
+				"StartTime":	0,
+				"StopTime":	0,
+				"SchedMode":	3,
+				"StreamMask":	13
+			},
+			"Sched6":	{
+				"StartTime":	0,
+				"StopTime":	0,
+				"SchedMode":	3,
+				"StreamMask":	13
+			},
+			"Sched7":	{
+				"StartTime":	0,
+				"StopTime":	0,
+				"SchedMode":	3,
+				"StreamMask":	13
+			}
+		},
+		"Weekday4":	{
+			"AlldayEnable":	0,
+			"Sched0":	{
+				"StartTime":	0,
+				"StopTime":	2359,
+				"SchedMode":	3,
+				"StreamMask":	13
+			},
+			"Sched1":	{
+				"StartTime":	0,
+				"StopTime":	0,
+				"SchedMode":	3,
+				"StreamMask":	13
+			},
+			"Sched2":	{
+				"StartTime":	0,
+				"StopTime":	0,
+				"SchedMode":	3,
+				"StreamMask":	13
+			},
+			"Sched3":	{
+				"StartTime":	0,
+				"StopTime":	0,
+				"SchedMode":	3,
+				"StreamMask":	13
+			},
+			"Sched4":	{
+				"StartTime":	0,
+				"StopTime":	0,
+				"SchedMode":	3,
+				"StreamMask":	13
+			},
+			"Sched5":	{
+				"StartTime":	0,
+				"StopTime":	0,
+				"SchedMode":	3,
+				"StreamMask":	13
+			},
+			"Sched6":	{
+				"StartTime":	0,
+				"StopTime":	0,
+				"SchedMode":	3,
+				"StreamMask":	13
+			},
+			"Sched7":	{
+				"StartTime":	0,
+				"StopTime":	0,
+				"SchedMode":	3,
+				"StreamMask":	13
+			}
+		},
+		"Weekday5":	{
+			"AlldayEnable":	0,
+			"Sched0":	{
+				"StartTime":	0,
+				"StopTime":	2359,
+				"SchedMode":	3,
+				"StreamMask":	13
+			},
+			"Sched1":	{
+				"StartTime":	0,
+				"StopTime":	0,
+				"SchedMode":	3,
+				"StreamMask":	13
+			},
+			"Sched2":	{
+				"StartTime":	0,
+				"StopTime":	0,
+				"SchedMode":	3,
+				"StreamMask":	13
+			},
+			"Sched3":	{
+				"StartTime":	0,
+				"StopTime":	0,
+				"SchedMode":	3,
+				"StreamMask":	13
+			},
+			"Sched4":	{
+				"StartTime":	0,
+				"StopTime":	0,
+				"SchedMode":	3,
+				"StreamMask":	13
+			},
+			"Sched5":	{
+				"StartTime":	0,
+				"StopTime":	0,
+				"SchedMode":	3,
+				"StreamMask":	13
+			},
+			"Sched6":	{
+				"StartTime":	0,
+				"StopTime":	0,
+				"SchedMode":	3,
+				"StreamMask":	13
+			},
+			"Sched7":	{
+				"StartTime":	0,
+				"StopTime":	0,
+				"SchedMode":	3,
+				"StreamMask":	13
+			}
+		},
+		"Weekday6":	{
+			"AlldayEnable":	0,
+			"Sched0":	{
+				"StartTime":	0,
+				"StopTime":	2359,
+				"SchedMode":	3,
+				"StreamMask":	13
+			},
+			"Sched1":	{
+				"StartTime":	0,
+				"StopTime":	0,
+				"SchedMode":	3,
+				"StreamMask":	13
+			},
+			"Sched2":	{
+				"StartTime":	0,
+				"StopTime":	0,
+				"SchedMode":	3,
+				"StreamMask":	13
+			},
+			"Sched3":	{
+				"StartTime":	0,
+				"StopTime":	0,
+				"SchedMode":	3,
+				"StreamMask":	13
+			},
+			"Sched4":	{
+				"StartTime":	0,
+				"StopTime":	0,
+				"SchedMode":	3,
+				"StreamMask":	13
+			},
+			"Sched5":	{
+				"StartTime":	0,
+				"StopTime":	0,
+				"SchedMode":	3,
+				"StreamMask":	13
+			},
+			"Sched6":	{
+				"StartTime":	0,
+				"StopTime":	0,
+				"SchedMode":	3,
+				"StreamMask":	13
+			},
+			"Sched7":	{
+				"StartTime":	0,
+				"StopTime":	0,
+				"SchedMode":	3,
+				"StreamMask":	13
+			}
+		}
+	}
+} 

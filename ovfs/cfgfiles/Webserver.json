@@ -1,0 +1,19 @@
+{
+	"EnableHttpRedirectToHttps":    0,
+	"EnableHttp":   1,
+	"HttpPort":     80,
+	"EnableHttps":  0,
+	"HttpsPort":    443,
+	"PlatFormReady":        1,
+	"SessionSupport":       0,
+	"SingleAccountLogin":   0,
+	"PasswordTips": 0,
+	"PluginParams": {
+	        "PicQuality":   1
+	},
+	"OnvifCfg": {
+		"AuthEnable":   0,
+		"AdaptiveIp":   1,
+		"Timeout":      21600
+	}
+}

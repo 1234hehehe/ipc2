@@ -1,0 +1,16 @@
+{
+	"AuthEnable":	0,
+	"OnvifPort":	80,
+	"AdaptiveIp":	1,
+	"Timeout":      21600,
+	"DiscoveryMode":	0,
+	"TZ":	{
+		"TimeZone":	"UTC",
+		"TimeOffset":	800,
+		"Name":	""
+	},
+	"DST":	{
+		"Name":	""
+	},
+	"BuildTime":	"2020-11-03 16:00Z"
+}

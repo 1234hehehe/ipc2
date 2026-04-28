@@ -1,0 +1,54 @@
+{
+	"MediaServer":	{
+		"Rtsp":	{
+			"Enable":	1,
+			"RtspPort":	554,
+			"HttpPort":	8002,
+			"Auth":	0,
+			"StreamMaxNum":	4,
+			"MultiCast":	{
+				"Enable":	0,
+				"MainVideo":	{
+					"IP":	"238.255.0.2",
+					"Port":	28080,
+					"TTL":	255
+				},
+				"SubVideo":	{
+					"IP":	"238.255.0.3",
+					"Port":	28084,
+					"TTL":	255
+				},
+				"ThirdVideo":	{
+					"IP":	"238.255.0.4",
+					"Port":	28088,
+					"TTL":	255
+				},
+				"MainAudio":	{
+					"IP":	"238.255.0.5",
+					"Port":	28080,
+					"TTL":	255
+				},
+				"SubAudio":	{
+					"IP":	"238.255.0.6",
+					"Port":	28084,
+					"TTL":	255
+				},
+				"ThirdAudio":	{
+					"IP":	"238.255.0.7",
+					"Port":	28088,
+					"TTL":	255
+				}
+			}
+		},
+		"Rtmp":	{
+			"Enable":	1,
+			"RtmpPort":	1935
+		},
+		"MediaDisconnect":	{
+			"DisconnectIP":	"0.0.0.0",
+			"DeviceId":	0,
+			"ChannelId":	0,
+			"StreamId":	0
+		}
+	}
+}

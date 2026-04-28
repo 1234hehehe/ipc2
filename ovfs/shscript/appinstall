@@ -1,0 +1,969 @@
+#!/bin/sh
+
+hardware=`cat /proc/cpuinfo |grep -e "Hardware" | awk '{print $3}'`
+mtdtype=`cat /proc/cmdline  | sed -e "s/.*mtdparts=//g" -e "s/:.*//g"`
+
+PATH="/usr/bin:/usr/sbin:/bin:/sbin:/root:/root/bin:/root/pppoe:/root/snmp:/root/wifi"
+LD_LIBRARY_PATH="/usr/local/lib:/usr/lib:/lib:/root:/root/lib:/root/pppoe:/media/lib"
+export PATH
+export LD_LIBRARY_PATH
+
+g_cpu_type=
+g_hw_type=
+g_sensor_type=
+g_lensDrv=
+
+sdcard_format_respawn()
+{
+        local LastSDExist=0;
+        local CurSDExist=0;
+        
+        devmem 0x10011138 32 0xfff
+        devmem 0x10011134 32 0xaaa
+        
+        mount_mmc
+        
+        if [ -b /dev/mmcblk0 ] ; then
+                let LastSDExist=1;
+        fi
+        
+        sleep 20;
+
+        while true; 
+        do
+        {
+                {
+                        if [ -b /dev/mmcblk0 ] ; then
+                                let CurSDExist=1;
+                        else
+                                let CurSDExist=0;
+                        fi
+					
+                        echo "LastSDExist=$LastSDExist,CurSDExist=$CurSDExist";
+					
+                        if [ $LastSDExist -ne $CurSDExist ] ; then
+                                if [ $CurSDExist -eq 1 ] ; then
+                                        echo 3 > /proc/sys/vm/drop_caches
+                                        umount /tmp/mmc/mmc1; rm -rf /tmp/mmc/mmc1;
+                                        mount_mmc
+                                else
+                                        killall ovfs_record
+                                        killall ovfs_filemanage
+                                        killall ovfs_eventlog
+										uritool put /webserver/devicestatus {\"SDCardStatus\":-1}
+                                fi
+
+                                LastSDExist=$CurSDExist;
+                        elif [ $CurSDExist -eq 1 ] ; then
+                                proc_name="/root/bin/ovfs_record";
+                                pidof ${proc_name##*/} > /dev/null;ret=$?;
+                                if [ ${ret} -ne 0 ] ; then
+				                        	echo "$(date) Starting up $proc_name ....";
+				                        	chmod +x ${proc_name};
+				                        	${proc_name} &
+                                fi
+
+								proc_name="/root/bin/ovfs_eventlog";
+                                pidof ${proc_name##*/} > /dev/null;ret=$?;
+                                if [ ${ret} -ne 0 ] ; then
+				                        	echo "$(date) Starting up $proc_name ....";
+				                        	chmod +x ${proc_name};
+				                        	${proc_name} &
+                                fi
+                        fi
+                }
+                sleep 5;
+        }
+        done
+}
+
+guard_process()
+{
+        local proc_name;
+        local param1;
+        local param2;
+        local param3;
+
+        local curtimev1=5;
+        local totaltimev1=5;
+        
+        local curtimev2=0;
+        local totaltimev2=5;
+        local curRestartTimev2=0
+        local totalRestartTimev2=20
+        
+        local curtimev3=5;
+        local totaltimev3=5;
+        local curRestartTimev3=0;
+        local totalRestartTimev3=20;
+        
+        local curEthIn=0;
+        local lstEthIn=0;
+        local curtimev4=0;
+        local totaltimev4=0;
+
+        while true; 
+        do
+        {
+                {
+                        if [ $curtimev1 -ge $totaltimev1 ] ; then
+                            need=0;
+                            for i in $(netstat -ntple | grep media | awk -F ' ' '{print $2}');
+                            do
+                                    #echo $i;
+                                    if [ $i -gt 3 ];
+                                    then
+                                            echo "listen queue > 3 , need strace";
+                                            need=1;
+                                    fi;
+                            done;
+                            if [ $need == 1 ];
+                            then
+                                    strace -fp $(pidof ovfs_mediaserver) -c -o /dev/null & sleep 5;pkill strace;
+                            fi
+                            let curtimev1=0;
+                        else
+                        		let curtimev1++;   
+                        fi  
+                }
+                
+                {
+                        proc_name="/root/nginx/sbin/nginx"
+                        param1="-p"
+                        param2="/root/nginx/"
+                        param3=""
+                
+                        if [ $curtimev2 -gt $totaltimev2 ] ; then
+                                #str=$(ps); echo ${str} | grep -q $proc_name; ret=$?;
+                                pidof ${proc_name##*/} > /dev/null;ret=$?;
+                                if [ ${ret} -ne 0 ] ; then
+                                        echo "name=$proc_name parm1=$param1 parm2=$param2 param3=$param3"
+                                        echo "$(date) Starting up $proc_name .... $curRestartTimev2/$totalRestartTimev2";
+                                        chmod +x ${proc_name};
+                                        ${proc_name} $param1 $param2 $param3 &
+                                        let curRestartTimev2++;
+                                fi
+                                let curtimev2=0;
+                        else
+                                let curtimev2++;   
+                        fi    
+                        
+                        if [ $curRestartTimev2 -ge $totalRestartTimev2 ] ; then
+                                echo "$(date) $proc_name starup fail. need reboot";
+                                reboot;
+                        fi
+                }
+if false; then              
+                {
+                    proc_name="/update/aliIoT4ovfs"
+                    param1="/usr/etc/cfgfiles"
+                    param2=""
+                    param3=""
+                    
+                    if [ $curtimev3 -ge $totaltimev3 ] ; then
+                            #str=$(ps); echo ${str} | grep -q $proc_name; ret=$?;
+                            pidof ${proc_name##*/} > /dev/null;ret=$?;
+                            if [ ${ret} -ne 0 ] ; then
+                                    echo "name=$proc_name parm1=$param1 parm2=$param2 param3=$param3"
+                                    echo "$(date) Starting up $proc_name .... $curRestartTimev3/$totalRestartTimev3";
+                                    chmod +x ${proc_name};
+                                    ${proc_name} $param1 $param2 $param3 &
+                                    let curRestartTimev3++;
+                            fi
+                            let curtimev3=0;
+                    else
+                            let curtimev3++;   
+                    fi
+                    
+                    if [ $curRestartTimev3 -ge $totalRestartTimev3 ] ; then
+                            echo "$(date) $proc_name starup fail. need reboot";
+                            reboot;
+                    fi
+                }
+
+                {
+                    if [ $curtimev4 -ge $totaltimev4 ] ; then
+                            curEthIn=$(cat /sys/class/net/eth0/carrier);
+                            if [ $curEthIn == 0 ] && [ $lstEthIn == 1 ] ; then
+                                    killall aliIoT4ovfs;
+                                    sleep 2;
+                                    /update/aliIoT4ovfs /usr/etc/cfgfiles &
+                            fi	
+                            let lstEthIn=curEthIn;
+                            
+                            let curtimev4=0;
+                    else
+                            let curtimev4++;
+                    fi
+                }
+fi                
+                sleep 2;
+        }
+        done
+}
+
+mount_tmpfs()
+{
+	mount -t tmpfs -o size=8m none /tmp;
+	mount -t tmpfs -o size=32m  none /var;
+	mkdir -p /var/run /var/lock /var/snapBuff /var/untar
+	mkdir -p /tmp/var /tmp/nginx/logs /tmp/nginx/proxy_temp /tmp/nginx/fastcgi_temp
+	cp -af /root/nginx/conf /tmp/nginx/conf; mount /tmp/nginx/conf /root/nginx/conf;
+	mount /tmp/nginx/logs /root/nginx/logs;
+	mount /tmp/nginx/proxy_temp /root/nginx/proxy_temp;
+	mount /tmp/nginx/fastcgi_temp /root/nginx/fastcgi_temp;
+#	ln -s /tmp/nginx /root/nginx
+#	ln -s /tmp/nginx/logs /root/nginx/logs
+#	ln -s /tmp/nginx/proxy_temp /root/nginx/proxy_temp
+#	ln -s /tmp/nginx/fastcgi_temp /root/nginx/fastcgi_temp
+	cp /root/font/servicestatus /dev
+	
+	if [ ! -f /usr/etc/logo.png ]; then
+	  cp -af /media/web/logo.png /usr/etc/logo.png
+	fi
+}
+
+snmp_pre()
+{
+  if [ -f /root/snmp/snmptrap.sh ] ; then                                                                                                                                                                           
+  cd /root/snmp; ./snmptrap.sh &                                                                                                                                                                                    
+  fi
+}
+
+startup_wifi()
+{	
+	lsusb | grep -q "0bda:[0,8]179"; local ret1=$?
+	lsusb | grep -q "0bda:0811"; local ret2=$?
+	lsusb | grep -q "0bda:f179"; local ret3=$?
+	lsusb | grep -q "0ffe:0001"; local ret4=$?
+	lsusb | grep -q "007a:6052"; local ret5=$?
+	lsusb | grep -q "a69c:88dc"; local ret6=$?
+	lsusb | grep -q "a69c:8d80"; local ret7=$?
+	
+if [ -d /var/untar/ko ] ; then
+	if [ $ret1 -eq 0 ] ; then
+	  insmod /var/untar/ko/ourdrv/8188eu.ko;
+	elif [ $ret2 -eq 0 ] ; then
+	  insmod /var/untar/ko/ourdrv/8821au.ko;
+	elif [ $ret3 -eq 0 ] ; then
+	  insmod /var/untar/ko/ourdrv/8188fu.ko;
+	elif [ $ret4 -eq 0 ] ; then
+	  insmod /var/untar/ko/ourdrv/hawk_usb.ko;
+	elif [ $ret5 -eq 0 ] ; then
+	  insmod /var/untar/ko/ourdrv/ATBM606x_wifi_usb.ko wifi_bt_comb=1;
+	elif [ $ret6 -eq 0 ] ; then
+	  insmod /var/untar/ko/ourdrv/aic_load_fw.ko;
+	  insmod /var/untar/ko/ourdrv/aic8800_fdrv.ko;  
+	  insmod /var/untar/ko/ourdrv/aic_btusb.ko;
+	elif [ $ret7 -eq 0 ] ; then
+	  insmod /var/untar/ko/ourdrv/aic_load_fw.ko;
+	  insmod /var/untar/ko/ourdrv/aic8800_fdrv.ko;  
+	  insmod /var/untar/ko/ourdrv/aic_btusb.ko;
+	fi
+elif [ -d /root/ko ] ; then
+	if [ $ret1 -eq 0 ] ; then
+	  insmod /root/ko/ourdrv/8188eu.ko;
+	elif [ $ret2 -eq 0 ] ; then
+	  insmod /root/ko/ourdrv/8821au.ko;
+	elif [ $ret3 -eq 0 ] ; then
+	  insmod /root/ko/ourdrv/8188fu.ko;
+	elif [ $ret4 -eq 0 ] ; then
+	  insmod /root/ko/ourdrv/hawk_usb.ko;
+	elif [ $ret5 -eq 0 ] ; then
+	  insmod /root/ko/ourdrv/ATBM606x_wifi_usb.ko wifi_bt_comb=1;
+	elif [ $ret6 -eq 0 ] ; then
+	  insmod /root/ko/ourdrv/aic_load_fw.ko;
+	  insmod /root/ko/ourdrv/aic8800_fdrv.ko;	 
+	  insmod /root/ko/ourdrv/aic_btusb.ko;
+	elif [ $ret7 -eq 0 ] ; then
+	  insmod /root/ko/ourdrv/aic_load_fw.ko;
+	  insmod /root/ko/ourdrv/aic8800_fdrv.ko;	 
+	  insmod /root/ko/ourdrv/aic_btusb.ko;
+	fi
+fi
+
+if [ $ret1 -eq 0 -o $ret2 -eq 0 -o $ret3 -eq 0 -o $ret4 -eq 0 -o $ret5 -eq 0 -o $ret6 -eq 0 -o $ret7 -eq 0 ] ; then
+    ifconfig wlan0 mtu 1400 up;
+	#ifconfig wlan0 192.168.10.1;
+	mkdir -p /var/lib/misc/;
+	touch /var/lib/misc/udhcpd.leases;
+
+	i=0
+	while [  $i -le 4  ] ; 
+	do
+		ifconfig -a | grep -q "wlan0"; local ret50=$?
+ 	  if [ $ret50 -ne 0 ] ; then
+ 	  	echo "wlan0 not detect";
+  	  let i++;
+			sleep 1;
+ 	  else
+ 	  	echo "wlan0 detect";
+ 	  	break;
+ 	  fi
+	done
+	
+	if [ $i -eq 5 ] ; then
+		echo "wlan0 not detect  need reboot";
+		reboot;
+	fi
+fi
+}
+
+startup_4g()                                                                                                               
+{
+#ec801²»Ö§³Öpppd²¦ºÅ
+	ret=0;
+	rndis=0;	                                                                                                                       
+	reboot_4g=0;
+	i=1
+	while [  $i  -le  20  ] ; 
+	do
+		lsusb | grep -q "1286:4e3c"; local ret10=$?
+		lsusb | grep -q "1782:4d10"; local ret11=$?
+		lsusb | grep -q "05c6:9025"; local ret12=$?
+		lsusb | grep -q "05c6:9625"; local ret13=$?
+		lsusb | grep -q "05c6:902d"; local ret14=$?
+		lsusb | grep -q "19d2:0536"; local ret15=$?
+		lsusb | grep -q "2c7c:0125"; local ret16=$?
+		lsusb | grep -q "2dee:4d41"; local ret17=$?
+		lsusb | grep -q "2c7c:0903"; local ret18=$?
+		lsusb | grep -q "19d1:0001"; local ret19=$?
+		lsusb | grep -q "2c7c:6026"; local ret20=$?
+
+		if [ $ret10 -eq 0 ] ; then
+			rndis=0;
+			echo "detect yuga CLM920_RV3";
+			echo "1286 4e3c ff" > /sys/bus/usb-serial/drivers/option1/new_id;
+			sleep 1;
+			if [ -e /dev/ttyUSB1 ] && [ -e /dev/ttyUSB2 ] ; then
+				if [ $reboot_4g -eq 0 ] ; then
+					echo "reset 4g model";
+					
+					echo -e "ATE0\r\n" > /dev/ttyUSB1;
+					timeout -t 1 cat /dev/ttyUSB1;
+					
+					for index in {1..10} ; do
+						echo -e "ATV1\r\n" > /dev/ttyUSB1;
+						ret=0;timeout -t 1 cat /dev/ttyUSB1 | grep -q "OK";ret=$?;
+						if [ $ret -eq 0 ] ; then
+							break;
+						else
+							sleep 3;
+						fi
+					done
+					
+					for index in {1..10} ; do
+						echo -e "AT+PMODS=0\r\n" > /dev/ttyUSB1;
+						ret=0;timeout -t 1 cat /dev/ttyUSB1 | grep -q "OK";ret=$?;
+						if [ $ret -eq 0 ] ; then
+							break;
+						else
+							sleep 3;
+						fi
+					done
+					
+					for index in {1..10} ; do
+						echo -e "AT+CFUN=1,1\r\n" > /dev/ttyUSB1;
+						ret=0;timeout -t 1 cat /dev/ttyUSB1 | grep -q "OK";ret=$?;
+						if [ $ret -eq 0 ] ; then
+							break;
+						else
+							sleep 3;
+						fi
+					done
+					
+					reboot_4g=1;
+					continue;
+				fi
+				ln -s /dev/ttyUSB1 /dev/at_cmd;
+				ln -s /dev/ttyUSB2 /dev/modem_cmd;
+				touch /tmp/yuga_clm920_rv3_$rndis;
+				mkdir -p /tmp/lte;
+			fi
+		fi                                                                      
+		if [ $ret11 -eq 0 ] ; then                                                                                         
+			echo "1782 4d10 ff" > /sys/bus/usb-serial/drivers/option1/new_id;
+			rm /dev/ttyUSB3;
+			if [  -f /dev/ttyUSB7 ] ; then
+					ln -s /dev/ttyUSB7 /dev/ttyUSB3;
+			else
+					ln -s /dev/ttyUSB0 /dev/ttyUSB3;
+			fi
+			mkdir -p /tmp/lte;
+			ln -s /dev/ttyUSB0 /dev/at_cmd;
+			ln -s /dev/ttyUSB7 /dev/modem_cmd;
+			sleep 3;
+		fi                                              
+
+		if [ $ret12 -eq 0 ] ; then
+			echo "05c6 9025 ff" > /sys/bus/usb-serial/drivers/option1/new_id;
+			sleep 5;
+			mkdir -p /tmp/lte;                     
+			echo "AT+USBCFG=902D" > /dev/ttyUSB1
+			echo "AT+USBCFG=902D" > /dev/ttyUSB3
+			sleep 25;
+			echo "05c6 902d ff" > /sys/bus/usb-serial/drivers/option1/new_id;
+			mkdir -p /tmp/lte;                                                                                                                                                                                   
+			touch /tmp/lte/yuga_clm920_nc3_rndis;
+			ln -s /dev/ttyUSB2 /dev/at_cmd;
+			ifconfig usb0 up;
+			udhcpc -i usb0 -p /var/run/udhcpc_usb0.pid -s udhcpc.script&                                                                                                                                                                                        
+		fi 
+		if [ $ret13 -eq 0 ] ; then
+			echo "05c6 9625 ff" > /sys/bus/usb-serial/drivers/option1/new_id;
+			sleep 1;
+			if [ -e /dev/ttyUSB1 ] ; then
+				echo -e "AT+CFUN=1,1\r\n" > /dev/ttyUSB1;
+			else
+				echo -e "AT+CFUN=1,1\r\n" > /dev/ttyUSB2;
+			fi
+			sleep 1;
+			mkdir -p /tmp/lte;                                                                                                                                                                                   
+			ln -s /dev/ttyUSB3 /dev/at_cmd;                                                                    
+			ln -s /dev/ttyUSB2 /dev/modem_cmd;                                                                                
+		fi
+		if [ $ret14 -eq 0 ] ; then
+			echo "05c6 902d ff" > /sys/bus/usb-serial/drivers/option1/new_id;
+			mkdir -p /tmp/lte;                                                                                                                                                                                   
+			touch /tmp/lte/yuga_clm920_nc3_rndis;
+			ln -s /dev/ttyUSB2 /dev/at_cmd;
+			ifconfig usb0 up;
+			udhcpc -i usb0 -p /var/run/udhcpc_usb0.pid -s udhcpc.script&                                                                                   
+		fi
+		if [ $ret15 -eq 0 ] ; then
+			echo "19d2 0536 ff" > /sys/bus/usb-serial/drivers/option1/new_id;
+			mkdir -p /tmp/lte;                                                                                                                                                                                   
+			ln -s /dev/ttyUSB0 /dev/at_cmd;                                                                    
+			ln -s /dev/ttyUSB1 /dev/modem_cmd;                                                                                
+ 		fi
+		if [ $ret16 -eq 0 ] ; then
+			echo "2c7c 0125 ff" > /sys/bus/usb-serial/drivers/option1/new_id;
+			mkdir -p /tmp/lte;
+			ln -s /dev/ttyUSB2 /dev/at_cmd;
+			ln -s /dev/ttyUSB3 /dev/modem_cmd;
+		fi
+		if [ $ret17 -eq 0 ] ; then
+			echo "detect meig slm3xx";
+			echo "2dee 4d41 ff" > /sys/bus/usb-serial/drivers/option1/new_id;
+			sleep 1;
+			echo "reset 4g model";
+			if [ -e /dev/ttyUSB0 ] ; then
+				echo -e "AT+CFUN=1,1\r\n" > /dev/ttyUSB0;
+			else
+				echo -e "AT+CFUN=1,1\r\n" > /dev/ttyUSB5;
+			fi
+			sleep 1;
+			mkdir -p /tmp/lte;
+			ln -s /dev/ttyUSB0 /dev/at_cmd;
+			ln -s /dev/ttyUSB5 /dev/modem_cmd;
+		fi
+		if [ $ret18 -eq 0 ] ; then
+			rndis=1;
+			echo "detect quectel";
+			echo "2c7c 0903 ff" > /sys/bus/usb-serial/drivers/option1/new_id;
+			sleep 1;
+			if [ -e /dev/ttyUSB1 ] && [ -e /dev/ttyUSB2 ] ; then
+				if [ $reboot_4g -eq 0 ] ; then
+					echo "reset 4g model";
+					
+					echo -e "ATE0\r\n" > /dev/ttyUSB1;
+					timeout -t 1 cat /dev/ttyUSB1;
+					
+					#make sure nat=1
+					for index in {1..10} ; do
+						echo -e "AT+QCFG=\"nat\"\r\n" > /dev/ttyUSB1;
+						ret=0;timeout -t 1 cat /dev/ttyUSB1 | grep -q "\"nat\",1";ret=$?
+						if [ $ret -eq 0 ] ; then
+							break;
+						else
+							echo -e "AT+QCFG=\"nat\",1\r\n" > /dev/ttyUSB1;
+							ret=0;timeout -t 1 cat /dev/ttyUSB1 | grep -q "OK";ret=$?;
+							if [ $ret -ne 0 ] ; then
+								sleep 3;
+							fi
+						fi
+					done
+					
+					#make sure reboot 4g succ
+					for index in {1..10} ; do
+						echo -e "AT+CFUN=1,1\r\n" > /dev/ttyUSB1;
+						ret=0;timeout -t 1 cat /dev/ttyUSB1 | grep -q "OK";ret=$?;
+						if [ $ret -eq 0 ] ; then
+							break;
+						else
+							sleep 3;
+						fi
+					done
+					
+					reboot_4g=1;
+					continue;
+				fi
+				ln -s /dev/ttyUSB1 /dev/at_cmd;
+				ln -s /dev/ttyUSB2 /dev/modem_cmd;
+				touch /tmp/quectel_ec800e_$rndis;
+				mkdir -p /tmp/lte;
+			fi
+		fi
+		if [ $ret19 -eq 0 ] || [ $ret20 -eq 0 ] ; then
+			rndis=1;
+			echo "detect LYNQ";
+			if [ $ret19 -eq 0 ] ; then
+				echo "19d1 0001" > /sys/bus/usb-serial/drivers/option1/new_id;
+			elif [ $ret20 -eq 0 ] ; then
+				echo "2c7c 6026" > /sys/bus/usb-serial/drivers/option1/new_id;
+			fi
+			sleep 1;
+			if [ -e /dev/ttyUSB1 ] ; then
+				if [ $reboot_4g -eq 0 ] ; then
+					echo "reset 4g model";
+					
+					stty -F /dev/ttyUSB1 -echo;
+					
+					echo -e "ATE0\r\n" > /dev/ttyUSB1;
+					timeout -t 1 cat /dev/ttyUSB1;
+					
+					#make sure nat=1
+					for index in {1..10} ; do
+						echo -e "AT+QCFG=\"nat\"\r\n" > /dev/ttyUSB1;
+						ret=0;timeout -t 1 cat /dev/ttyUSB1 | grep -q "\"nat\",1";ret=$?
+						if [ $ret -eq 0 ] ; then
+							break;
+						else
+							echo -e "AT+QCFG=\"nat\",1\r\n" > /dev/ttyUSB1;
+							ret=0;timeout -t 1 cat /dev/ttyUSB1 | grep -q "OK";ret=$?;
+							if [ $ret -ne 0 ] ; then
+								sleep 3;
+							fi
+						fi
+					done
+					
+					#make sure reboot 4g succ
+					for index in {1..10} ; do
+						echo -e "AT+RESET\r\n" > /dev/ttyUSB1;
+						ret=0;timeout -t 1 cat /dev/ttyUSB1 | grep -q "OK";ret=$?;
+						if [ $ret -eq 0 ] ; then
+							break;
+						else
+							sleep 3;
+						fi
+					done
+					
+					reboot_4g=1;
+					continue;
+				fi
+				ln -s /dev/ttyUSB1 /dev/at_cmd;
+				ln -s /dev/ttyUSB2 /dev/modem_cmd;
+				touch /tmp/lynq_$rndis;
+				mkdir -p /tmp/lte;
+			fi
+		fi
+		if [ -e /dev/at_cmd ] ; then
+			echo "4G detect";
+			break;
+		else
+			echo "4G not detect";
+			sleep 3;
+		fi
+		let i++;
+	done
+
+	if [ -d /tmp/lte ] ; then
+		rm /usr/sbin/chat;
+		mkdir -p /tmp/ppp/peers;
+		mount /tmp/ppp /etc/ppp/;
+		cp /root/ppp/lte-dial /etc/ppp/peers/lte-dial;
+		cp /root/ppp/lte-connect-chat /etc/ppp/peers/lte-connect-chat;
+	fi
+}
+
+net_pre()
+{
+	ipaddr=
+	macaddr=
+	fileName=/usr/etc/cfgfiles/NetWork.json;
+	if [ ! -f ${fileName} ] ; then
+	fileName=/update/res/default/NetWork.json;
+	fi
+	if [ -f ${fileName} ] ; then
+#	ipaddr=$(echo $(grep "\"IpAddrV4\"" "${fileName}") | sed -e "s/\"//g" -e "s/IpAddrV4://g" | cut -d ',' -f 1)                 
+#	ipmask=$(echo $(grep "\"IpMaskV4\"" "${fileName}") | sed -e "s/\"//g" -e "s/IpMaskV4://g" | cut -d ',' -f 1)         
+#	gateway=$(echo $(grep "\"GatewayV4\"" "${fileName}") | sed -e "s/\"//g" -e "s/GatewayV4://g" | cut -d ',' -f 1)
+	ipaddr=$(echo $(grep "\"IpAddrV4\"" "${fileName}") | sed -e "s/^.*\"IpAddrV4\":[ \t]*\"//g" -e "s/\",\{0,1\}$//g")                 
+	ipmask=$(echo $(grep "\"IpMaskV4\"" "${fileName}") | sed -e "s/^.*\"IpMaskV4\":[ \t]*\"//g" -e "s/\",\{0,1\}$//g")         
+	gateway=$(echo $(grep "\"GatewayV4\"" "${fileName}") | sed -e "s/^.*\"GatewayV4\":[ \t]*\"//g" -e "s/\",\{0,1\}$//g")	
+	macaddr=$(echo $(grep "\"MacAddr\"" "${fileName}") | sed -e "s/^.*\"MacAddr\":[ \t]*\"//g" -e "s/\",\{0,1\}$//g")	
+	fi 
+
+	if [ -z $ipaddr ] ; then                                                                                                                  
+	ipaddr=192.168.1.188;                                                                                                                     
+	ipmask=255.255.255.0;                                                                                                                       
+	gateway=192.168.1.1;                                                                                                                      
+	fi 
+	
+	if [ -z $macaddr ];then
+	byte0=$(head -c 32 /dev/urandom | md5sum | cut -c-2);
+	byte1=$(head -c 32 /dev/urandom | md5sum | cut -c-2);
+	byte2=$(head -c 32 /dev/urandom | md5sum | cut -c-2);
+	byte3=$(head -c 32 /dev/urandom | md5sum | cut -c-2);
+	byte4=$(head -c 32 /dev/urandom | md5sum | cut -c-2);
+	macaddr=00:${byte0}:${byte1}:${byte2}:${byte3}:${byte4}
+
+	fi
+
+	echo -e "ifconfig eth0 down"
+	ifconfig eth0 down
+	echo -e "ifconfig eth0 hw ether $macaddr mtu 1400 up"
+	ifconfig eth0 hw ether $macaddr mtu 1400 up
+	echo -e "ifconfig eth0 $ipaddr netmask $ipmask"
+	ifconfig eth0 $ipaddr netmask $ipmask
+	route add default gw $gateway
+	ifconfig lo up
+}
+
+
+insmod_ko()
+{
+	curpath=$(pwd)
+	if [ ! -f /update/ko.tar.xz ] ; then
+		cp -a /update/ko /var/untar/;
+	fi
+
+	cd /var/untar/ko;./loadko.sh ;
+
+	echo 21 > /sys/class/gpio/export
+	echo out > /sys/class/gpio/gpio21/direction
+	echo 1 > /sys/class/gpio/gpio21/value
+	sleep 1;
+	startup_wifi;
+	startup_4g &
+
+	cd $curpath; rm -rf /var/untar/ko;
+	echo 3 > /proc/sys/vm/drop_caches;
+}
+
+start_p2p()
+{
+    pidof autoupgrade > /dev/null;ret=$?;
+    if [ ${ret} -ne 0 ] ; then
+            [ -f /usr/etc/cfgfiles/satellite.conf ] || cp -af /root/res/default/satellite.conf /usr/etc/cfgfiles/satellite.conf;
+	        which autoupgrade && autoupgrade /usr/etc/cfgfiles /usr/etc &
+    fi
+	
+#	[ $? -ne 0 ] &&	which aliIoT4ovfs && aliIoT4ovfs /usr/etc/cfgfiles &
+}
+
+write_phy_extreg()
+{
+	local ext_reg=$1
+	local value=$2
+	echo w reg:0x0-0xd-0x1f > /proc/jz/mdio/cmd;
+	echo w reg:0x0-0xe-$ext_reg > /proc/jz/mdio/cmd;
+	echo w reg:0x0-0xd-0x401f > /proc/jz/mdio/cmd;
+	echo w reg:0x0-0xe-$value > /proc/jz/mdio/cmd;
+}
+read_phy_extreg()
+{
+	local ext_reg=$1
+	echo w reg:0x0-0xd-0x1f > /proc/jz/mdio/cmd;
+	echo w reg:0x0-0xe-$ext_reg > /proc/jz/mdio/cmd;
+	echo w reg:0x0-0xd-0x401f > /proc/jz/mdio/cmd;
+	echo r reg:0x0-0xe > /proc/jz/mdio/cmd;
+	cat /proc/jz/mdio/cmd;
+}
+resetphy()
+{
+	echo "reset generate phy";
+	echo w reg:0x0-0x00-0x4000 > /proc/jz/mdio/cmd;
+	sleep 1;
+	echo w reg:0x0-0x00-0x3300 > /proc/jz/mdio/cmd;
+}
+resetdp83825()
+{
+	echo "reset phy dp83825";
+	echo w reg:0x0-0x1f-0x8000 > /proc/jz/mdio/cmd;
+	sleep 1;
+
+	write_phy_extreg 0x30b 0xc80;
+	write_phy_extreg 0x30c 0xe;
+	write_phy_extreg 0x30e 0x5800;
+}
+guard_phy()
+{
+	echo getphy > /proc/jz/mdio/cmd 
+	str=`cat /proc/jz/mdio/cmd`
+	phy=${str#*:};
+	echo "phy=$phy"
+
+	if [ $phy == "0" ] ; then
+		write_phy_extreg 0x30b 0xc80;
+		read_phy_extreg 0x30b;
+		write_phy_extreg 0x30c 0xe;
+		read_phy_extreg 0x30c;
+		write_phy_extreg 0x30e 0x5800;
+		read_phy_extreg 0x30e;
+		echo w reg:0x0-0x17-0x1e5 > /proc/jz/mdio/cmd;
+		echo r reg:0x0-0x17 > /proc/jz/mdio/cmd;
+		cat /proc/jz/mdio/cmd;
+		echo dp83825
+	elif [ $phy == "1" ] ; then
+		echo sz18201
+	else
+		echo "phytype = $phy nosupport"
+		return;
+	fi
+
+	gpiotool B 13 12ma;
+	gpiotool B 14 12ma;
+	gpiotool B 7 12ma;
+
+	sleep 60;
+
+	local nullcnt=0;
+	local resetcnt=360;
+	while true ; do
+		str=`cat /proc/net/arp | grep eth0 | tr -d '\n'`
+		ip=${str%% *}
+		if [ -z "$ip" ] ; then
+			sleep 10;
+			let nullcnt++;
+			if [ $nullcnt -gt $resetcnt ] ; then
+				echo "$nullcnt gt $resetcnt";
+				if [ $phy == "0" ] ; then
+					resetdp83825;
+				elif [ $phy == "1" ] ; then
+					resetphy;
+				fi
+				nullcnt=0;
+			fi
+		else
+			nullcnt=0;
+			ret=1;
+			while [ -n "$ip" ] ; do
+				result=`arping -D -f -w 3 -I eth0 $ip | grep Unicast`
+				if [ -n "$result" ] ; then
+					echo "arping $ip ok";
+					ret=0;
+					break;
+				else
+					echo "arping $ip failed";
+				fi
+				str=${str#*eth0};
+				ip=${str%% *};
+			done
+			if [ ${ret} -ne 0 ] ; then
+				if [ $phy == "0" ] ; then
+					resetdp83825;
+				elif [ $phy == "1" ] ; then
+					resetphy;
+				fi
+				sleep 180;
+			fi
+		fi
+		sleep 3;
+	done;
+}
+start_module()
+{
+	sysctl -w net.ipv4.tcp_tw_recycle=0;
+	sysctl -w vm.drop_caches=3;
+	date;free;
+	syslogd -O /tmp/syslog.log -s 64 -b 8 -l 6;
+	cd /root/ 
+	echo "sysinit..."
+	sysinit&
+	
+	ulimit -s 512;
+
+	guard_phy &
+
+	gpiotool B 13 12ma;
+	gpiotool B 14 12ma;
+	gpiotool B 7 12ma;
+
+	gpiotool A 22 down;
+	gpiotool C 4 up;
+
+	echo 0 > /proc/sys/net/ipv4/neigh/default/gc_thresh1;
+
+	echo "Start core..."
+	ovfs_core&
+
+	echo "Start boardsystem..."
+	ovfs_boardsystem&
+	sleep 6;
+
+	echo "Start network..."
+	ifconfig eth0 down;
+	ovfs_network&
+
+	echo "Start webserver..."
+	ovfs_webserver&
+
+	sleep 1;
+
+	echo "update..."
+	if [ -f /root/bin/update ] ; then
+		pkill update
+		cp /root/bin/update /dev/;
+		cd /dev;./update&
+		cd /;
+	fi
+
+	sleep 5;
+	
+	echo "start mediaserver"
+	ovfs_mediaserver&
+	
+	ovfs_ptz&
+#	mount_mmc &
+	sdcard_format_respawn &
+	
+	libcount=$(ls /root/host_libs/ | wc -l)
+	echo libcount=$libcount
+	if [ $libcount -gt 0 ] ; then
+		ovfs_access_host &
+	fi
+	
+	guard_process &
+	
+	sleep 10;
+	start_p2p
+}
+
+mount_mtd()
+{
+if [ ! -d /media ] ; then 
+	mkdir /media -p
+fi
+	mount -t squashfs /dev/mtdblock5 /media > /dev/null;
+if [ ! -d /usr/etc ] ; then 
+	mkdir /usr/etc -p
+fi
+	mount -t jffs2 mtd:config /usr/etc 2> /dev/null;
+	[ -f /usr/etc/factoryinfo.json ] || cp -af /update/etc/factoryinfo.json /usr/etc/factoryinfo.json;
+	
+	mount /update /root;
+
+	[ -d /root/etc/sensor ] && ln -sf /root/etc/sensor /etc/sensor;
+}
+
+untar_pack()
+{
+	echo "untar packet..."
+	for tarfile in /update/*.tar.xz ; do
+		filename=$(basename $tarfile | sed -e "s/.tar.xz//");
+		cp $tarfile /var/untar;
+		xz -d /var/untar/$filename.tar.xz;
+		tar -xvf /var/untar/$filename.tar -C /var/untar;
+		rm /var/untar/$filename.tar;
+		ln -s /var/untar/$filename /root/$filename
+	done
+	
+	mkdir -p /tmp/nginx/logs && ln -s /tmp/nginx/logs /root/nginx/logs
+	echo "untar packet...ok"
+}
+
+update_factoryinfo()
+{
+	update_factoryinfo.sh;
+}
+
+mount_mmc()
+{
+	local index=0;
+	
+	chmod a+x /root/mount_mmc
+	while [ true ] ; do
+	if [ -e /dev/mmcblk0 ] ; then
+		/root/mount_mmc
+		if [ -d /tmp/mmc/mmc1 ] ; then
+			ovfs_record&
+			ovfs_filemanage &
+			ovfs_eventlog &
+		fi
+		break;
+	else
+		sleep 3;
+			
+		let index++;
+		if [ $index -eq 3 ] ; then
+			if [ -d /tmp/mmc/mmc1 ] ; then 
+				ovfs_record&
+				ovfs_filemanage &
+				ovfs_eventlog &
+			fi
+			break;
+		fi
+	fi
+	done
+}
+
+get_sys_hw_info()
+{
+FAC_INFO_PATH=/usr/etc/factoryinfo.json
+if [ ! -f $FAC_INFO_PATH ] ; then
+echo "Can't find $FAC_INFO_PATH"
+exit 0
+fi
+
+g_hw_type=$(echo $(grep "Hardware" $FAC_INFO_PATH) | sed -e "s/\"//g" -e "s/Hardware://g" | cut -d ',' -f 1 | tr [A-Z] [a-z])
+g_cpu_type=$(echo $(grep "Platform" $FAC_INFO_PATH) | sed -e "s/\"//g" -e "s/Platform://g" | cut -d ',' -f 1 | tr [A-Z] [a-z])
+g_sensor_type=$(echo $(grep "SensorModel" $FAC_INFO_PATH) | sed -e "s/\"//g" -e "s/SensorModel://g" | cut -d ',' -f 1 | tr [A-Z] [a-z])
+g_lensDrv=$(echo $(grep "LensDrvType" $FAC_INFO_PATH) | sed -e "s/\"//g" -e "s/LensDrvType://g" | cut -d ',' -f 1 | tr [A-Z] [a-z])
+LensSupport=$(echo $(grep "LensSupport" $FAC_INFO_PATH) | sed -e "s/\"//g" -e "s/LensSupport://g" | cut -d ',' -f 1 | tr [A-Z] [a-z])
+
+g_serial=$(echo $(grep -nr "SerialNumber" /usr/etc/cfgfiles/Core.json | cut -d '"' -f 4) | tr [A-Z] [a-z])
+g_serial=$(echo ${g_serial:0:4})
+
+sed -i 's/\/usr\/lib:\/root\/lib/\/usr\/lib:\/root:\/root\/lib/g' /etc/profile
+
+echo "========== sys info: hw_type=$g_hw_type  cpu_type=$g_cpu_type sensor_type=$g_sensor_type ============="
+
+}
+
+custom_file_pre()
+{
+	g_sensor_type=$(echo $(grep "SensorModel" $FAC_INFO_PATH) | sed -e "s/\"//g" -e "s/SensorModel://g" | cut -d ',' -f 1 | tr [A-Z] [a-z])
+	def_file=/update/res/default/${g_sensor_type}_BoardSys.json	
+	if [ -f $def_file ] ; then
+		
+		rm /tmp/auto/res/default/BoardSys.json
+		mkdir -p /tmp/auto/res/default
+		ln -s $def_file /tmp/auto/res/default/BoardSys.json
+	fi
+
+	if [ -f /update/res/custom/custom.json ] ; then
+		cp /update/res/custom/custom.json /usr/etc/custom.json
+	fi
+	
+	if [ -f /root/customer_loader_step0.sh ] ; then
+		chmod 777 /root/customer_loader_step0.sh
+		/root/customer_loader_step0.sh
+	fi
+}
+
+main()
+{
+	chroot /;
+	sysctl -w net.ipv4.tcp_tw_recycle=0;
+	mount /update /root;
+	sysctl -w vm.drop_caches=3; free | tee -a /dev/free.log;
+	mount_mtd;
+	update_factoryinfo;
+	get_sys_hw_info;
+	mount_tmpfs;
+	untar_pack;
+	sysctl -w vm.drop_caches=3; free | tee -a /dev/free.log;
+	insmod_ko;
+	net_pre;
+	sysctl -w vm.drop_caches=3; free | tee -a /dev/free.log;
+	custom_file_pre;
+	sysctl -w vm.drop_caches=3; free | tee -a /dev/free.log;
+	start_module&
+	sysctl -w vm.drop_caches=3; free | tee -a /dev/free.log;
+	echo "1">/proc/sys/net/ipv4/conf/all/arp_ignore;
+	echo "2">/proc/sys/net/ipv4/conf/all/arp_announce;
+	echo "5">/proc/sys/net/ipv4/tcp_retries2;	
+}
+
+main

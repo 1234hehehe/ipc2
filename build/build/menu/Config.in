@@ -1,0 +1,20 @@
+#
+
+mainmenu "Build Configuration"
+
+source "build/menu/ipc.platform.h"
+
+source "build/menu/ipc.hardware.h"
+
+source "build/menu/ipc.flashchip.h"
+
+source "build/menu/ipc.sensormodel.h"
+
+source "build/menu/ipc.autolens.h"
+
+source "build/menu/ipc.customer.h"
+
+source "build/menu/ipc.project.h"
+
+source "build/menu/ipc.release.h"
+

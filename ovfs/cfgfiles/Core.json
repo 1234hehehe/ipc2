@@ -1,0 +1,51 @@
+{
+        "Version": {
+			"DeviceTypeString":     "ipc_guard_4g"
+	},
+	"Time":	{
+		"NTP":	{
+			"Enable":	1,
+			"Server":	"asia.pool.ntp.org",
+			"Interval":	2
+		},
+		"TimeZone":	{
+			"Zone":	27,
+			"EnableBias":	0,
+			"ZoneBias":	0
+		},
+		"DST":	{
+			"Enable":	0,
+			"Mode":	0,
+			"Bias":	0,
+			"StartTime":	{
+				"Month":	0,
+				"WeekIdx":	0,
+				"WeekDay":	0,
+				"Hour":	0,
+				"Min":	0
+			},
+			"StopTime":	{
+				"Month":	0,
+				"WeekIdx":	0,
+				"WeekDay":	0,
+				"Hour":	0,
+				"Min":	0
+			}
+		}
+	},
+	"Maintenance":	{
+		"Maintain":	{
+			"Mode":	0,
+			"EveryDate":	"000000",
+			"Week":	{
+				"Mask":	0,
+				"Time":	"000000"
+			},
+			"Monthly":	{
+				"DaysMask":	0,
+				"Time":	"000000"
+			},
+			"Once":	"20000101000000"
+		}
+	}
+}

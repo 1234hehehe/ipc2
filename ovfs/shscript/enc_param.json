@@ -1,0 +1,63 @@
+{
+    "RCParam": [
+        {
+            "RCMode": "VBR",
+            "TargetBitRateRatio":1.01,
+            "TargetBitRateRatio_EX":0.8,
+            "MaxBitRateRatio":1.5,
+            "MaxPictureSizeRatio":1.2,
+            "InitialQP": 35,
+            "MinQP": 30,
+            "MaxQP": 48,
+            "MinIQP": 30,
+            "MaxIQP": 48,
+            "MaxIprop": 45,
+            "MinIprop": 1,
+            "MinStillRate": 25,
+            "MaxStillQp": 35,
+            "qualityLvl": 6
+        },
+        {
+            "RCMode": "VBR",
+            "TargetBitRateRatio":0.8,
+            "TargetBitRateRatio_EX":0.64,
+            "MaxBitRateRatio":1.01,
+            "MaxPictureSizeRatio":1.1,
+            "InitialQP": 35,
+            "MinQP": 34,
+            "MaxQP": 50,
+            "MinIQP": 34,
+            "MaxIQP": 50,
+            "MaxIprop": 45,
+            "MinIprop": 1,
+            "MinStillRate": 15,
+            "MaxStillQp": 38,
+            "qualityLvl": 5
+        },
+        {
+            "RCMode": "VBR",
+            "TargetBitRateRatio":0.56,
+            "TargetBitRateRatio_EX":0.4,
+            "MaxBitRateRatio":0.6,
+            "MaxPictureSizeRatio":0.6,
+            "InitialQP": 35,
+            "MinQP": 35,
+            "MaxQP": 51,
+            "MinIQP": 35,
+            "MaxIQP": 51,
+            "MaxIprop": 45,
+            "MinIprop": 1,
+            "MinStillRate": 10,
+            "MaxStillQp": 40,
+            "qualityLvl": 4
+        },
+        {
+            "RCMode": "CBR",
+            "TargetBitRateRatio":1.01,
+            "MaxPictureSizeRatio":1.34,
+            "InitialQP": 35,
+            "MinQP": 15,
+            "MaxQP": 51
+        }
+    ]
+}

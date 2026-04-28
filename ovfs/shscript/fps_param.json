@@ -1,0 +1,30 @@
+{
+	"FPS":	
+	[
+		{
+			"DestFps":	0,
+			"UpV":			0,
+			"DownV":		85
+		},
+		{
+			"DestFps":	20,
+			"UpV":			81,
+			"DownV":		90
+		},
+		{
+			"DestFps":	15,
+			"UpV":			86,
+			"DownV":		95
+		},
+		{
+			"DestFps":	10,
+			"UpV":			91,
+			"DownV":		100
+		},
+		{
+                        "DestFps":      5,
+                        "UpV":                  96,
+                        "DownV":                10000
+                }
+	]
+}

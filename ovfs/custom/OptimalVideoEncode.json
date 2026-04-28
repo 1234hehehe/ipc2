@@ -1,0 +1,19 @@
+{
+	"AttributeList":        [{
+                                                        "Device":       0,
+                                                        "Channel":      0,
+                                                        "Stream":       0,
+                                                        "Iinterval":    200,
+                                                        "BitrateCtrlMode":      0,
+							"Quality":      1,
+                                                        "EncodeFormat": 8
+                                 }, {
+                                                        "Device":       0,
+                                                        "Channel":      0,
+                                                        "Stream":       1,
+                                                        "Iinterval":    200,
+                                                        "BitrateCtrlMode":      0,
+							"Quality":      1,
+                                                        "EncodeFormat": 8
+                                 }]
+}

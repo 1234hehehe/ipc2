@@ -1,0 +1,227 @@
+
+user  root;
+worker_processes  1;
+
+#error_log  logs/error.log;
+#error_log  logs/error.log  notice;
+#error_log  logs/error.log  info;
+error_log /dev/null crit;
+
+#pid        logs/nginx.pid;
+
+
+events {
+    use epoll; 
+    worker_connections  1024;
+    multi_accept on;
+}
+
+
+http {
+   
+    include       mime.types;
+    default_type  application/octet-stream;
+
+    access_log  off;
+
+    sendfile       on;
+    tcp_nopush     on;
+    tcp_nodelay    on;
+
+    keepalive_timeout  20s; 
+
+
+    #open_file_cache max=1000 inactive=5m;
+    client_body_temp_path /dev/nginx_upload_tmp 3 3;
+
+    # open_file_cache 指令中的inactive 参数时间内文件的最少使用次数，
+    # 如果超过这个数字，文件描述符一直是在缓存中打开的，如上例，如果有一个
+    # 文件在inactive 时间内一次没被使用，它将被移除。
+    open_file_cache_min_uses 1;
+
+    # 这个是指多长时间检查一次缓存的有效信息
+    open_file_cache_valid 1m;
+
+
+   
+       
+
+    server {
+       
+        index index.html login.asp;
+        access_log  off;
+
+        server_name  localhost;
+
+        #we hide the nginx server info
+        server_tokens off;
+
+        #charset utf-8;
+        #access_log  logs/host.access.log  main;
+        listen    80;
+        listen    443 default ssl;
+
+        #relative path base on nginx.conf path
+        #if http https in one server block,we need to take ssl on away!
+        #ssl on;
+        ssl_certificate     ../ssl/self.crt;
+        ssl_certificate_key ../ssl/self.key;
+
+        ssl_session_cache    shared:SSL:1m;
+        ssl_session_timeout  5m;
+
+        ssl_protocols  TLSv1.1 TLSv1.2;
+        #ssl_ciphers CHACHA20:AES128:AES256:GCM:!DH:!RC4:!aNULL:!eNULL:!LOW:!3DES:!MD5:!EXP:!PSK:!SRP:!DSS;
+            
+        ssl_ciphers EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH:CHACHA20:AES128:AES256:GCM:!DH:!RC4:!aNULL:!eNULL:!LOW:!3DES:!MD5:!EXP:!PSK:!SRP:!DSS;
+
+        #强制客户端使用https
+        add_header Strict-Transport-Security max-age=31536000;
+        ssl_prefer_server_ciphers on;
+
+
+
+
+        #error_page  404              /404.html;
+
+        # redirect server error pages to the static page /50x.html
+        #
+        #error_page   500 502 503 504  /50x.html;
+        #location = /50x.html {
+        #    root   html;
+        #}
+
+        # Custom error pages
+        error_page 401 /error/401.html;
+        error_page 403 /error/403.html;
+        error_page 404 /error/404.html;
+        error_page 405 /error/405.html;
+        error_page 500 501 502 503 504 /error/5xx.html;
+        location ^~ /error/ {
+          internal;
+        }
+
+
+        add_header X-Frame-Options SAMEORIGIN;
+        add_header X-Content-Type-Options nosniff;
+        add_header X-XSS-Protection "1; mode=block";
+
+
+
+
+
+          #图片缓存30天
+          location ~.*\.(jpg|jpeg|png|gif)$  
+          {  
+            expires 1d;  
+          }
+          
+                                                                                   
+          location ~.*\.(css|asp)?$                                                                            
+          {                                                                                                    
+            expires 1h;                                                                                        
+          }          
+          
+          #js
+          location ~.*\.js$ 
+          {  
+            
+            set $time 1h;
+            if ($uri ~ "/language/*") {
+                set $time -1;
+            }
+            expires $time;
+          } 
+
+
+
+        # pass the onvif request to Onvif server
+        location  /onvif/ {
+           
+            proxy_read_timeout 60;
+            proxy_connect_timeout 60;
+            proxy_buffering off;
+            proxy_set_header HostAddr $host;
+            proxy_set_header RemoteAddr $remote_addr;
+            #proxy_pass   http://127.0.0.1:29/onvif/;
+            proxy_pass   http://unix:/var/run/onvif/unix;
+        }   
+
+
+        location ^~ /digest/upload {  
+            limit_except POST          { deny all; }
+
+            #client_body_temp_path /dev/upload_tmp;
+            #client_body_in_file_only on;
+            client_body_buffer_size 128k;
+            client_max_body_size 35M;
+            
+            #fastcgi_pass 127.0.0.1:28;
+            fastcgi_pass unix:/var/run/webserver/unix;
+            fastcgi_param  SCRIPT_FILENAME  /scripts$fastcgi_script_name;
+            include        fastcgi_params;
+            
+            #file path
+            #fastcgi_param  REQUEST_BODY_FILE  $request_body_file;
+            
+            #wo don't need send all huge post data to fcgi,it may kill your app.
+            fastcgi_request_buffering off;
+            fastcgi_pass_request_body on;
+            
+            fastcgi_connect_timeout 300;
+            fastcgi_send_timeout 300;
+            fastcgi_read_timeout 300;
+        }  
+
+   
+         
+      
+        
+        #rewrite_log on;   # 打开 URL 重写模块的日志开关，以便写入 error_log
+        #根据cookie中的语言 自动重写请求的语言文件
+        location /language/lang {
+            #default language js
+            set $scriptname "en_gb.js";
+            if ($http_cookie ~ "s_Language=([^;]+)(?:;|$)") {
+                set $scriptname $1;
+            }
+            rewrite "^/language/lang$" /language/$scriptname;
+        }
+
+     
+
+        # pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
+        location ~* /(?:digest|basic|goform)/[^\s]*$ {
+           
+            #fastcgi_pass   127.0.0.1:28;
+            fastcgi_pass unix:/var/run/webserver/unix;
+            fastcgi_param   SCRIPT_FILENAME  /scripts$fastcgi_script_name;
+            include         fastcgi_params;
+
+            fastcgi_connect_timeout 300;
+            fastcgi_send_timeout 300;
+            fastcgi_read_timeout 300;
+        }
+        
+        location ~* /(?:BoardSys|MediaServer|Core|Network|Alarm|Record)/[^\s]*$ {
+        	   fastcgi_pass 127.0.0.1:30;
+        	   fastcgi_param  SCRIPT_FILENAME /scripts$fastcgi_script_name;
+        	   include        fastcgi_params;
+        	   
+        	   fastcgi_connect_timeout 300;
+        	   fastcgi_send_timeout 300;
+        	   fastcgi_read_timeout 300;        
+        } 
+       location ~* /(?:iAPI)/[^\s]*$ {
+            #fastcgi_pass 127.0.0.1:31;
+			fastcgi_pass unix:/var/run/iapi3/unix;
+            fastcgi_param  SCRIPT_FILENAME /scripts$fastcgi_script_name;
+            include        fastcgi_params;
+ 
+            fastcgi_connect_timeout 300;
+            fastcgi_send_timeout 300;
+            fastcgi_read_timeout 300;   
+        }
+    
+    }
+}

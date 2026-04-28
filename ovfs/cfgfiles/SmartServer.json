@@ -1,0 +1,132 @@
+{
+	"DetectWire":	{
+		"Enable":	0,
+		"dwDetectType":	3,
+		"dwSensitivity":	1,
+		"WireList":	[{
+				"Point":	[{
+						"X":	0.500000,
+						"Y":	0
+					}, {
+						"X":	0.500000,
+						"Y":	1
+					}],
+				"Start_Point":	{
+					"X":	0.450000,
+					"Y":	0.500000
+				},
+				"End_Point":	{
+					"X":	0.550000,
+					"Y":	0.500000
+				}
+			}]
+	},
+	"RegionalInvasion":	{
+		"Enable":	0,
+		"dwDetectType":	3,
+		"dwSensitivity":	1,
+		"RegionList":	[{
+				"Point":	[{
+						"X":	0,
+						"Y":	0
+					}, {
+						"X":	1,
+						"Y":	0
+					}, {
+						"X":	1,
+						"Y":	1
+					}, {
+						"X":	0,
+						"Y":	1
+					}]
+			}]
+	},
+	"PersonStaying":	{
+		"Enable":	0,
+		"dwSensitivity":	1,
+		"dwLingerTime":	10,
+		"RegionList":	[{
+				"Point":	[{
+						"X":	0,
+						"Y":	0
+					}, {
+						"X":	1,
+						"Y":	0
+					}, {
+						"X":	1,
+						"Y":	1
+					}, {
+						"X":	0,
+						"Y":	1
+					}]
+			}]
+	},
+	"ParkingViolation":	{
+		"Enable":	0,
+		"dwSensitivity":	1,
+		"dwLingerTime":	180,
+		"RegionList":	[{
+				"Point":	[{
+						"X":	0,
+						"Y":	0
+					}, {
+						"X":	1,
+						"Y":	0
+					}, {
+						"X":	1,
+						"Y":	1
+					}, {
+						"X":	0,
+						"Y":	1
+					}]
+			}]
+	},
+	"DetectAbsent":	{
+		"Enable":	0,
+		"dwSleepingDetect":	0,
+		"dwSensitivity":	1,
+		"dwAbsentTime":	60,
+		"RegionList":	[{
+				"Point":	[{
+						"X":	0,
+						"Y":	0
+					}, {
+						"X":	1,
+						"Y":	0
+					}, {
+						"X":	1,
+						"Y":	1
+					}, {
+						"X":	0,
+						"Y":	1
+					}]
+			}]
+	},
+	"Retrograde":	{
+		"Enable":	0,
+		"dwSensitivity":	1,
+		"RegionList":	[{
+				"Point":	[{
+						"X":	0.250000,
+						"Y":	0.250000
+					}, {
+						"X":	0.750000,
+						"Y":	0.250000
+					}, {
+						"X":	0.750000,
+						"Y":	0.750000
+					}, {
+						"X":	0.250000,
+						"Y":	0.750000
+					}],
+				"Start_Point":	{
+					"X":	0.700000,
+					"Y":	0.500000
+				},
+				"End_Point":	{
+					"X":	0.800000,
+					"Y":	0.500000
+				}
+			}]
+	}
+} 

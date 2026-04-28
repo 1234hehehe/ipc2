@@ -1,0 +1,15 @@
+{
+	"Data": {
+		"EnableIoT": 1,
+		"EnableAlarm": 1,
+		"DeviceDebugStatus": 0,
+		"UpgradeDebugStatus": 0,
+		"LicenseDir": "/usr/etc",
+		"APKURI": "http://umeye.yeelinkvision.com/umeyeDevApi/app/umeye",
+		"DeviceHostAddr": "http://umeye.yeelinkvision.com",
+		"UpgradeHostAddr": "http://umeye.yeelinkvision.com",
+		"UMEyeListenPort": 5800,
+		"UMEyeDeviceHostAddr": "open-umeye-device.yeelinkvision.com",
+		"UMEyeAlarmHostAddr": "http://open-umeye-alarm.yeelinkvision.com:8888/umeye_api"
+	}
+}

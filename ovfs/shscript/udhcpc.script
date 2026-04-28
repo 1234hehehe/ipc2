@@ -1,0 +1,84 @@
+#!/bin/sh
+
+# udhcpc script edited by Tim Riker <Tim@Rikers.org>
+
+[ -z "$1" ] && echo "Error: should be called from udhcpc" && exit 1
+
+RESOLV_CONF="/tmp/udhcpc_resolv_${interface}.conf"
+IP_CONF="/tmp/udhcpc_ip_${interface}.conf"
+IP_SAVE_CONF="/usr/etc/udhcpc_ip_${interface}.conf"
+ROUTER_CONF="/tmp/udhcpc_route_${interface}.conf"
+[ -n "$subnet" ] && NETMASK="netmask $subnet"
+BROADCAST="broadcast +"
+[ -n "$broadcast" ] && BROADCAST="broadcast $broadcast"
+
+case "$1" in
+	deconfig)
+		[ -f $RESOLV_CONF ] && mv $RESOLV_CONF $RESOLV_CONF.bak
+		[ -f $IP_CONF ] && mv $IP_CONF $IP_CONF.bak
+		[ -f $ROUTER_CONF ] && mv $ROUTER_CONF $ROUTER_CONF.bak
+		;;
+
+	renew|bound)
+		echo "Setting IP address $interface $ip $NETMASK"
+		ifconfig $interface $ip $NETMASK $BROADCAST
+		echo $interface $ip $NETMASK > $IP_CONF
+		
+		if [ "$interface" == "wlan0" ] ; then
+			echo $ip > $IP_SAVE_CONF
+		fi
+		
+		if [ -n "$router" ] ; then
+			if [ ! -e /update/res/custom/Network.json ] ; then
+				wiredExtranet=0
+			else
+				wiredExtranet=$(cat /update/res/custom/Network.json | awk -F '[:,}]' '{for(i=1;i<=NF;i++){if($i ~ /WiredExtranet/){print $(i+1)}}}')
+			fi
+			if [ ! -e /tmp/is4gDevice ] || [ $wiredExtranet == 1 ] || [ "$interface" == "usb0" ] || [ "$interface" == "usb1" ] ; then
+				echo "Deleting routers"
+				while route del default gw 0.0.0.0 dev $interface ; do
+					:
+				done
+				
+				if [ "$interface" == "usb0" ] || [ "$interface" == "usb1" ] ; then
+					metric=0
+				else
+					metric=1
+				fi
+				
+				for i in $router ; do
+					echo "Adding router $i"
+					route add default gw $i dev $interface metric $((metric++))
+				done
+				
+				if [ "$interface" == "usb0" ] || [ "$interface" == "usb1" ] ; then
+					ip_int=$(echo $ip | awk -F. '{print ($1*(256^3)) + ($2*(256^2)) + ($3*256) + $4}')
+					netmask_int=$(echo $subnet | awk -F. '{print ($1*(256^3)) + ($2*(256^2)) + ($3*256) + $4}')
+					network_int=$((ip_int & netmask_int))
+					network_addr=$(printf "%d.%d.%d.%d\n" $(( (network_int >> 24) & 0xFF )) $(( (network_int >> 16) & 0xFF )) $(( (network_int >> 8) & 0xFF )) $(( network_int & 0xFF )))
+					route del -net $network_addr netmask $subnet dev $interface
+				fi
+			fi
+			
+			for i in $router ; do
+				echo gw $i > $ROUTER_CONF
+			done
+		fi
+		
+		
+		RESOLV_CONF_TMP=/dev/resolv.conf
+		echo -n > $RESOLV_CONF_TMP
+		echo -n > $RESOLV_CONF
+		[ -n "$domain" ] && (grep -q "search $domain" /etc/resolv.conf || echo search $domain >> $RESOLV_CONF_TMP);
+		for i in $dns ; do
+			grep -q "nameserver $i" /etc/resolv.conf || (echo Adding dns $i	&& echo nameserver $i >> $RESOLV_CONF_TMP);
+			echo nameserver $i >> $RESOLV_CONF
+		done
+		cat $RESOLV_CONF_TMP >> /etc/resolv.conf
+		;;
+	*)
+		echo "udhcpc response $1";
+		;;
+esac
+
+exit 0
