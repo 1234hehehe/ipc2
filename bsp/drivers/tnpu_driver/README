@@ -1,0 +1,29 @@
+
+#### Build & Installation Guide
+
+**1. Set Kernel Path
+Edit `Makefile` before compiling:
+KERNEL_DIR ?= /path/to/your/linux-kernel  # MUST match development board's kernel!
+
+**2. Compile Drive
+make
+
+**3. Load/Unload Driver
+# Install TNPU driver with 16MB continuous memory
+insmod tnpu.ko cma_pool_size=0x1000000
+# Set clock (600MHz)
+insmod tnpu.ko parent_clk_name=apll tnpu_clk_rate=600000000 cma_pool_size=0x1000000
+# Uninstall
+rmmod tnpu
+
+Generally, driver installation failures are caused by kernel mismatch:
+> $(KERNEL_DIR) MUST match the kernel running on your dev board.
+> Verify vermagic with 'uname -r' on board and 'modinfo tnpu.ko' on host.
+
+#### Debugging Options
+Enable in 'tnpu_drv.h':
+#define CONFIG_TNPU_DEV_DEBUG        // Driver init/shutdown
+#define CONFIG_TNPU_MEM_DEBUG        // CMA memory allocations
+#define CONFIG_TNPU_CORE_DEBUG       // Library loading & scheduling
+#define CONFIG_TNPU_DUTY_RATIO_DEBUG // Performance monitoring
+
