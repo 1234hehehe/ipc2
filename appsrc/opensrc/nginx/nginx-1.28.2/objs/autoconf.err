@@ -1,0 +1,1085 @@
+
+
+----------------------------------------
+checking for C compiler
+
+/bin/sh: objs/autotest: cannot execute binary file: Exec format error
+
+----------------------------------------
+checking for gcc -pipe switch
+
+
+----------------------------------------
+checking for --with-ld-opt="-muclibc -Os -fstack-protector-all -DPLATFORM_JZT33 -DLINUX_JZT33 -DSDKVER_ -Os -Wall -fPIC -pthread -L/home/yangxy/stqc/appsrc/opensrc/nginx2/../out/jzt33/lib"
+
+
+----------------------------------------
+checking for -Wl,-E switch
+
+
+----------------------------------------
+checking for gcc builtin atomic operations
+
+/bin/sh: objs/autotest: cannot execute binary file: Exec format error
+
+----------------------------------------
+checking for C99 variadic macros
+
+/bin/sh: objs/autotest: cannot execute binary file: Exec format error
+
+----------------------------------------
+checking for gcc variadic macros
+
+/bin/sh: objs/autotest: cannot execute binary file: Exec format error
+
+----------------------------------------
+checking for gcc builtin 64 bit byteswap
+
+
+----------------------------------------
+checking for unistd.h
+
+
+----------------------------------------
+checking for inttypes.h
+
+
+----------------------------------------
+checking for limits.h
+
+
+----------------------------------------
+checking for sys/filio.h
+
+objs/autotest.c:3:23: fatal error: sys/filio.h: No such file or directory
+compilation terminated.
+----------
+
+
+#include <sys/filio.h>
+
+int main(void) {
+    return 0;
+}
+
+----------
+mips-t33-linux-gnu-gcc -o objs/autotest objs/autotest.c
+----------
+
+----------------------------------------
+checking for sys/param.h
+
+
+----------------------------------------
+checking for sys/mount.h
+
+
+----------------------------------------
+checking for sys/statvfs.h
+
+
+----------------------------------------
+checking for crypt.h
+
+
+----------------------------------------
+checking for epoll
+
+/bin/sh: objs/autotest: cannot execute binary file: Exec format error
+
+----------------------------------------
+checking for O_PATH
+
+objs/autotest.c: In function 'main':
+objs/autotest.c:10:46: error: 'O_PATH' undeclared (first use in this function)
+                   fd = openat(AT_FDCWD, ".", O_PATH|O_DIRECTORY|O_NOFOLLOW);
+                                              ^
+objs/autotest.c:10:46: note: each undeclared identifier is reported only once for each function it appears in
+objs/autotest.c:11:44: error: 'AT_EMPTY_PATH' undeclared (first use in this function)
+                   if (fstatat(fd, "", &sb, AT_EMPTY_PATH) != 0) return 1;
+                                            ^
+----------
+
+#include <sys/types.h>
+#include <unistd.h>
+#include <sys/types.h>
+                  #include <sys/stat.h>
+                  #include <fcntl.h>
+
+int main(void) {
+    int fd; struct stat sb;
+                  fd = openat(AT_FDCWD, ".", O_PATH|O_DIRECTORY|O_NOFOLLOW);
+                  if (fstatat(fd, "", &sb, AT_EMPTY_PATH) != 0) return 1;
+    return 0;
+}
+
+----------
+mips-t33-linux-gnu-gcc -muclibc -Os -fstack-protector-all -DPLATFORM_JZT33 -DLINUX_JZT33 -DSDKVER_ -Os -Wall -fPIC -pthread -L/home/yangxy/stqc/appsrc/opensrc/nginx2/../out/jzt33/lib -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 -o objs/autotest objs/autotest.c -muclibc -Os -fstack-protector-all -DPLATFORM_JZT33 -DLINUX_JZT33 -DSDKVER_ -Os -Wall -fPIC -pthread -L/home/yangxy/stqc/appsrc/opensrc/nginx2/../out/jzt33/lib
+----------
+
+----------------------------------------
+checking for sendfile()
+
+/bin/sh: objs/autotest: cannot execute binary file: Exec format error
+
+----------------------------------------
+checking for sendfile64()
+
+/bin/sh: objs/autotest: cannot execute binary file: Exec format error
+
+----------------------------------------
+checking for sys/prctl.h
+
+
+----------------------------------------
+checking for prctl(PR_SET_DUMPABLE)
+
+/bin/sh: objs/autotest: cannot execute binary file: Exec format error
+
+----------------------------------------
+checking for prctl(PR_SET_KEEPCAPS)
+
+/bin/sh: objs/autotest: cannot execute binary file: Exec format error
+
+----------------------------------------
+checking for capabilities
+
+
+----------------------------------------
+checking for crypt_r()
+
+objs/autotest.c: In function 'main':
+objs/autotest.c:7:24: error: storage size of 'cd' isn't known
+     struct crypt_data  cd;
+                        ^
+objs/autotest.c:8:19: warning: implicit declaration of function 'crypt_r' [-Wimplicit-function-declaration]
+                   crypt_r("key", "salt", &cd);;
+                   ^
+objs/autotest.c:7:24: warning: unused variable 'cd' [-Wunused-variable]
+     struct crypt_data  cd;
+                        ^
+----------
+
+#include <sys/types.h>
+#include <unistd.h>
+#include <crypt.h>
+
+int main(void) {
+    struct crypt_data  cd;
+                  crypt_r("key", "salt", &cd);;
+    return 0;
+}
+
+----------
+mips-t33-linux-gnu-gcc -muclibc -Os -fstack-protector-all -DPLATFORM_JZT33 -DLINUX_JZT33 -DSDKVER_ -Os -Wall -fPIC -pthread -L/home/yangxy/stqc/appsrc/opensrc/nginx2/../out/jzt33/lib -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 -o objs/autotest objs/autotest.c -muclibc -Os -fstack-protector-all -DPLATFORM_JZT33 -DLINUX_JZT33 -DSDKVER_ -Os -Wall -fPIC -pthread -L/home/yangxy/stqc/appsrc/opensrc/nginx2/../out/jzt33/lib -lcrypt
+----------
+
+----------------------------------------
+checking for sys/vfs.h
+
+
+----------------------------------------
+checking for BPF sockhash
+
+objs/autotest.c: In function 'main':
+objs/autotest.c:10:23: error: 'union bpf_attr' has no member named 'map_flags'
+                   attr.map_flags = 0;
+                       ^
+objs/autotest.c:11:35: error: 'BPF_MAP_TYPE_SOCKHASH' undeclared (first use in this function)
+                   attr.map_type = BPF_MAP_TYPE_SOCKHASH;
+                                   ^
+objs/autotest.c:11:35: note: each undeclared identifier is reported only once for each function it appears in
+----------
+
+#include <sys/types.h>
+#include <unistd.h>
+#include <linux/bpf.h>
+                  #include <sys/syscall.h>
+
+int main(void) {
+    union bpf_attr attr = { 0 };
+
+                  attr.map_flags = 0;
+                  attr.map_type = BPF_MAP_TYPE_SOCKHASH;
+
+                  syscall(__NR_bpf, 0, &attr, 0);;
+    return 0;
+}
+
+----------
+mips-t33-linux-gnu-gcc -muclibc -Os -fstack-protector-all -DPLATFORM_JZT33 -DLINUX_JZT33 -DSDKVER_ -Os -Wall -fPIC -pthread -L/home/yangxy/stqc/appsrc/opensrc/nginx2/../out/jzt33/lib -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 -o objs/autotest objs/autotest.c -muclibc -Os -fstack-protector-all -DPLATFORM_JZT33 -DLINUX_JZT33 -DSDKVER_ -Os -Wall -fPIC -pthread -L/home/yangxy/stqc/appsrc/opensrc/nginx2/../out/jzt33/lib
+----------
+
+----------------------------------------
+checking for SO_COOKIE
+
+objs/autotest.c: In function 'main':
+objs/autotest.c:10:45: error: 'SO_COOKIE' undeclared (first use in this function)
+                   getsockopt(0, SOL_SOCKET, SO_COOKIE, &cookie, &optlen);
+                                             ^
+objs/autotest.c:10:45: note: each undeclared identifier is reported only once for each function it appears in
+----------
+
+#include <sys/types.h>
+#include <unistd.h>
+#include <sys/socket.h>
+                  #include <inttypes.h>
+
+int main(void) {
+    socklen_t optlen = sizeof(uint64_t);
+                  uint64_t cookie;
+                  getsockopt(0, SOL_SOCKET, SO_COOKIE, &cookie, &optlen);
+    return 0;
+}
+
+----------
+mips-t33-linux-gnu-gcc -muclibc -Os -fstack-protector-all -DPLATFORM_JZT33 -DLINUX_JZT33 -DSDKVER_ -Os -Wall -fPIC -pthread -L/home/yangxy/stqc/appsrc/opensrc/nginx2/../out/jzt33/lib -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 -o objs/autotest objs/autotest.c -muclibc -Os -fstack-protector-all -DPLATFORM_JZT33 -DLINUX_JZT33 -DSDKVER_ -Os -Wall -fPIC -pthread -L/home/yangxy/stqc/appsrc/opensrc/nginx2/../out/jzt33/lib
+----------
+
+----------------------------------------
+checking for UDP_SEGMENT
+
+objs/autotest.c: In function 'main':
+objs/autotest.c:10:42: error: 'UDP_SEGMENT' undeclared (first use in this function)
+                   getsockopt(0, SOL_UDP, UDP_SEGMENT, &val, &optlen);
+                                          ^
+objs/autotest.c:10:42: note: each undeclared identifier is reported only once for each function it appears in
+----------
+
+#include <sys/types.h>
+#include <unistd.h>
+#include <sys/socket.h>
+                  #include <netinet/udp.h>
+
+int main(void) {
+    socklen_t optlen = sizeof(int);
+                  int val;
+                  getsockopt(0, SOL_UDP, UDP_SEGMENT, &val, &optlen);
+    return 0;
+}
+
+----------
+mips-t33-linux-gnu-gcc -muclibc -Os -fstack-protector-all -DPLATFORM_JZT33 -DLINUX_JZT33 -DSDKVER_ -Os -Wall -fPIC -pthread -L/home/yangxy/stqc/appsrc/opensrc/nginx2/../out/jzt33/lib -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 -o objs/autotest objs/autotest.c -muclibc -Os -fstack-protector-all -DPLATFORM_JZT33 -DLINUX_JZT33 -DSDKVER_ -Os -Wall -fPIC -pthread -L/home/yangxy/stqc/appsrc/opensrc/nginx2/../out/jzt33/lib
+----------
+
+----------------------------------------
+checking for poll()
+
+
+----------------------------------------
+checking for /dev/poll
+
+objs/autotest.c:4:25: fatal error: sys/devpoll.h: No such file or directory
+compilation terminated.
+----------
+
+#include <sys/types.h>
+#include <unistd.h>
+#include <sys/devpoll.h>
+
+int main(void) {
+    int  n, dp; struct dvpoll  dvp;
+                  dp = 0;
+                  dvp.dp_fds = NULL;
+                  dvp.dp_nfds = 0;
+                  dvp.dp_timeout = 0;
+                  n = ioctl(dp, DP_POLL, &dvp);
+                  if (n == -1) return 1;
+    return 0;
+}
+
+----------
+mips-t33-linux-gnu-gcc -muclibc -Os -fstack-protector-all -DPLATFORM_JZT33 -DLINUX_JZT33 -DSDKVER_ -Os -Wall -fPIC -pthread -L/home/yangxy/stqc/appsrc/opensrc/nginx2/../out/jzt33/lib -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 -o objs/autotest objs/autotest.c -muclibc -Os -fstack-protector-all -DPLATFORM_JZT33 -DLINUX_JZT33 -DSDKVER_ -Os -Wall -fPIC -pthread -L/home/yangxy/stqc/appsrc/opensrc/nginx2/../out/jzt33/lib
+----------
+
+----------------------------------------
+checking for kqueue
+
+objs/autotest.c:4:23: fatal error: sys/event.h: No such file or directory
+compilation terminated.
+----------
+
+#include <sys/types.h>
+#include <unistd.h>
+#include <sys/event.h>
+
+int main(void) {
+    (void) kqueue();
+    return 0;
+}
+
+----------
+mips-t33-linux-gnu-gcc -muclibc -Os -fstack-protector-all -DPLATFORM_JZT33 -DLINUX_JZT33 -DSDKVER_ -Os -Wall -fPIC -pthread -L/home/yangxy/stqc/appsrc/opensrc/nginx2/../out/jzt33/lib -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 -o objs/autotest objs/autotest.c -muclibc -Os -fstack-protector-all -DPLATFORM_JZT33 -DLINUX_JZT33 -DSDKVER_ -Os -Wall -fPIC -pthread -L/home/yangxy/stqc/appsrc/opensrc/nginx2/../out/jzt33/lib
+----------
+
+----------------------------------------
+checking for crypt()
+
+/tmp/ccXmH83C.o: In function `main':
+autotest.c:(.text.startup+0x24): undefined reference to `crypt'
+autotest.c:(.text.startup+0x38): undefined reference to `crypt'
+collect2: error: ld returned 1 exit status
+----------
+
+#include <sys/types.h>
+#include <unistd.h>
+
+
+int main(void) {
+    crypt("test", "salt");;
+    return 0;
+}
+
+----------
+mips-t33-linux-gnu-gcc -muclibc -Os -fstack-protector-all -DPLATFORM_JZT33 -DLINUX_JZT33 -DSDKVER_ -Os -Wall -fPIC -pthread -L/home/yangxy/stqc/appsrc/opensrc/nginx2/../out/jzt33/lib -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 -o objs/autotest objs/autotest.c -muclibc -Os -fstack-protector-all -DPLATFORM_JZT33 -DLINUX_JZT33 -DSDKVER_ -Os -Wall -fPIC -pthread -L/home/yangxy/stqc/appsrc/opensrc/nginx2/../out/jzt33/lib
+----------
+
+----------------------------------------
+checking for crypt() in libcrypt
+
+
+----------------------------------------
+checking for F_READAHEAD
+
+objs/autotest.c: In function 'main':
+objs/autotest.c:7:14: error: 'F_READAHEAD' undeclared (first use in this function)
+     fcntl(0, F_READAHEAD, 1);;
+              ^
+objs/autotest.c:7:14: note: each undeclared identifier is reported only once for each function it appears in
+----------
+
+#include <sys/types.h>
+#include <unistd.h>
+#include <fcntl.h>
+
+int main(void) {
+    fcntl(0, F_READAHEAD, 1);;
+    return 0;
+}
+
+----------
+mips-t33-linux-gnu-gcc -muclibc -Os -fstack-protector-all -DPLATFORM_JZT33 -DLINUX_JZT33 -DSDKVER_ -Os -Wall -fPIC -pthread -L/home/yangxy/stqc/appsrc/opensrc/nginx2/../out/jzt33/lib -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 -o objs/autotest objs/autotest.c -muclibc -Os -fstack-protector-all -DPLATFORM_JZT33 -DLINUX_JZT33 -DSDKVER_ -Os -Wall -fPIC -pthread -L/home/yangxy/stqc/appsrc/opensrc/nginx2/../out/jzt33/lib
+----------
+
+----------------------------------------
+checking for posix_fadvise()
+
+
+----------------------------------------
+checking for O_DIRECT
+
+
+----------------------------------------
+checking for F_NOCACHE
+
+objs/autotest.c: In function 'main':
+objs/autotest.c:7:14: error: 'F_NOCACHE' undeclared (first use in this function)
+     fcntl(0, F_NOCACHE, 1);;
+              ^
+objs/autotest.c:7:14: note: each undeclared identifier is reported only once for each function it appears in
+----------
+
+#include <sys/types.h>
+#include <unistd.h>
+#include <fcntl.h>
+
+int main(void) {
+    fcntl(0, F_NOCACHE, 1);;
+    return 0;
+}
+
+----------
+mips-t33-linux-gnu-gcc -muclibc -Os -fstack-protector-all -DPLATFORM_JZT33 -DLINUX_JZT33 -DSDKVER_ -Os -Wall -fPIC -pthread -L/home/yangxy/stqc/appsrc/opensrc/nginx2/../out/jzt33/lib -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 -o objs/autotest objs/autotest.c -muclibc -Os -fstack-protector-all -DPLATFORM_JZT33 -DLINUX_JZT33 -DSDKVER_ -Os -Wall -fPIC -pthread -L/home/yangxy/stqc/appsrc/opensrc/nginx2/../out/jzt33/lib
+----------
+
+----------------------------------------
+checking for directio()
+
+objs/autotest.c: In function 'main':
+objs/autotest.c:8:5: warning: implicit declaration of function 'directio' [-Wimplicit-function-declaration]
+     directio(0, DIRECTIO_ON);;
+     ^
+objs/autotest.c:8:17: error: 'DIRECTIO_ON' undeclared (first use in this function)
+     directio(0, DIRECTIO_ON);;
+                 ^
+objs/autotest.c:8:17: note: each undeclared identifier is reported only once for each function it appears in
+----------
+
+#include <sys/types.h>
+#include <unistd.h>
+#include <sys/types.h>
+                  #include <sys/fcntl.h>
+
+int main(void) {
+    directio(0, DIRECTIO_ON);;
+    return 0;
+}
+
+----------
+mips-t33-linux-gnu-gcc -muclibc -Os -fstack-protector-all -DPLATFORM_JZT33 -DLINUX_JZT33 -DSDKVER_ -Os -Wall -fPIC -pthread -L/home/yangxy/stqc/appsrc/opensrc/nginx2/../out/jzt33/lib -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 -o objs/autotest objs/autotest.c -muclibc -Os -fstack-protector-all -DPLATFORM_JZT33 -DLINUX_JZT33 -DSDKVER_ -Os -Wall -fPIC -pthread -L/home/yangxy/stqc/appsrc/opensrc/nginx2/../out/jzt33/lib
+----------
+
+----------------------------------------
+checking for statfs()
+
+
+----------------------------------------
+checking for statvfs()
+
+
+----------------------------------------
+checking for dlopen()
+
+/opt/mips-gcc540-glibc222-r3.3.7.mxu2.cve2_enz/bin/../lib/gcc/mips-linux-gnu/5.4.0/../../../../mips-linux-gnu/bin/ld: /tmp/cco1FnEP.o: undefined reference to symbol 'dlopen'
+/opt/mips-gcc540-glibc222-r3.3.7.mxu2.cve2_enz/bin/../mips-linux-gnu/libc/uclibc/lib/libdl.so.0: error adding symbols: DSO missing from command line
+collect2: error: ld returned 1 exit status
+----------
+
+#include <sys/types.h>
+#include <unistd.h>
+#include <dlfcn.h>
+
+int main(void) {
+    dlopen(NULL, RTLD_NOW | RTLD_GLOBAL); dlsym(NULL, "");
+    return 0;
+}
+
+----------
+mips-t33-linux-gnu-gcc -muclibc -Os -fstack-protector-all -DPLATFORM_JZT33 -DLINUX_JZT33 -DSDKVER_ -Os -Wall -fPIC -pthread -L/home/yangxy/stqc/appsrc/opensrc/nginx2/../out/jzt33/lib -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 -o objs/autotest objs/autotest.c -muclibc -Os -fstack-protector-all -DPLATFORM_JZT33 -DLINUX_JZT33 -DSDKVER_ -Os -Wall -fPIC -pthread -L/home/yangxy/stqc/appsrc/opensrc/nginx2/../out/jzt33/lib
+----------
+
+----------------------------------------
+checking for dlopen() in libdl
+
+
+----------------------------------------
+checking for sched_yield()
+
+
+----------------------------------------
+checking for sched_setaffinity()
+
+
+----------------------------------------
+checking for SO_SETFIB
+
+objs/autotest.c: In function 'main':
+objs/autotest.c:7:31: error: 'SO_SETFIB' undeclared (first use in this function)
+     setsockopt(0, SOL_SOCKET, SO_SETFIB, NULL, 0);
+                               ^
+objs/autotest.c:7:31: note: each undeclared identifier is reported only once for each function it appears in
+----------
+
+#include <sys/types.h>
+#include <unistd.h>
+#include <sys/socket.h>
+
+int main(void) {
+    setsockopt(0, SOL_SOCKET, SO_SETFIB, NULL, 0);
+    return 0;
+}
+
+----------
+mips-t33-linux-gnu-gcc -muclibc -Os -fstack-protector-all -DPLATFORM_JZT33 -DLINUX_JZT33 -DSDKVER_ -Os -Wall -fPIC -pthread -L/home/yangxy/stqc/appsrc/opensrc/nginx2/../out/jzt33/lib -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 -o objs/autotest objs/autotest.c -muclibc -Os -fstack-protector-all -DPLATFORM_JZT33 -DLINUX_JZT33 -DSDKVER_ -Os -Wall -fPIC -pthread -L/home/yangxy/stqc/appsrc/opensrc/nginx2/../out/jzt33/lib
+----------
+
+----------------------------------------
+checking for SO_REUSEPORT
+
+
+----------------------------------------
+checking for SO_ACCEPTFILTER
+
+objs/autotest.c: In function 'main':
+objs/autotest.c:7:31: error: 'SO_ACCEPTFILTER' undeclared (first use in this function)
+     setsockopt(0, SOL_SOCKET, SO_ACCEPTFILTER, NULL, 0);
+                               ^
+objs/autotest.c:7:31: note: each undeclared identifier is reported only once for each function it appears in
+----------
+
+#include <sys/types.h>
+#include <unistd.h>
+#include <sys/socket.h>
+
+int main(void) {
+    setsockopt(0, SOL_SOCKET, SO_ACCEPTFILTER, NULL, 0);
+    return 0;
+}
+
+----------
+mips-t33-linux-gnu-gcc -muclibc -Os -fstack-protector-all -DPLATFORM_JZT33 -DLINUX_JZT33 -DSDKVER_ -Os -Wall -fPIC -pthread -L/home/yangxy/stqc/appsrc/opensrc/nginx2/../out/jzt33/lib -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 -o objs/autotest objs/autotest.c -muclibc -Os -fstack-protector-all -DPLATFORM_JZT33 -DLINUX_JZT33 -DSDKVER_ -Os -Wall -fPIC -pthread -L/home/yangxy/stqc/appsrc/opensrc/nginx2/../out/jzt33/lib
+----------
+
+----------------------------------------
+checking for SO_BINDANY
+
+objs/autotest.c: In function 'main':
+objs/autotest.c:7:31: error: 'SO_BINDANY' undeclared (first use in this function)
+     setsockopt(0, SOL_SOCKET, SO_BINDANY, NULL, 0);
+                               ^
+objs/autotest.c:7:31: note: each undeclared identifier is reported only once for each function it appears in
+----------
+
+#include <sys/types.h>
+#include <unistd.h>
+#include <sys/socket.h>
+
+int main(void) {
+    setsockopt(0, SOL_SOCKET, SO_BINDANY, NULL, 0);
+    return 0;
+}
+
+----------
+mips-t33-linux-gnu-gcc -muclibc -Os -fstack-protector-all -DPLATFORM_JZT33 -DLINUX_JZT33 -DSDKVER_ -Os -Wall -fPIC -pthread -L/home/yangxy/stqc/appsrc/opensrc/nginx2/../out/jzt33/lib -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 -o objs/autotest objs/autotest.c -muclibc -Os -fstack-protector-all -DPLATFORM_JZT33 -DLINUX_JZT33 -DSDKVER_ -Os -Wall -fPIC -pthread -L/home/yangxy/stqc/appsrc/opensrc/nginx2/../out/jzt33/lib
+----------
+
+----------------------------------------
+checking for IP_TRANSPARENT
+
+objs/autotest.c: In function 'main':
+objs/autotest.c:8:31: error: 'IP_TRANSPARENT' undeclared (first use in this function)
+     setsockopt(0, IPPROTO_IP, IP_TRANSPARENT, NULL, 0);
+                               ^
+objs/autotest.c:8:31: note: each undeclared identifier is reported only once for each function it appears in
+----------
+
+#include <sys/types.h>
+#include <unistd.h>
+#include <sys/socket.h>
+                  #include <netinet/in.h>
+
+int main(void) {
+    setsockopt(0, IPPROTO_IP, IP_TRANSPARENT, NULL, 0);
+    return 0;
+}
+
+----------
+mips-t33-linux-gnu-gcc -muclibc -Os -fstack-protector-all -DPLATFORM_JZT33 -DLINUX_JZT33 -DSDKVER_ -Os -Wall -fPIC -pthread -L/home/yangxy/stqc/appsrc/opensrc/nginx2/../out/jzt33/lib -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 -o objs/autotest objs/autotest.c -muclibc -Os -fstack-protector-all -DPLATFORM_JZT33 -DLINUX_JZT33 -DSDKVER_ -Os -Wall -fPIC -pthread -L/home/yangxy/stqc/appsrc/opensrc/nginx2/../out/jzt33/lib
+----------
+
+----------------------------------------
+checking for IP_BINDANY
+
+objs/autotest.c: In function 'main':
+objs/autotest.c:8:31: error: 'IP_BINDANY' undeclared (first use in this function)
+     setsockopt(0, IPPROTO_IP, IP_BINDANY, NULL, 0);
+                               ^
+objs/autotest.c:8:31: note: each undeclared identifier is reported only once for each function it appears in
+----------
+
+#include <sys/types.h>
+#include <unistd.h>
+#include <sys/socket.h>
+                  #include <netinet/in.h>
+
+int main(void) {
+    setsockopt(0, IPPROTO_IP, IP_BINDANY, NULL, 0);
+    return 0;
+}
+
+----------
+mips-t33-linux-gnu-gcc -muclibc -Os -fstack-protector-all -DPLATFORM_JZT33 -DLINUX_JZT33 -DSDKVER_ -Os -Wall -fPIC -pthread -L/home/yangxy/stqc/appsrc/opensrc/nginx2/../out/jzt33/lib -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 -o objs/autotest objs/autotest.c -muclibc -Os -fstack-protector-all -DPLATFORM_JZT33 -DLINUX_JZT33 -DSDKVER_ -Os -Wall -fPIC -pthread -L/home/yangxy/stqc/appsrc/opensrc/nginx2/../out/jzt33/lib
+----------
+
+----------------------------------------
+checking for IP_BIND_ADDRESS_NO_PORT
+
+objs/autotest.c: In function 'main':
+objs/autotest.c:8:31: error: 'IP_BIND_ADDRESS_NO_PORT' undeclared (first use in this function)
+     setsockopt(0, IPPROTO_IP, IP_BIND_ADDRESS_NO_PORT, NULL, 0);
+                               ^
+objs/autotest.c:8:31: note: each undeclared identifier is reported only once for each function it appears in
+----------
+
+#include <sys/types.h>
+#include <unistd.h>
+#include <sys/socket.h>
+                  #include <netinet/in.h>
+
+int main(void) {
+    setsockopt(0, IPPROTO_IP, IP_BIND_ADDRESS_NO_PORT, NULL, 0);
+    return 0;
+}
+
+----------
+mips-t33-linux-gnu-gcc -muclibc -Os -fstack-protector-all -DPLATFORM_JZT33 -DLINUX_JZT33 -DSDKVER_ -Os -Wall -fPIC -pthread -L/home/yangxy/stqc/appsrc/opensrc/nginx2/../out/jzt33/lib -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 -o objs/autotest objs/autotest.c -muclibc -Os -fstack-protector-all -DPLATFORM_JZT33 -DLINUX_JZT33 -DSDKVER_ -Os -Wall -fPIC -pthread -L/home/yangxy/stqc/appsrc/opensrc/nginx2/../out/jzt33/lib
+----------
+
+----------------------------------------
+checking for IP_RECVDSTADDR
+
+objs/autotest.c: In function 'main':
+objs/autotest.c:8:31: error: 'IP_RECVDSTADDR' undeclared (first use in this function)
+     setsockopt(0, IPPROTO_IP, IP_RECVDSTADDR, NULL, 0);
+                               ^
+objs/autotest.c:8:31: note: each undeclared identifier is reported only once for each function it appears in
+----------
+
+#include <sys/types.h>
+#include <unistd.h>
+#include <sys/socket.h>
+                  #include <netinet/in.h>
+
+int main(void) {
+    setsockopt(0, IPPROTO_IP, IP_RECVDSTADDR, NULL, 0);
+    return 0;
+}
+
+----------
+mips-t33-linux-gnu-gcc -muclibc -Os -fstack-protector-all -DPLATFORM_JZT33 -DLINUX_JZT33 -DSDKVER_ -Os -Wall -fPIC -pthread -L/home/yangxy/stqc/appsrc/opensrc/nginx2/../out/jzt33/lib -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 -o objs/autotest objs/autotest.c -muclibc -Os -fstack-protector-all -DPLATFORM_JZT33 -DLINUX_JZT33 -DSDKVER_ -Os -Wall -fPIC -pthread -L/home/yangxy/stqc/appsrc/opensrc/nginx2/../out/jzt33/lib
+----------
+
+----------------------------------------
+checking for IP_SENDSRCADDR
+
+objs/autotest.c: In function 'main':
+objs/autotest.c:8:31: error: 'IP_SENDSRCADDR' undeclared (first use in this function)
+     setsockopt(0, IPPROTO_IP, IP_SENDSRCADDR, NULL, 0);
+                               ^
+objs/autotest.c:8:31: note: each undeclared identifier is reported only once for each function it appears in
+----------
+
+#include <sys/types.h>
+#include <unistd.h>
+#include <sys/socket.h>
+                  #include <netinet/in.h>
+
+int main(void) {
+    setsockopt(0, IPPROTO_IP, IP_SENDSRCADDR, NULL, 0);
+    return 0;
+}
+
+----------
+mips-t33-linux-gnu-gcc -muclibc -Os -fstack-protector-all -DPLATFORM_JZT33 -DLINUX_JZT33 -DSDKVER_ -Os -Wall -fPIC -pthread -L/home/yangxy/stqc/appsrc/opensrc/nginx2/../out/jzt33/lib -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 -o objs/autotest objs/autotest.c -muclibc -Os -fstack-protector-all -DPLATFORM_JZT33 -DLINUX_JZT33 -DSDKVER_ -Os -Wall -fPIC -pthread -L/home/yangxy/stqc/appsrc/opensrc/nginx2/../out/jzt33/lib
+----------
+
+----------------------------------------
+checking for IP_PKTINFO
+
+
+----------------------------------------
+checking for IPV6_RECVPKTINFO
+
+
+----------------------------------------
+checking for IP_MTU_DISCOVER
+
+
+----------------------------------------
+checking for IPV6_MTU_DISCOVER
+
+
+----------------------------------------
+checking for IP_DONTFRAG
+
+objs/autotest.c: In function 'main':
+objs/autotest.c:8:31: error: 'IP_DONTFRAG' undeclared (first use in this function)
+     setsockopt(0, IPPROTO_IP, IP_DONTFRAG, NULL, 0);
+                               ^
+objs/autotest.c:8:31: note: each undeclared identifier is reported only once for each function it appears in
+----------
+
+#include <sys/types.h>
+#include <unistd.h>
+#include <sys/socket.h>
+                  #include <netinet/in.h>
+
+int main(void) {
+    setsockopt(0, IPPROTO_IP, IP_DONTFRAG, NULL, 0);
+    return 0;
+}
+
+----------
+mips-t33-linux-gnu-gcc -muclibc -Os -fstack-protector-all -DPLATFORM_JZT33 -DLINUX_JZT33 -DSDKVER_ -Os -Wall -fPIC -pthread -L/home/yangxy/stqc/appsrc/opensrc/nginx2/../out/jzt33/lib -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 -o objs/autotest objs/autotest.c -muclibc -Os -fstack-protector-all -DPLATFORM_JZT33 -DLINUX_JZT33 -DSDKVER_ -Os -Wall -fPIC -pthread -L/home/yangxy/stqc/appsrc/opensrc/nginx2/../out/jzt33/lib
+----------
+
+----------------------------------------
+checking for IPV6_DONTFRAG
+
+objs/autotest.c: In function 'main':
+objs/autotest.c:8:31: error: 'IPV6_DONTFRAG' undeclared (first use in this function)
+     setsockopt(0, IPPROTO_IP, IPV6_DONTFRAG, NULL, 0);
+                               ^
+objs/autotest.c:8:31: note: each undeclared identifier is reported only once for each function it appears in
+----------
+
+#include <sys/types.h>
+#include <unistd.h>
+#include <sys/socket.h>
+                  #include <netinet/in.h>
+
+int main(void) {
+    setsockopt(0, IPPROTO_IP, IPV6_DONTFRAG, NULL, 0);
+    return 0;
+}
+
+----------
+mips-t33-linux-gnu-gcc -muclibc -Os -fstack-protector-all -DPLATFORM_JZT33 -DLINUX_JZT33 -DSDKVER_ -Os -Wall -fPIC -pthread -L/home/yangxy/stqc/appsrc/opensrc/nginx2/../out/jzt33/lib -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 -o objs/autotest objs/autotest.c -muclibc -Os -fstack-protector-all -DPLATFORM_JZT33 -DLINUX_JZT33 -DSDKVER_ -Os -Wall -fPIC -pthread -L/home/yangxy/stqc/appsrc/opensrc/nginx2/../out/jzt33/lib
+----------
+
+----------------------------------------
+checking for TCP_DEFER_ACCEPT
+
+
+----------------------------------------
+checking for TCP_KEEPIDLE
+
+
+----------------------------------------
+checking for TCP_FASTOPEN
+
+objs/autotest.c: In function 'main':
+objs/autotest.c:9:32: error: 'TCP_FASTOPEN' undeclared (first use in this function)
+     setsockopt(0, IPPROTO_TCP, TCP_FASTOPEN, NULL, 0);
+                                ^
+objs/autotest.c:9:32: note: each undeclared identifier is reported only once for each function it appears in
+----------
+
+#include <sys/types.h>
+#include <unistd.h>
+#include <sys/socket.h>
+                  #include <netinet/in.h>
+                  #include <netinet/tcp.h>
+
+int main(void) {
+    setsockopt(0, IPPROTO_TCP, TCP_FASTOPEN, NULL, 0);
+    return 0;
+}
+
+----------
+mips-t33-linux-gnu-gcc -muclibc -Os -fstack-protector-all -DPLATFORM_JZT33 -DLINUX_JZT33 -DSDKVER_ -Os -Wall -fPIC -pthread -L/home/yangxy/stqc/appsrc/opensrc/nginx2/../out/jzt33/lib -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 -o objs/autotest objs/autotest.c -muclibc -Os -fstack-protector-all -DPLATFORM_JZT33 -DLINUX_JZT33 -DSDKVER_ -Os -Wall -fPIC -pthread -L/home/yangxy/stqc/appsrc/opensrc/nginx2/../out/jzt33/lib
+----------
+
+----------------------------------------
+checking for TCP_INFO
+
+
+----------------------------------------
+checking for accept4()
+
+
+----------------------------------------
+checking for int size
+
+
+----------------------------------------
+checking for long size
+
+
+----------------------------------------
+checking for long long size
+
+
+----------------------------------------
+checking for void * size
+
+
+----------------------------------------
+checking for uint32_t
+
+
+----------------------------------------
+checking for uint64_t
+
+
+----------------------------------------
+checking for sig_atomic_t
+
+
+----------------------------------------
+checking for sig_atomic_t size
+
+
+----------------------------------------
+checking for socklen_t
+
+
+----------------------------------------
+checking for in_addr_t
+
+
+----------------------------------------
+checking for in_port_t
+
+
+----------------------------------------
+checking for rlim_t
+
+
+----------------------------------------
+checking for uintptr_t
+
+
+----------------------------------------
+checking for system byte ordering
+
+
+----------------------------------------
+checking for size_t size
+
+
+----------------------------------------
+checking for off_t size
+
+
+----------------------------------------
+checking for time_t size
+
+
+----------------------------------------
+checking for AF_INET6
+
+
+----------------------------------------
+checking for setproctitle()
+
+objs/autotest.c: In function 'main':
+objs/autotest.c:7:5: warning: implicit declaration of function 'setproctitle' [-Wimplicit-function-declaration]
+     setproctitle("test");;
+     ^
+/tmp/ccDnZw6C.o: In function `main':
+autotest.c:(.text.startup+0x1c): undefined reference to `setproctitle'
+autotest.c:(.text.startup+0x34): undefined reference to `setproctitle'
+collect2: error: ld returned 1 exit status
+----------
+
+#include <sys/types.h>
+#include <unistd.h>
+#include <stdlib.h>
+
+int main(void) {
+    setproctitle("test");;
+    return 0;
+}
+
+----------
+mips-t33-linux-gnu-gcc -muclibc -Os -fstack-protector-all -DPLATFORM_JZT33 -DLINUX_JZT33 -DSDKVER_ -Os -Wall -fPIC -pthread -L/home/yangxy/stqc/appsrc/opensrc/nginx2/../out/jzt33/lib -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 -o objs/autotest objs/autotest.c -muclibc -Os -fstack-protector-all -DPLATFORM_JZT33 -DLINUX_JZT33 -DSDKVER_ -Os -Wall -fPIC -pthread -L/home/yangxy/stqc/appsrc/opensrc/nginx2/../out/jzt33/lib
+----------
+
+----------------------------------------
+checking for pread()
+
+
+----------------------------------------
+checking for pwrite()
+
+
+----------------------------------------
+checking for pwritev()
+
+objs/autotest.c: In function 'main':
+objs/autotest.c:10:23: warning: implicit declaration of function 'pwritev' [-Wimplicit-function-declaration]
+                   n = pwritev(1, vec, 1, 0);
+                       ^
+/tmp/ccInVhBG.o: In function `main':
+autotest.c:(.text.startup+0x18): undefined reference to `pwritev'
+autotest.c:(.text.startup+0x48): undefined reference to `pwritev'
+collect2: error: ld returned 1 exit status
+----------
+
+#include <sys/types.h>
+#include <unistd.h>
+#include <sys/uio.h>
+
+int main(void) {
+    char buf[1]; struct iovec vec[1]; ssize_t n;
+                  vec[0].iov_base = buf;
+                  vec[0].iov_len = 1;
+                  n = pwritev(1, vec, 1, 0);
+                  if (n == -1) return 1;
+    return 0;
+}
+
+----------
+mips-t33-linux-gnu-gcc -muclibc -Os -fstack-protector-all -DPLATFORM_JZT33 -DLINUX_JZT33 -DSDKVER_ -Os -Wall -fPIC -pthread -L/home/yangxy/stqc/appsrc/opensrc/nginx2/../out/jzt33/lib -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 -o objs/autotest objs/autotest.c -muclibc -Os -fstack-protector-all -DPLATFORM_JZT33 -DLINUX_JZT33 -DSDKVER_ -Os -Wall -fPIC -pthread -L/home/yangxy/stqc/appsrc/opensrc/nginx2/../out/jzt33/lib
+----------
+
+----------------------------------------
+checking for strerrordesc_np()
+
+objs/autotest.c: In function 'main':
+objs/autotest.c:7:18: warning: implicit declaration of function 'strerrordesc_np' [-Wimplicit-function-declaration]
+     char *p; p = strerrordesc_np(0);
+                  ^
+objs/autotest.c:7:16: warning: assignment makes pointer from integer without a cast [-Wint-conversion]
+     char *p; p = strerrordesc_np(0);
+                ^
+/tmp/ccFGjKbN.o: In function `main':
+autotest.c:(.text.startup+0x18): undefined reference to `strerrordesc_np'
+autotest.c:(.text.startup+0x30): undefined reference to `strerrordesc_np'
+collect2: error: ld returned 1 exit status
+----------
+
+#include <sys/types.h>
+#include <unistd.h>
+#include <string.h>
+
+int main(void) {
+    char *p; p = strerrordesc_np(0);
+                  if (p == NULL) return 1;
+    return 0;
+}
+
+----------
+mips-t33-linux-gnu-gcc -muclibc -Os -fstack-protector-all -DPLATFORM_JZT33 -DLINUX_JZT33 -DSDKVER_ -Os -Wall -fPIC -pthread -L/home/yangxy/stqc/appsrc/opensrc/nginx2/../out/jzt33/lib -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 -o objs/autotest objs/autotest.c -muclibc -Os -fstack-protector-all -DPLATFORM_JZT33 -DLINUX_JZT33 -DSDKVER_ -Os -Wall -fPIC -pthread -L/home/yangxy/stqc/appsrc/opensrc/nginx2/../out/jzt33/lib
+----------
+
+----------------------------------------
+checking for sys_nerr
+
+objs/autotest.c: In function 'main':
+objs/autotest.c:8:18: error: 'sys_nerr' undeclared (first use in this function)
+     printf("%d", sys_nerr);;
+                  ^
+objs/autotest.c:8:18: note: each undeclared identifier is reported only once for each function it appears in
+----------
+
+#include <sys/types.h>
+#include <unistd.h>
+#include <errno.h>
+                      #include <stdio.h>
+
+int main(void) {
+    printf("%d", sys_nerr);;
+    return 0;
+}
+
+----------
+mips-t33-linux-gnu-gcc -muclibc -Os -fstack-protector-all -DPLATFORM_JZT33 -DLINUX_JZT33 -DSDKVER_ -Os -Wall -fPIC -pthread -L/home/yangxy/stqc/appsrc/opensrc/nginx2/../out/jzt33/lib -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 -o objs/autotest objs/autotest.c -muclibc -Os -fstack-protector-all -DPLATFORM_JZT33 -DLINUX_JZT33 -DSDKVER_ -Os -Wall -fPIC -pthread -L/home/yangxy/stqc/appsrc/opensrc/nginx2/../out/jzt33/lib
+----------
+
+----------------------------------------
+checking for _sys_nerr
+
+objs/autotest.c: In function 'main':
+objs/autotest.c:8:18: error: '_sys_nerr' undeclared (first use in this function)
+     printf("%d", _sys_nerr);;
+                  ^
+objs/autotest.c:8:18: note: each undeclared identifier is reported only once for each function it appears in
+----------
+
+#include <sys/types.h>
+#include <unistd.h>
+#include <errno.h>
+                      #include <stdio.h>
+
+int main(void) {
+    printf("%d", _sys_nerr);;
+    return 0;
+}
+
+----------
+mips-t33-linux-gnu-gcc -muclibc -Os -fstack-protector-all -DPLATFORM_JZT33 -DLINUX_JZT33 -DSDKVER_ -Os -Wall -fPIC -pthread -L/home/yangxy/stqc/appsrc/opensrc/nginx2/../out/jzt33/lib -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 -o objs/autotest objs/autotest.c -muclibc -Os -fstack-protector-all -DPLATFORM_JZT33 -DLINUX_JZT33 -DSDKVER_ -Os -Wall -fPIC -pthread -L/home/yangxy/stqc/appsrc/opensrc/nginx2/../out/jzt33/lib
+----------
+
+----------------------------------------
+checking for localtime_r()
+
+
+----------------------------------------
+checking for clock_gettime(CLOCK_MONOTONIC)
+
+
+----------------------------------------
+checking for posix_memalign()
+
+
+----------------------------------------
+checking for memalign()
+
+
+----------------------------------------
+checking for mmap(MAP_ANON|MAP_SHARED)
+
+/bin/sh: objs/autotest: cannot execute binary file: Exec format error
+
+----------------------------------------
+checking for mmap("/dev/zero", MAP_SHARED)
+
+/bin/sh: objs/autotest: cannot execute binary file: Exec format error
+
+----------------------------------------
+checking for System V shared memory
+
+/bin/sh: objs/autotest: cannot execute binary file: Exec format error
+
+----------------------------------------
+checking for POSIX semaphores
+
+/bin/sh: objs/autotest: cannot execute binary file: Exec format error
+
+----------------------------------------
+checking for POSIX semaphores in libpthread
+
+/bin/sh: objs/autotest: cannot execute binary file: Exec format error
+
+----------------------------------------
+checking for POSIX semaphores in librt
+
+/bin/sh: objs/autotest: cannot execute binary file: Exec format error
+
+----------------------------------------
+checking for struct msghdr.msg_control
+
+
+----------------------------------------
+checking for ioctl(FIONBIO)
+
+
+----------------------------------------
+checking for ioctl(FIONREAD)
+
+
+----------------------------------------
+checking for struct tm.tm_gmtoff
+
+
+----------------------------------------
+checking for struct dirent.d_namlen
+
+objs/autotest.c: In function 'main':
+objs/autotest.c:8:28: error: 'struct dirent' has no member named 'd_namlen'
+     struct dirent  dir; dir.d_namlen = 0;
+                            ^
+objs/autotest.c:9:41: error: 'struct dirent' has no member named 'd_namlen'
+                   printf("%d", (int) dir.d_namlen);
+                                         ^
+objs/autotest.c:8:20: warning: variable 'dir' set but not used [-Wunused-but-set-variable]
+     struct dirent  dir; dir.d_namlen = 0;
+                    ^
+----------
+
+#include <sys/types.h>
+#include <unistd.h>
+#include <dirent.h>
+                  #include <stdio.h>
+
+int main(void) {
+    struct dirent  dir; dir.d_namlen = 0;
+                  printf("%d", (int) dir.d_namlen);
+    return 0;
+}
+
+----------
+mips-t33-linux-gnu-gcc -muclibc -Os -fstack-protector-all -DPLATFORM_JZT33 -DLINUX_JZT33 -DSDKVER_ -Os -Wall -fPIC -pthread -L/home/yangxy/stqc/appsrc/opensrc/nginx2/../out/jzt33/lib -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 -o objs/autotest objs/autotest.c -muclibc -Os -fstack-protector-all -DPLATFORM_JZT33 -DLINUX_JZT33 -DSDKVER_ -Os -Wall -fPIC -pthread -L/home/yangxy/stqc/appsrc/opensrc/nginx2/../out/jzt33/lib
+----------
+
+----------------------------------------
+checking for struct dirent.d_type
+
+
+----------------------------------------
+checking for sysconf(_SC_NPROCESSORS_ONLN)
+
+
+----------------------------------------
+checking for sysconf(_SC_LEVEL1_DCACHE_LINESIZE)
+
+
+----------------------------------------
+checking for openat(), fstatat()
+
+
+----------------------------------------
+checking for getaddrinfo()
+

@@ -1,0 +1,17 @@
+include ../makefile.pre
+LIBNAME=module
+BIN_TYPE=SHARED
+EXPORT_INCLUDE_HEADER=libmodule_api.h
+MY_SUBDIR=
+MYFLAG=
+MYINC_PATH=
+MYDEP_LIBPATH=
+MYDEP_LIBS= -lpthread  -lcommon -lstreamqueue -lencry -lupdate -lcryptomgr
+
+ifeq ($(USE_MEM_DEBUG),Y)
+MYFLAG+=-mapcs-frame -fexceptions -funwind-tables -finstrument-functions -fasynchronous-unwind-tables
+MYDEP_LIBS+=-rdynamic
+endif
+
+include ../makefile.inc
+

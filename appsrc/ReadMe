@@ -1,0 +1,62 @@
+make PLATFORM_NAME=HI3516A SDKVER_NAME=V070 clean
+make PLATFORM_NAME=HI3516CV300 clean
+make PLATFORM_NAME=HI3516E clean
+make PLATFORM_NAME=HI3519 SDKVER_NAME=V050 clean
+make PLATFORM_NAME=JZT30 clean
+make -C lowersys/hi3516a/ PLATFORM_NAME=HI3516A SDKVER_NAME=V050
+make -C lowersys/hi3516a/ PLATFORM_NAME=HI3516A SDKVER_NAME=V070
+make -C lowersys/hi3516cv300/ PLATFORM_NAME=HI3516CV300
+make -C lowersys/hi3516cv300/ PLATFORM_NAME=HI3516E
+make -C lowersys/hi3516ev200/ PLATFORM_NAME=HI3516EV200 SIMPLIFIED=Y clean
+make -C lowersys/hi3516ev200/ PLATFORM_NAME=HI3516EV200 SIMPLIFIED=N clean
+make -C lowersys/hi3516ev200/ PLATFORM_NAME=HI3516EV200 SDKVER_NAME=V010 SIMPLIFIED=N clean
+make -C lowersys/hi3519/ PLATFORM_NAME=HI3519 SDKVER_NAME=V050 clean
+make -C lowersys/hi3516cv500/ PLATFORM_NAME=HI3516CV500 SDKVER_NAME=V003 clean
+make -C lowersys/hi3516cv500/ PLATFORM_NAME=HI3516CV500 SDKVER_NAME=V010 clean
+make -C uppersys/webserver/ PLATFORM_NAME=JZT30 WITH_PTZ=N clean
+make -C uppersys/webserver/ PLATFORM_NAME=HI3519  WITH_FISHEYE=Y clean
+make -C uppersys/webserver/ PLATFORM_NAME=HI3519  FACE_COMPARE=Y clean
+make -C uppersys/webserver/ PLATFORM_NAME=HI3516A SDKVER_NAME=V070  EXTEND_SMART=Y clean
+make -C uppersys/webserver/ PLATFORM_NAME=HI3516CV500 SDKVER_NAME=V010 clean
+make -C uppersys/webserver/ PLATFORM_NAME=HI3516CV500 SDKVER_NAME=V010 FACE_COMPARE=Y clean
+make -C uppersys/webserver/ PLATFORM_NAME=HI3516EV200 SIMPLIFIED=Y clean
+make -C uppersys/webserver/ PLATFORM_NAME=HI3516EV200 SIMPLIFIED=N clean
+make -C uppersys/onvifserver3 PLATFORM_NAME=HI3519  clean
+
+make -C basicsys/libencry/ PLATFORM_NAME=JZT30
+make -C uppersys/libwtdg/ PLATFORM_NAME=JZT30 clean
+make -C uppersys/network/ PLATFORM_NAME=JZT30 clean
+make -C lowersys/jzt30/hal/ PLATFORM_NAME=JZT30
+make -C lowersys/jzt30/rest/ PLATFORM_NAME=JZT30
+make -C lowersys/jzt30 PLATFORM_NAME=JZT30 SIMPLIFIED=Y clean
+make -C opensrc/polarssl/ PLATFORM_NAME=JZT30
+make -C uppersys/webserver/ PLATFORM_NAME=JZT30 SIMPLIFIED=Y clean
+make -C uppersys/mediaserver PLATFORM_NAME=JZT30 RTMP=Y clean
+
+ovfs_webserver_for8m:用于2层板简版
+make -C uppersys/webserver_forJZ/ PLATFORM_NAME=JZT30 JZT31N=Y SIMPLIFIED=Y WITH_PTZ=N clean
+ovfs_webserver_nossl_noptz:用于4层板电动镜头版本
+make -C uppersys/webserver_forJZ/ PLATFORM_NAME=JZT30 JZT31N=Y SIMPLIFIED=N WITH_PTZ=N clean
+ovfs_webserver_nossl_withptz:用于4层板定焦版本
+make -C uppersys/webserver_forJZ/ PLATFORM_NAME=JZT30 JZT31N=Y SIMPLIFIED=N WITH_PTZ=Y clean
+ovfs_webserver_ssl_withptz:用于T31X
+make -C uppersys/webserver_forJZ/ PLATFORM_NAME=JZT30 JZT31N=N SIMPLIFIED=N WITH_PTZ=Y clean
+
+ovfs_alarm_for8m:用于2层板简版
+make -C uppersys/alarm_forJZ/ PLATFORM_NAME=JZT30 SIMPLIFIED=Y clean
+ovfs_alarm:用于4层板简版
+make -C uppersys/alarm_forJZ/ PLATFORM_NAME=JZT30 SIMPLIFIED=N clean
+
+编译全功能版本的：
+make -C lowersys/jzt30/ PLATFORM_NAME=JZT30 JZT31N=N SIMPLIFIED=N SDKVER_NAME=V540 SMART=y JZIVS=y AAC=y clean
+make -C lowersys/jzt30/ PLATFORM_NAME=JZT30 JZT31N=Y SIMPLIFIED=N SDKVER_NAME=V540 SMART=y JZIVS=y AAC=y clean
+编译无扩展板版本的：
+make -C lowersys/jzt30/ PLATFORM_NAME=JZT30 JZT31N=Y SIMPLIFIED=Y SDKVER_NAME=V540 SMART=y JZIVS=y AAC=y clean
+
+make -C lowersys/jzt40/ PLATFORM_NAME=JZT40 SDKVER_NAME=V103 clean
+make -C lowersys/jzt40/ PLATFORM_NAME=JZT40 SDKVER_NAME=V110 ISP_OSD=n SMAET=y clean
+make -C lowersys/jzt40/ PLATFORM_NAME=JZT40 SDKVER_NAME=V110 ISP_OSD=n antsivs=y LICENSE=n clean
+make -C lowersys/jzt40/ PLATFORM_NAME=JZT40 SDKVER_NAME=V110 ISP_OSD=y personvehicle=y LICENSE=y clean
+make -C opensrc/libosip2/  PLATFORM_NAME=JZT40 V=1
+make -C opensrc/libeXosip2/  PLATFORM_NAME=JZT40 V=1
+make -C opensrc/mtd_utils/  PLATFORM_NAME=JZT40 V=1 

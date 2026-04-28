@@ -1,0 +1,4 @@
+#!librawstorage:用于T31N
+make clean && make PLATFORM_NAME=JZT30 JZT31N=Y
+#!librawstorage:用于非T31N
+make clean && make PLATFORM_NAME=JZT30 JZT31N=N

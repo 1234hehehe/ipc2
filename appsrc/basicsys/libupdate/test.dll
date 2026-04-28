@@ -1,0 +1,18 @@
+
+
+#ifdef CONFIG_DTR_MODE_SUPPORT
+#define SET_READ_QUAD_DTR(_dummy_, _size_, _clk_) \
+	static struct spi_op read_quad_dtr_##_dummy_##_size_##_clk_ = { \
+	SPI_IF_READ_QUAD_DTR, SPI_CMD_READ_QUAD_DTR, _dummy_, _size_, _clk_ }
+
+#define SET_READ_QUAD_DTR4B(_dummy_, _size_, _clk_) \
+	static struct spi_op read_quad_dtr4b_##_dummy_##_size_##_clk_ = { \
+	SPI_IF_READ_QUAD_DTR, SPI_CMD_READ_QUAD_DTR4B, _dummy_, _size_, _clk_ }
+
+#define SET_READ_QUAD_DTR4B_WINBOND(_dummy_, _size_, _clk_) \
+	static struct spi_op read_quad_dtr_winbond_##_dummy_##_size_##_clk_ = \
+	{SPI_IF_READ_QUAD_DTR, SPI_CMD_READ_QUAD_DTR4B_WINBOND, \
+		_dummy_, _size_, _clk_ }
+#endif
+
+
