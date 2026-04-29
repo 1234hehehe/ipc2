@@ -1360,7 +1360,8 @@ int smc91111_initialize(u8 dev_num, int base_addr)
 	dev->send = smc_send;
 	dev->recv = smc_rcv;
 	dev->write_hwaddr = smc_write_hwaddr;
-	sprintf(dev->name, "%s-%hu", SMC_DEV_NAME, dev_num);
+	snprintf(dev->name, sizeof(dev->name), "%s-%hu",
+		 SMC_DEV_NAME, dev_num);
 
 	eth_register(dev);
 	return 0;

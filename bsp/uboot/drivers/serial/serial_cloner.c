@@ -655,36 +655,29 @@ static void local_serial_clk_init()
 	cpm_outl(clkgr, CPM_CLKGR);
 }
 
-static unsigned int atoi(char *pstr)
+static int parse_u32_token(const char *pstr, u32 *value)
 {
-	unsigned int value = 0;
-	int sign = 1;
-	unsigned int radix;
+	char buf[32];
+	unsigned long parsed;
+	size_t len;
 
-	if(*pstr == '-'){
-		sign = -1;
-		pstr++;
-	}
-	if(*pstr == '0' && (*(pstr+1) == 'x' || *(pstr+1) == 'X')){
-		radix = 16;
-		pstr += 2;
-	}
-	else
-		radix = 10;
-	while(*pstr && (*pstr != '\n')){
-		if(radix == 16){
-			if(*pstr >= '0' && *pstr <= '9')
-				value = value * radix + *pstr - '0';
-			else if(*pstr >= 'A' && *pstr <= 'F')
-				value = value * radix + *pstr - 'A' + 10;
-			else if(*pstr >= 'a' && *pstr <= 'f')
-				value = value * radix + *pstr - 'a' + 10;
-		}
-		else
-			value = value * radix + *pstr - '0';
-		pstr++;
-	}
-	return value;
+	if (!pstr || !value)
+		return -EINVAL;
+
+	len = strnlen(pstr, sizeof(buf));
+	if (!len || len >= sizeof(buf))
+		return -EINVAL;
+
+	memcpy(buf, pstr, len);
+	buf[len] = '\0';
+	if (len > 0 && buf[len - 1] == '\n')
+		buf[len - 1] = '\0';
+
+	if (strict_strtoul(buf, 0, &parsed) || parsed > 0xffffffffUL)
+		return -EINVAL;
+
+	*value = parsed;
+	return 0;
 }
 
 static int i2c_program_serial(struct serial_cloner *serial_cloner)
@@ -811,12 +804,19 @@ static int nand_program_serial(struct serial_cloner *serial_cloner)
 {
 #ifdef CONFIG_JZ_NAND_MGR
 	int curr_device = 0;
-	u32 startaddr = atoi(ptemp[4]) + atoi(ptemp[6]);
-	u32 length = atoi(ptemp[8]);
+	u32 start, offset, startaddr, length;
 	void *databuf = (void *)data_addr;
 
+	if (parse_u32_token(ptemp[4], &start) ||
+	    parse_u32_token(ptemp[6], &offset) ||
+	    parse_u32_token(ptemp[8], &length))
+		return -EINVAL;
+	if (start > 0xffffffffU - offset)
+		return -EINVAL;
+	startaddr = start + offset;
+
 	printf("=========++++++++++++>   NAND PROGRAM:startaddr = %d P offset = %d P length = %d \n",startaddr,length);
-	do_nand_request(startaddr, databuf, length,atoi(ptemp[6]));
+	do_nand_request(startaddr, databuf, length, offset);
 
 	return 0;
 #else
@@ -830,10 +830,21 @@ static int mmc_program_serial(char *data,int mmc_index)
 	int curr_device = 0;
 	write_back_chk = 1;
 	struct mmc *mmc = find_mmc_device(mmc_index);
-	u32 blk = (atoi(ptemp[4]) + atoi(ptemp[6]))/MMC_BYTE_PER_BLOCK;
-	u32 cnt = (atoi(ptemp[8]) + MMC_BYTE_PER_BLOCK - 1)/MMC_BYTE_PER_BLOCK;
+	u32 start, offset, length, crc_expected;
+	u32 blk, cnt;
 	void *addr = (void *)data;
 	u32 n;
+
+	if (parse_u32_token(ptemp[4], &start) ||
+	    parse_u32_token(ptemp[6], &offset) ||
+	    parse_u32_token(ptemp[8], &length) ||
+	    parse_u32_token(ptemp[12], &crc_expected))
+		return -EINVAL;
+	if (start > 0xffffffffU - offset ||
+	    length > 0xffffffffU - (MMC_BYTE_PER_BLOCK - 1))
+		return -EINVAL;
+	blk = (start + offset) / MMC_BYTE_PER_BLOCK;
+	cnt = (length + MMC_BYTE_PER_BLOCK - 1) / MMC_BYTE_PER_BLOCK;
 
 	if (!mmc) {
 		printf("no mmc device at slot %x\n", curr_device);
@@ -864,10 +875,12 @@ static int mmc_program_serial(char *data,int mmc_index)
 		if (n != cnt)
 			return -EIO;
 
-		uint32_t tmp_crc = local_crc32(0xffffffff,addr,atoi(ptemp[8]));
-		debug_cond(BURNNER_DEBUG,"%d blocks check: %s\n",n,atoi(ptemp[12] == tmp_crc) ? "OK" : "ERROR");
-		if (atoi(ptemp[12]) != tmp_crc) {
-			printf("src_crc32 = %u , dst_crc32 = %u\n",atoi(ptemp[12]),tmp_crc);
+		uint32_t tmp_crc = local_crc32(0xffffffff, addr, length);
+		debug_cond(BURNNER_DEBUG, "%d blocks check: %s\n",
+			   n, crc_expected == tmp_crc ? "OK" : "ERROR");
+		if (crc_expected != tmp_crc) {
+			printf("src_crc32 = %u , dst_crc32 = %u\n",
+			       crc_expected, tmp_crc);
 			return -EIO;
 		}
 	}
@@ -881,10 +894,13 @@ static int efuse_program_serial(struct serial_cloner *serial_cloner)
 		efuse_init(serial_cloner->args->efuse_gpio);
 		enabled = 1;
 	}
-	u32 partation = atoi(ptemp[4]);
-	u32 length = atoi(ptemp[8]);
+	u32 partation, length;
 	void *addr = (void *)data_addr;
 	u32 r = 0;
+
+	if (parse_u32_token(ptemp[4], &partation) ||
+	    parse_u32_token(ptemp[8], &length))
+		return -EINVAL;
 
 	if (r = efuse_write(addr, length, partation)) {
 		printf("efuse write error\n");
@@ -914,17 +930,21 @@ static int analysis_cmd(char *strcmd,int *type)
 	char *p;
 	char *cmd_temp[16];
 	int index = 0,i;
-	unsigned int length;
-	for(i = 0; i < sizeof(ptemp); i ++)
+	u32 length;
+
+	for (i = 0; i < ARRAY_SIZE(ptemp); i++)
 		memset(ptemp[i],0,sizeof(ptemp[i]));
 	strtok(strcmd,temp);
-	while((p = strtok(NULL, temp))){
+	while ((p = strtok(NULL, temp))) {
+		if (index >= ARRAY_SIZE(ptemp) || index >= ARRAY_SIZE(cmd_temp))
+			return -EINVAL;
 		cmd_temp[index] = p;
-		strcpy(ptemp[index] , p);
+		snprintf(ptemp[index], sizeof(ptemp[index]), "%s", p);
 		index ++;
 	}
 	count = index;
-	length = atoi(cmd_temp[8]);
+	if (index <= 8 || parse_u32_token(cmd_temp[8], &length))
+		return -EINVAL;
 	if(!strcmp(ptemp[0],"write")){
 		*type = 0;
 	}else if(!strcmp(ptemp[0],"args")){
@@ -948,16 +968,22 @@ static int analysis(char *strcmd,int *hindex,unsigned int *hcrc,int *hlength)
 	char temp[] = ":,\n";
 	char *p;
 	char *cmd_temp[32];
-	char digital[16][16];
-	int index = 0,i;
+	int index = 0;
+	u32 hindex_val, hlength_val;
 	p = strtok(strcmd,temp);
 	while((p = strtok(NULL, temp))){
+		if (index >= ARRAY_SIZE(cmd_temp))
+			return -EINVAL;
 		cmd_temp[index] = p;
 		index ++;
 	}
-	*hcrc = atoi(cmd_temp[0]);
-	*hindex = atoi(cmd_temp[2]);
-	*hlength = atoi(cmd_temp[4]);
+	if (index <= 4 ||
+	    parse_u32_token(cmd_temp[0], hcrc) ||
+	    parse_u32_token(cmd_temp[2], &hindex_val) ||
+	    parse_u32_token(cmd_temp[4], &hlength_val))
+		return -EINVAL;
+	*hindex = hindex_val;
+	*hlength = hlength_val;
 	return 0;
 }
 
@@ -974,17 +1000,21 @@ static int local_serial_receive_data(char *data,int length,int timeout)
 
 }
 
-static int local_serial_receive_cmd(char *cmd,int timeout)
+static int local_serial_receive_cmd(char *cmd, size_t cmd_size, int timeout)
 {
 	int index_cmd = 0;
 	while(1){
-		while(local_serial_tstc())
+		while (local_serial_tstc()) {
+			if (index_cmd >= cmd_size - 1)
+				return -1;
 			cmd[index_cmd ++] = readb(&uart->rbr_thr_dllr);
+		}
+		cmd[index_cmd] = '\0';
 		if(cmd[0] == 'g'){
-			if(index_cmd == 24)
+			if(index_cmd >= 24)
 				break;
 		}else{
-			if(cmd[index_cmd - 1] == '\n')
+			if(index_cmd > 0 && cmd[index_cmd - 1] == '\n')
 				break;
 		}
 		if(timeout--  <= 0)
@@ -1023,7 +1053,7 @@ int start_serial_cloner()
 		printf("Running .......\n");
 receive_cmd:	memset(cmd,0,sizeof(cmd));
 		memset(data,0,sizeof(data));
-		if(local_serial_receive_cmd(cmd,cmd_timout) == -1){
+		if(local_serial_receive_cmd(cmd, sizeof(cmd), cmd_timout) == -1){
 			goto receive_cmd;
 		}
 		printf("cmd:%s\n",cmd);
@@ -1041,11 +1071,20 @@ receive_cmd:	memset(cmd,0,sizeof(cmd));
 		}
 
 		data_len = analysis_cmd(cmd,&handle_type);
+		if (data_len < 0 || data_len > sizeof(data))
+			goto receive_cmd;
 		printf("data_len:%d\n",data_len);
 
 		switch(handle_type){
 			case WRITE:
-				transfer_size = atoi(ptemp[14]);
+				{
+					u32 transfer_val;
+
+					if (parse_u32_token(ptemp[14], &transfer_val) ||
+					    transfer_val == 0)
+						goto receive_cmd;
+					transfer_size = transfer_val;
+				}
 				printf("transfer_size:%d\n",transfer_size);
 				if(data_len % transfer_size == 0){
 					data_count = data_len / transfer_size;
@@ -1055,12 +1094,19 @@ receive_cmd:	memset(cmd,0,sizeof(cmd));
 
 				local_serial_puts(stateok);
 			recmd:	memset(cmd_data,0,sizeof(cmd_data));
-				if(local_serial_receive_cmd(cmd_data,10000000) == -1){
+				if(local_serial_receive_cmd(cmd_data, sizeof(cmd_data),
+							    10000000) == -1){
 					local_serial_puts(stateretry);
 					goto recmd;
 				}
 				printf("cmd_data:%s\n",cmd_data);
-				analysis(cmd_data,&hindex,&hcrc,&hlength);
+				if (analysis(cmd_data,&hindex,&hcrc,&hlength))
+					goto recmd;
+				if (hindex < 0 || hlength < 0 ||
+				    (size_t)hindex > sizeof(data) / transfer_size ||
+				    (size_t)hlength >
+				    sizeof(data) - (size_t)hindex * transfer_size)
+					goto receive_cmd;
 				printf("hcrc:%u   hindex:%d    hlength:%d\n",hcrc,hindex,hlength);
 				local_serial_puts(stateok);
 			redata:	if(!local_serial_receive_data(data + hindex * transfer_size,hlength,20000000)){
@@ -1092,8 +1138,12 @@ receive_cmd:	memset(cmd,0,sizeof(cmd));
 			case ARGS:
 				local_serial_puts(stateok);
 				if(!local_serial_receive_data(data,data_len,20000000)){
+					u32 args_crc;
+
+					if (parse_u32_token(ptemp[12], &args_crc))
+						goto receive_cmd;
 					crc = local_crc32(0xffffffff,data,data_len);
-					if(crc == atoi(ptemp[12])){
+					if(crc == args_crc){
 						memcpy(argument,data,sizeof(struct arguments));
 						local_serial_puts(stateok);
 						printf(stateok);
@@ -1118,8 +1168,12 @@ receive_cmd:	memset(cmd,0,sizeof(cmd));
 				break;
 			case TIME:
 				if(!local_serial_receive_data(data,data_len,20000000)){
+					u32 time_crc;
+
+					if (parse_u32_token(ptemp[12], &time_crc))
+						goto receive_cmd;
 					crc = local_crc32(0xffffffff,data,data_len);
-					if(crc == atoi(ptemp[12])){
+					if(crc == time_crc){
 						rtc1 = *((struct rtc_time *)data);
 						if(rtc_set(&rtc1)){
 							local_serial_puts(stateok);
@@ -1142,7 +1196,13 @@ receive_cmd:	memset(cmd,0,sizeof(cmd));
 				break;
 			case BAUDRATE:
 				printf("baudrate changed\n");
-				baudvalue = atoi(ptemp[2]);
+				{
+					u32 baudvalue_val;
+
+					if (parse_u32_token(ptemp[2], &baudvalue_val))
+						goto receive_cmd;
+					baudvalue = baudvalue_val;
+				}
 				local_serial_puts(stateok);
 				local_serial_gpio_init();
 				local_serial_clk_init();

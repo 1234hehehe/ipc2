@@ -50,7 +50,7 @@ int dos_open(char *name)
 	name ++;
     }
     lg = strlen (name);
-    if (name [lg - 1] == '"') {
+    if (lg > 0 && name [lg - 1] == '"') {
 	name [lg - 1] = '\0';
     }
 
@@ -155,16 +155,22 @@ int dos_dir (void)
 			name,
 			NULL) == 0) {
 	/* Display file info                                                 */
-	printf ("%3.3s %9d %s %02d %04d %02d:%02d:%02d %s\n",
+	{
+		int month_idx = DOS_MONTH(&dir);
+
+		if (month_idx < 1 || month_idx > ARRAY_SIZE(month))
+			month_idx = 1;
+		printf ("%3.3s %9d %s %02d %04d %02d:%02d:%02d %s\n",
 		(dir.attr & ATTR_DIRECTORY) ? "dir" : "   ",
 		__le32_to_cpu (dir.size),
-		month [DOS_MONTH (&dir) - 1],
+		month [month_idx - 1],
 		DOS_DAY (&dir),
 		DOS_YEAR (&dir),
 		DOS_HOUR (&dir),
 		DOS_MINUTE (&dir),
 		DOS_SEC (&dir),
 		name);
+	}
 
     }
     free (name);

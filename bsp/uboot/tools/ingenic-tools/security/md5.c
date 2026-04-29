@@ -305,12 +305,16 @@ int do_md5()
 	string_length = 248;
 	//string_length = 119;
 	
-  	unsigned char string[string_length];
-	sprintf( file_name, "./hex_md5/md5_file%04d.hex", i);
+	unsigned char string[string_length + 1];
+	snprintf(file_name, sizeof(file_name), "./hex_md5/md5_file%04d.hex", i);
         printf ("file_name: %s\n", file_name);
 
 	FILE *fp;
   	fp=fopen (file_name, "w");
+	if (!fp) {
+		perror("fopen");
+		return -1;
+	}
   	//fprintf (fp, "%s\n", len_addr);
  
  	/*	random int to string	*/
@@ -365,6 +369,10 @@ int do_md5()
  	printf ("\n\n");
 
  	fp = fopen (file_name, "a");
+	if (!fp) {
+		perror("fopen");
+		return -1;
+	}
  	fprintf (fp, "%s\n", md5_addr);
  	for (j=0; j<13; j=j+4)
  	{
@@ -380,5 +388,3 @@ int do_md5()
  }
  return 0;
 }
-
-

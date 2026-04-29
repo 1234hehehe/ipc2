@@ -92,6 +92,34 @@ static void consume_symbol(const char *sym)
 	}
 }
 
+static int path_is_safe(const char *path)
+{
+	return path && *path &&
+		!strstr(path, "../") &&
+		!strstr(path, "/..") &&
+		strcmp(path, "..");
+}
+
+static void build_path(char *buf, size_t buflen, const char *dir,
+			 const char *path)
+{
+	int ret;
+
+	ret = snprintf(buf, buflen, "%s/%s", dir, path);
+	if (ret < 0 || (size_t)ret >= buflen) {
+		fprintf(stderr, "docproc: path too long: %s/%s\n", dir, path);
+		exit(1);
+	}
+}
+
+static void *realloc_array(void *ptr, size_t nmemb, size_t size)
+{
+	if (size && nmemb > ((size_t)-1) / size)
+		return NULL;
+
+	return realloc(ptr, nmemb * size);
+}
+
 static void usage (void)
 {
 	fprintf(stderr, "Usage: docproc {doc|depend} file\n");
@@ -117,10 +145,8 @@ static void exec_kernel_doc(char **svec)
 			perror("fork");
 			exit(1);
 		case  0:
-			memset(real_filename, 0, sizeof(real_filename));
-			strncat(real_filename, kernsrctree, PATH_MAX);
-			strncat(real_filename, "/" KERNELDOCPATH KERNELDOC,
-					PATH_MAX - strlen(real_filename));
+			build_path(real_filename, sizeof(real_filename),
+				   kernsrctree, KERNELDOCPATH KERNELDOC);
 			execvp(real_filename, svec);
 			fprintf(stderr, "exec ");
 			perror(real_filename);
@@ -152,14 +178,25 @@ int symfilecnt = 0;
 
 static void add_new_symbol(struct symfile *sym, char * symname)
 {
-	sym->symbollist =
-          realloc(sym->symbollist, (sym->symbolcnt + 1) * sizeof(char *));
+	struct symbols *list;
+
+	list = realloc_array(sym->symbollist, sym->symbolcnt + 1,
+			       sizeof(*list));
+	if (!list) {
+		perror("docproc");
+		exit(1);
+	}
+	sym->symbollist = list;
 	sym->symbollist[sym->symbolcnt++].name = strdup(symname);
 }
 
 /* Add a filename to the list */
 static struct symfile * add_new_file(char * filename)
 {
+	if (symfilecnt >= MAXFILES) {
+		fprintf(stderr, "docproc: too many files referenced\n");
+		exit(1);
+	}
 	symfilelist[symfilecnt++].filename = strdup(filename);
 	return &symfilelist[symfilecnt - 1];
 }
@@ -198,11 +235,13 @@ static void find_export_symbols(char * filename)
 	char line[MAXLINESZ];
 	if (filename_exist(filename) == NULL) {
 		char real_filename[PATH_MAX + 1];
-		memset(real_filename, 0, sizeof(real_filename));
-		strncat(real_filename, srctree, PATH_MAX);
-		strncat(real_filename, "/", PATH_MAX - strlen(real_filename));
-		strncat(real_filename, filename,
-				PATH_MAX - strlen(real_filename));
+
+		if (!path_is_safe(filename)) {
+			fprintf(stderr, "docproc: unsafe path '%s'\n", filename);
+			exit(1);
+		}
+		build_path(real_filename, sizeof(real_filename),
+			   srctree, filename);
 		sym = add_new_file(filename);
 		fp = fopen(real_filename, "r");
 		if (fp == NULL)	{
@@ -253,10 +292,12 @@ static void docfunctions(char * filename, char * type)
 	int symcnt = 0;
 	int idx = 0;
 	char **vec;
+	size_t vec_count;
 
-	for (i=0; i <= symfilecnt; i++)
+	for (i = 0; i < symfilecnt; i++)
 		symcnt += symfilelist[i].symbolcnt;
-	vec = malloc((2 + 2 * symcnt + 3) * sizeof(char *));
+	vec_count = 2 * symcnt + 5;
+	vec = malloc(vec_count * sizeof(char *));
 	if (vec == NULL) {
 		perror("docproc: ");
 		exit(1);
@@ -375,30 +416,42 @@ static void find_all_symbols(char *filename)
 		case  0:
 			close(pipefd[0]);
 			dup2(pipefd[1], 1);
-			memset(real_filename, 0, sizeof(real_filename));
-			strncat(real_filename, kernsrctree, PATH_MAX);
-			strncat(real_filename, "/" KERNELDOCPATH KERNELDOC,
-					PATH_MAX - strlen(real_filename));
+			build_path(real_filename, sizeof(real_filename),
+				   kernsrctree, KERNELDOCPATH KERNELDOC);
 			execvp(real_filename, vec);
 			fprintf(stderr, "exec ");
 			perror(real_filename);
 			exit(1);
 		default:
+		{
+			char *new_data;
+
 			close(pipefd[1]);
 			data = malloc(4096);
+			if (!data) {
+				perror("docproc");
+				exit(1);
+			}
 			do {
 				while ((ret = read(pipefd[0],
 						   data + data_len,
 						   4096)) > 0) {
 					data_len += ret;
-					data = realloc(data, data_len + 4096);
+					new_data = realloc_array(data,
+							 data_len + 4096, 1);
+					if (!new_data) {
+						perror("docproc");
+						exit(1);
+					}
+					data = new_data;
 				}
-			} while (ret == -EAGAIN);
-			if (ret != 0) {
+			} while (ret == -1 && errno == EAGAIN);
+			if (ret < 0) {
 				perror("read");
 				exit(1);
 			}
 			waitpid(pid, &ret ,0);
+		}
 	}
 	if (WIFEXITED(ret))
 		exitstatus |= WEXITSTATUS(ret);
@@ -415,8 +468,17 @@ static void find_all_symbols(char *filename)
 	}
 	start = all_list_len;
 	all_list_len += count;
-	all_list = realloc(all_list, sizeof(char *) * all_list_len);
 	str = data;
+	if (count) {
+		char **new_list;
+
+		new_list = realloc_array(all_list, all_list_len, sizeof(char *));
+		if (!new_list) {
+			perror("docproc");
+			exit(1);
+		}
+		all_list = new_list;
+	}
 	for (i = 0; i < data_len && start != all_list_len; i++) {
 		if (data[i] == '\0') {
 			all_list[start] = str;
@@ -510,6 +572,10 @@ int main(int argc, char *argv[])
 		exit(1);
 	}
 	/* Open file, exit on error */
+	if (!path_is_safe(argv[2])) {
+		fprintf(stderr, "docproc: unsafe path '%s'\n", argv[2]);
+		exit(2);
+	}
 	infile = fopen(argv[2], "r");
         if (infile == NULL) {
                 fprintf(stderr, "docproc: ");

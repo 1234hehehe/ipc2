@@ -882,16 +882,27 @@ void udc_setup_ep(struct usb_device_instance *device, unsigned int id,
 		ep0_endpoint->endpoint_address = 0xff;
 		ep0_urb = usbd_alloc_urb(device, endpoint);
 	} else if (MAX_ENDPOINT >= id) {
+		size_t in_index = (size_t)id * 2 + 1;
+		size_t out_index = (size_t)id * 2;
 		int ep_addr;
+
+		if (in_index >= ARRAY_SIZE(epinfo) ||
+		    out_index >= ARRAY_SIZE(epinfo)) {
+			if (debug_level > 0)
+				serial_printf("ERROR : %s endpoint index %u "
+					      "exceeds epinfo array\n",
+					      __PRETTY_FUNCTION__, id);
+			return;
+		}
 
 		/* Check the direction */
 		ep_addr = endpoint->endpoint_address;
 		if (USB_DIR_IN == (ep_addr & USB_ENDPOINT_DIR_MASK)) {
 			/* IN */
-			epinfo[(id * 2) + 1].epsize = endpoint->tx_packetSize;
+			epinfo[in_index].epsize = endpoint->tx_packetSize;
 		} else {
 			/* OUT */
-			epinfo[id * 2].epsize = endpoint->rcv_packetSize;
+			epinfo[out_index].epsize = endpoint->rcv_packetSize;
 		}
 
 		musb_configure_ep(&epinfo[0], ARRAY_SIZE(epinfo));

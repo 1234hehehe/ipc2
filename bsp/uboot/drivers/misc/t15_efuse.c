@@ -229,6 +229,7 @@ int efuse_write_data(void *buf, int length, off_t offset)
 	int off = offset;
 	int xlen = 0;
 	int len = length;
+	size_t alloc_len;
 	uint32_t tmp_reg = 0;
 	int timeout = EFUSE_W_TIMEOUT;		//vddq high is less than 1 sec
 
@@ -241,10 +242,13 @@ int efuse_write_data(void *buf, int length, off_t offset)
 	ret = adjust_efuse(1);
 	if (ret) goto out;
 
-	tmp_buf = (char *)malloc(len + sizeof(int32_t));
+	if (len < 0 || (size_t)len > (size_t)-1 - sizeof(int32_t))
+		return -EINVAL;
+	alloc_len = len + sizeof(int32_t);
+	tmp_buf = (char *)malloc(alloc_len);
 	if (!tmp_buf)
 		return  -ENOMEM;
-	memset(tmp_buf, 0, len + sizeof(int32_t));
+	memset(tmp_buf, 0, alloc_len);
 	ptmp_buf = (int32_t *)tmp_buf;
 
 	for (i = 0; i < length; i++)

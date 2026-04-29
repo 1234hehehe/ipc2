@@ -391,11 +391,17 @@ int eth_initialize(bd_t *bis)
 	 * If not, call a CPU-specific one
 	 */
 	if (board_eth_init != __def_eth_init) {
+
 		if (board_eth_init(bis) < 0)
+    {
 			printf("Board Net Initialization Failed\n");
+    }
+
 	} else if (cpu_eth_init != __def_eth_init) {
+
 		if (cpu_eth_init(bis) < 0)
 			printf("CPU Net Initialization Failed\n");
+
 	} else
 		printf("Net Initialization Skipped\n");
 

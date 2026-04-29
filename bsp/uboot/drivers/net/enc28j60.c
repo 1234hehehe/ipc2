@@ -967,7 +967,7 @@ int enc28j60_initialize(unsigned int bus, unsigned int cs,
 	dev->send = enc_send;
 	dev->recv = enc_recv;
 	dev->write_hwaddr = enc_write_hwaddr;
-	sprintf(dev->name, "enc%i.%i", bus, cs);
+	snprintf(dev->name, sizeof(dev->name), "enc%i.%i", bus, cs);
 	eth_register(dev);
 #if defined(CONFIG_CMD_MII)
 	miiphy_register(dev->name, enc_miiphy_read, enc_miiphy_write);

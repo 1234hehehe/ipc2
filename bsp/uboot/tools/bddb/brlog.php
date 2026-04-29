@@ -56,16 +56,16 @@
 <hr></hr>
 <p></p>
 <?php
-	$limit=abs(isset($_REQUEST['limit'])?$_REQUEST['limit']:20);
-	$offset=abs(isset($_REQUEST['offset'])?$_REQUEST['offset']:0);
+	$limit=abs(intval(isset($_REQUEST['limit']) ? $_REQUEST['limit'] : 20));
+	$offset=abs(intval(isset($_REQUEST['offset']) ? $_REQUEST['offset'] : 0));
 	$lr=mysql_query("select count(*) as n from log where serno=$serno");
 	$lrow=mysql_fetch_array($lr);
 	if($lrow['n']>$limit){
 		$preoffset=max(0,$offset-$limit);
 		$postoffset=$offset+$limit;
 		echo "<table width=\"100%\">\n<tr align=center>\n";
-		printf("<td><%sa href=\"%s?submit=Log&serno=$serno&offset=%d\"><img border=0 alt=\"&lt;\" src=\"/icons/left.gif\"></a></td>\n", $offset>0?"":"no", $PHP_SELF, $preoffset);
-		printf("<td><%sa href=\"%s?submit=Log&serno=$serno&offset=%d\"><img border=0 alt=\"&gt;\" src=\"/icons/right.gif\"></a></td>\n", $postoffset<$lrow['n']?"":"no", $PHP_SELF, $postoffset);
+		printf("<td><%sa href=\"%s?submit=Log&serno=$serno&offset=%d\"><img border=0 alt=\"&lt;\" src=\"/icons/left.gif\"></a></td>\n", $offset>0?"":"no", bddb_self(), $preoffset);
+		printf("<td><%sa href=\"%s?submit=Log&serno=$serno&offset=%d\"><img border=0 alt=\"&gt;\" src=\"/icons/right.gif\"></a></td>\n", $postoffset<$lrow['n']?"":"no", bddb_self(), $postoffset);
 		echo "</tr>\n</table>\n";
 	}
 	mysql_free_result($lr);
@@ -78,14 +78,15 @@
 <th width="70%">details</th>
 </tr>
 <?php
-	$r=mysql_query("select * from log where serno=$serno order by logno limit $offset,$limit");
+	$r=mysql_query(sprintf("select * from log where serno=%d order by logno limit %d,%d",
+		$serno, $offset, $limit));
 
 	while($row=mysql_fetch_array($r)){
 		echo "<tr>\n";
 		print_cell("<a href=\"edlog.php?serno=$row[serno]&logno=$row[logno]\">$row[logno]</a>");
 		print_cell($row['date']);
 		print_cell($row['who']);
-		print_cell("<pre>" . urldecode($row['details']) . "</pre>");
+		print_cell("<pre>" . bddb_html(urldecode($row['details'])) . "</pre>");
 		echo "</tr>\n";
 	}
 

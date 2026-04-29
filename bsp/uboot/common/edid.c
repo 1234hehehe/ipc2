@@ -79,13 +79,17 @@ int edid_get_ranges(struct edid1_info *edid, unsigned int *hmin,
 static char *snip(char *string)
 {
 	char *s;
+	size_t len;
 
 	/*
 	 * This is always a 13 character buffer
 	 * and it's not always terminated.
 	 */
 	string[12] = '\0';
-	s = &string[strlen(string) - 1];
+	len = strlen(string);
+	if (!len)
+		return string;
+	s = &string[len - 1];
 
 	while (s >= string && (isspace(*s) || *s == '\n' || *s == '\r' ||
 			*s == '\0'))

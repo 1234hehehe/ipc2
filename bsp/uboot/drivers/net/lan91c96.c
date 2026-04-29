@@ -810,7 +810,8 @@ int lan91c96_initialize(u8 dev_num, int base_addr)
 	dev->halt = lan91c96_halt;
 	dev->send = lan91c96_send;
 	dev->recv = lan91c96_recv;
-	sprintf(dev->name, "%s-%hu", supported_chips[r].name, dev_num);
+	snprintf(dev->name, sizeof(dev->name), "%s-%hu",
+		 supported_chips[r].name, dev_num);
 
 	eth_register(dev);
 	return 0;

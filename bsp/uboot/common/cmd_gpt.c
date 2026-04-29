@@ -171,7 +171,16 @@ static int set_gpt_info(block_dev_desc_t *dev_desc,
 	}
 
 	/* allocate memory for partitions */
-	parts = calloc(sizeof(disk_partition_t), p_count);
+	if (p_count <= 0 ||
+	    (size_t)p_count > ((size_t)-1) / sizeof(*parts)) {
+		errno = -4;
+		goto err;
+	}
+	parts = calloc(p_count, sizeof(*parts));
+	if (!parts) {
+		errno = -4;
+		goto err;
+	}
 
 	/* retrive partions data from string */
 	for (i = 0; i < p_count; i++) {

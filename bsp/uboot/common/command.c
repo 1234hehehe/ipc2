@@ -355,7 +355,7 @@ int cmd_auto_complete(const char *const prompt, char *buf, int *np, int *colp)
 		last_char = '\0';
 
 	/* copy to secondary buffer which will be affected */
-	strcpy(tmp_buf, buf);
+	snprintf(tmp_buf, sizeof(tmp_buf), "%s", buf);
 
 	/* separate into argv */
 	argc = make_argv(tmp_buf, sizeof(argv)/sizeof(argv[0]), argv);

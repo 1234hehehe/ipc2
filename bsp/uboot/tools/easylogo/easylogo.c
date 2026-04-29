@@ -9,6 +9,7 @@
 */
 
 #include <errno.h>
+#include <fcntl.h>
 #include <getopt.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -16,6 +17,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/stat.h>
+#include <sys/wait.h>
 
 #pragma pack(1)
 
@@ -62,6 +64,81 @@ void *xmalloc (size_t size)
 		exit (1);
 	}
 	return ret;
+}
+
+static int copy_string(char *dst, size_t dst_size, const char *src)
+{
+	int ret = snprintf(dst, dst_size, "%s", src);
+
+	return ret < 0 || (size_t)ret >= dst_size;
+}
+
+static int write_all(int fd, const void *buf, size_t len)
+{
+	const unsigned char *ptr = buf;
+
+	while (len) {
+		ssize_t written = write(fd, ptr, len);
+
+		if (written <= 0)
+			return -1;
+		ptr += written;
+		len -= written;
+	}
+
+	return 0;
+}
+
+static int compress_image_data(const char *prog, const unsigned char *data,
+			       size_t data_len, const char *outfile)
+{
+	int pipefd[2];
+	int outfd;
+	int status;
+	pid_t pid;
+
+	if (pipe(pipefd))
+		return -1;
+
+	outfd = open(outfile, O_WRONLY | O_CREAT | O_TRUNC, 0600);
+	if (outfd < 0) {
+		close(pipefd[0]);
+		close(pipefd[1]);
+		return -1;
+	}
+
+	pid = fork();
+	if (pid < 0) {
+		close(outfd);
+		close(pipefd[0]);
+		close(pipefd[1]);
+		return -1;
+	}
+
+	if (!pid) {
+		if (dup2(pipefd[0], STDIN_FILENO) < 0 ||
+		    dup2(outfd, STDOUT_FILENO) < 0)
+			_exit(EXIT_FAILURE);
+		close(pipefd[0]);
+		close(pipefd[1]);
+		close(outfd);
+		execlp(prog, prog, (char *)NULL);
+		_exit(EXIT_FAILURE);
+	}
+
+	close(pipefd[0]);
+	close(outfd);
+	if (write_all(pipefd[1], data, data_len)) {
+		close(pipefd[1]);
+		waitpid(pid, &status, 0);
+		return -1;
+	}
+	close(pipefd[1]);
+
+	if (waitpid(pid, &status, 0) < 0)
+		return -1;
+
+	return WIFEXITED(status) && WEXITSTATUS(status) == 0 ? 0 : -1;
 }
 
 void StringUpperCase (char *str)
@@ -344,35 +421,22 @@ int image_save_header (image_t * image, char *filename, char *varname)
 		FILE *compfp;
 		size_t filename_len = strlen(filename);
 		char *compfilename = xmalloc(filename_len + 20);
-		char *compcmd = xmalloc(filename_len + 50);
 
 		sprintf(compfilename, "%s.bin", filename);
 		switch (compression) {
 		case COMP_GZIP:
-			strcpy(compcmd, "gzip");
 			comp_name = "GZIP";
 			break;
 		case COMP_LZMA:
-			strcpy(compcmd, "lzma");
 			comp_name = "LZMA";
 			break;
 		default:
 			errstr = "\nerror: unknown compression method";
 			goto done;
 		}
-		strcat(compcmd, " > ");
-		strcat(compcmd, compfilename);
-		compfp = popen(compcmd, "w");
-		if (!compfp) {
-			errstr = "\nerror: popen() failed";
-			goto done;
-		}
-		if (fwrite(image->data, image->size, 1, compfp) != 1) {
-			errstr = "\nerror: writing data to gzip failed";
-			goto done;
-		}
-		if (pclose(compfp)) {
-			errstr = "\nerror: gzip process failed";
+		if (compress_image_data(compression == COMP_GZIP ? "gzip" : "lzma",
+					image->data, image->size, compfilename)) {
+			errstr = "\nerror: compressor execution failed";
 			goto done;
 		}
 
@@ -402,7 +466,6 @@ int image_save_header (image_t * image, char *filename, char *varname)
 
  done:
 		free(compfilename);
-		free(compcmd);
 
 		if (errstr) {
 			perror (errstr);
@@ -413,7 +476,11 @@ int image_save_header (image_t * image, char *filename, char *varname)
 	/*	Headers */
 	fprintf (file, "#include <video_easylogo.h>\n\n");
 	/*	Macros */
-	strcpy (def_name, varname);
+	if (copy_string(def_name, sizeof(def_name), varname)) {
+		fprintf(stderr, "error: variable name too long\n");
+		fclose(file);
+		return -1;
+	}
 	StringUpperCase (def_name);
 	fprintf (file, "#define	DEF_%s_WIDTH\t\t%d\n", def_name,
 		 image->width);
@@ -544,25 +611,34 @@ int main (int argc, char *argv[])
 	if (c > 4 || c < 1)
 		usage (1);
 
-	strcpy (inputfile, argv[optind]);
+	if (copy_string(inputfile, sizeof(inputfile), argv[optind]))
+		usage(1);
 
 	if (c > 1)
-		strcpy (varname, argv[optind + 1]);
+	{
+		if (copy_string(varname, sizeof(varname), argv[optind + 1]))
+			usage(1);
+	}
 	else {
 		/* transform "input.tga" to just "input" */
 		char *dot;
-		strcpy (varname, inputfile);
+		if (copy_string(varname, sizeof(varname), inputfile))
+			usage(1);
 		dot = strchr (varname, '.');
 		if (dot)
 			*dot = '\0';
 	}
 
 	if (c > 2)
-		strcpy (outputfile, argv[optind + 2]);
+	{
+		if (copy_string(outputfile, sizeof(outputfile), argv[optind + 2]))
+			usage(1);
+	}
 	else {
 		/* just append ".h" to input file name */
-		strcpy (outputfile, inputfile);
-		strcat (outputfile, ".h");
+		if (snprintf(outputfile, sizeof(outputfile), "%s.h", inputfile) >=
+		    sizeof(outputfile))
+			usage(1);
 	}
 
 	/* Make sure the output is sent as soon as we printf() */

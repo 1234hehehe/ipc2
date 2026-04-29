@@ -28,8 +28,8 @@
 			$preoffset=max(0,$offset-$limit);
 			$postoffset=$offset+$limit;
 			echo "<table width=\"100%\">\n<tr>\n";
-			printf("<td align=left><%sa href=\"%s?submit=Browse&offset=%d&verbose=%d\"><img border=0 alt=\"&lt;\" src=\"/icons/left.gif\"></a></td>\n", $offset>0?"":"no", $PHP_SELF, $preoffset, $verbose);
-			printf("<td align=right><%sa href=\"%s?submit=Browse&offset=%d&verbose=%d\"><img border=0 alt=\"&gt;\" src=\"/icons/right.gif\"></a></td>\n", $postoffset<$lrow['n']?"":"no", $PHP_SELF, $postoffset, $offset);
+			printf("<td align=left><%sa href=\"%s?submit=Browse&offset=%d&verbose=%d\"><img border=0 alt=\"&lt;\" src=\"/icons/left.gif\"></a></td>\n", $offset>0?"":"no", bddb_self(), $preoffset, $verbose);
+			printf("<td align=right><%sa href=\"%s?submit=Browse&offset=%d&verbose=%d\"><img border=0 alt=\"&gt;\" src=\"/icons/right.gif\"></a></td>\n", $postoffset<$lrow['n']?"":"no", bddb_self(), $postoffset, $offset);
 			echo "</tr>\n</table>\n";
 		}
 
@@ -112,7 +112,7 @@
 		print_cell($row['rev']);
 		print_cell($row['location']);
 		if ($verbose) {
-			print_cell("<pre>\n" . urldecode($row['comments']) .
+			print_cell("<pre>\n" . bddb_html(urldecode($row['comments'])) .
 				"\n\t</pre>");
 			print_cell(gather_enum_multi_print("sdram", 4, $row));
 			print_cell(gather_enum_multi_print("flash", 4, $row));
@@ -137,7 +137,7 @@
 <table width="100%">
 <tr>
   <td align=center><?php
-	printf("<a href=\"%s?submit=Browse&offset=%d&verbose=%d%s\">%s Listing</a>\n", $PHP_SELF, $offset, $verbose?0:1, $serno!=''?"&serno=$serno":'', $verbose?"Terse":"Verbose");
+	printf("<a href=\"%s?submit=Browse&offset=%d&verbose=%d%s\">%s Listing</a>\n", bddb_self(), $offset, $verbose?0:1, $serno!=''?"&serno=" . rawurlencode($serno):'', $verbose?"Terse":"Verbose");
   ?></td>
   <td align=center><a href="index.php">Back to Start</a></td>
 </tr>

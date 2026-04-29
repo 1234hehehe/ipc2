@@ -214,29 +214,39 @@ int do_bootvx(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 			max(strlen(bootline), 255));
 		flush_cache(bootaddr, max(strlen(bootline), 255));
 	} else {
-		sprintf(build_buf, CONFIG_SYS_VXWORKS_BOOT_DEVICE);
+		snprintf(build_buf, sizeof(build_buf),
+			 CONFIG_SYS_VXWORKS_BOOT_DEVICE);
 		tmp = getenv("bootfile");
 		if (tmp)
-			sprintf(&build_buf[strlen(build_buf)],
+			snprintf(build_buf + strlen(build_buf),
+				 sizeof(build_buf) - strlen(build_buf),
 				 "%s:%s ", CONFIG_SYS_VXWORKS_SERVERNAME, tmp);
 		else
-			sprintf(&build_buf[strlen(build_buf)],
+			snprintf(build_buf + strlen(build_buf),
+				 sizeof(build_buf) - strlen(build_buf),
 				 "%s:file ", CONFIG_SYS_VXWORKS_SERVERNAME);
 
 		tmp = getenv("ipaddr");
 		if (tmp)
-			sprintf(&build_buf[strlen(build_buf)], "e=%s ", tmp);
+			snprintf(build_buf + strlen(build_buf),
+				 sizeof(build_buf) - strlen(build_buf),
+				 "e=%s ", tmp);
 
 		tmp = getenv("serverip");
 		if (tmp)
-			sprintf(&build_buf[strlen(build_buf)], "h=%s ", tmp);
+			snprintf(build_buf + strlen(build_buf),
+				 sizeof(build_buf) - strlen(build_buf),
+				 "h=%s ", tmp);
 
 		tmp = getenv("hostname");
 		if (tmp)
-			sprintf(&build_buf[strlen(build_buf)], "tn=%s ", tmp);
+			snprintf(build_buf + strlen(build_buf),
+				 sizeof(build_buf) - strlen(build_buf),
+				 "tn=%s ", tmp);
 
 #ifdef CONFIG_SYS_VXWORKS_ADD_PARAMS
-		sprintf(&build_buf[strlen(build_buf)],
+		snprintf(build_buf + strlen(build_buf),
+			 sizeof(build_buf) - strlen(build_buf),
 			 CONFIG_SYS_VXWORKS_ADD_PARAMS);
 #endif
 

@@ -222,8 +222,15 @@ static uint32_t *ais_alloc_buffer(struct mkimage_params *params)
 	 * is not left to the main program, because after the datafile
 	 * the header must be terminated with the Jump & Close command.
 	 */
+	if (sbuf.st_size < 0 ||
+	    (size_t)WORD_ALIGN(sbuf.st_size) >
+	    (uint32_t)-1 - MAX_CMD_BUFFER) {
+		fprintf(stderr, "%s: image too large: %s\n",
+			params->cmdname, datafile);
+		exit(EXIT_FAILURE);
+	}
 	ais_img_size = WORD_ALIGN(sbuf.st_size) + MAX_CMD_BUFFER;
-	ptr = (uint32_t *)malloc(WORD_ALIGN(sbuf.st_size) + MAX_CMD_BUFFER);
+	ptr = (uint32_t *)malloc(ais_img_size);
 	if (!ptr) {
 		fprintf(stderr, "%s: malloc return failure: %s\n",
 			params->cmdname, strerror(errno));

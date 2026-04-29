@@ -92,6 +92,18 @@
 		return urldecode($str);
 	}
 
+	function bddb_html($str) {
+		return htmlspecialchars($str, ENT_QUOTES);
+	}
+
+	function bddb_self() {
+		return bddb_html(isset($_SERVER['PHP_SELF']) ? $_SERVER['PHP_SELF'] : '');
+	}
+
+	function bddb_sql($str) {
+		return mysql_real_escape_string($str);
+	}
+
 	mt_srand(time() | getmypid());
 
 	// set up MySQL connection
@@ -196,14 +208,9 @@
 			return FALSE;
 		$a = func_get_args();
 		$fp = array_shift($a);
-		$x = "\$s = sprintf";
-		$sep = '(';
-		foreach ($a as $z) {
-			$x .= "$sep'$z'";
-			$sep = ',';
-		}
-		$x .= ');';
-		eval($x);
+		$s = call_user_func_array('sprintf', $a);
+		if ($s === FALSE)
+			return FALSE;
 		$l = strlen($s);
 		$r = fwrite($fp, $s, $l);
 		if ($r != $l)
@@ -417,7 +424,7 @@
 
 			if (isset($_REQUEST[$name])) {
 				$retval .= sprintf(", %s='%s'",
-					$name, $_REQUEST[$name]);
+					$name, bddb_sql($_REQUEST[$name]));
 			}
 		}
 

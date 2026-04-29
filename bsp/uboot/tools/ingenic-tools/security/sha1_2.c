@@ -262,6 +262,10 @@ FILE *outfp;
 	//printf("\n");
 	#endif
 	outfp = fopen(outfilename,"a");
+	if (!outfp) {
+		perror("fopen");
+		return;
+	}
 	fprintf(outfp,"%s\n",ADDR_SHA1);
 	fprintf(outfp,"%02x\n",(infor.h0<<24)>>24);
 	fprintf(outfp,"%02x\n",(infor.h0<<16)>>24);
@@ -344,5 +348,4 @@ int do_sha1_2(int *pbuf)
 	}
 	return 0;
 }
-
 

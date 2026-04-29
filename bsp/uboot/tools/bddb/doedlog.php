@@ -26,17 +26,17 @@
 		if (!checkdate($m, $d, $y) || $y < 1999)
 			die("date is invalid (input '$date', " .
 				"yyyy-mm-dd '$y-$m-$d')");
-		$query.=" date='$date'";
+		$query.=" date='" . bddb_sql($date) . "'";
 	}
 
 	if (isset($_REQUEST['who'])) {
 		$who=$_REQUEST['who'];
-		$query.=", who='" . $who . "'";
+		$query.=", who='" . bddb_sql($who) . "'";
 	}
 
 	if (isset($_REQUEST['details'])) {
 		$details=$_REQUEST['details'];
-		$query.=", details='" . rawurlencode($details) . "'";
+		$query.=", details='" . bddb_sql(rawurlencode($details)) . "'";
 	}
 
 	$query.=" where serno=$serno and logno=$logno";
@@ -49,7 +49,7 @@
 		echo "\t\t\tThe following error was encountered:\n";
 		echo "\t\t</p>\n";
 		echo "\t\t<center>\n";
-		printf("\t\t\t<b>%s</b>\n", $errstr);
+		printf("\t\t\t<b>%s</b>\n", bddb_html($errstr));
 		echo "\t\t</center>\n";
 		echo "\t</font>\n";
 	}

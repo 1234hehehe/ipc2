@@ -169,7 +169,7 @@ int open_subdir (File_t *desc)
 	return (-1);
     }
 
-    strcpy (pathname, desc -> name);
+    snprintf(pathname, MAX_PATH, "%s", desc->name);
 
     /* Suppress file name                                                    */
     tmp = basename (pathname);

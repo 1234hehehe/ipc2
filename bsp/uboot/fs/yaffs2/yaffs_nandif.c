@@ -216,7 +216,9 @@ struct yaffs_dev *
 
 	if (dev && clonedName) {
 		memset(dev, 0, sizeof(struct yaffs_dev));
-		strcpy(clonedName, name);
+		memcpy(clonedName, name,
+		       (strnlen(name, YAFFS_MAX_NAME_LENGTH) + 1) *
+		       sizeof(YCHAR));
 
 		param = &dev->param;
 

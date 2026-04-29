@@ -183,7 +183,8 @@ int pcnet_initialize (bd_t * bis)
 		}
 		memset(dev, 0, sizeof(*dev));
 		dev->priv = (void *) devbusfn;
-		sprintf (dev->name, "pcnet#%d", dev_nr);
+		snprintf(dev->name, sizeof(dev->name),
+			 "pcnet#%d", dev_nr);
 
 		/*
 		 * Setup the PCI device.

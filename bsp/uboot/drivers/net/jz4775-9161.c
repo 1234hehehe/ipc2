@@ -778,7 +778,7 @@ int jz_net_initialize(bd_t *bis)
 
 	memset(dev, 0, sizeof(struct eth_device));
 
-	sprintf(dev->name, "Jz4775-9161");
+	snprintf(dev->name, sizeof(dev->name), "%s", "Jz4775-9161");
 
 	dev->iobase	= 0;
 	dev->priv	= 0;

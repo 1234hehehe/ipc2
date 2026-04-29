@@ -27,6 +27,7 @@
 
 static void copy_file(int, const char *, int);
 static void usage(void);
+static off_t get_file_size(const char *file);
 
 /* image_type_params link list to maintain registered image type supports */
 struct image_type_params *mkimage_tparams = NULL;
@@ -76,6 +77,25 @@ void mkimage_register (struct image_type_params *tparams)
 	tparams->next = NULL;
 
 	debug ("Registered %s\n", tparams->name);
+}
+
+static off_t get_file_size(const char *file)
+{
+	int fd;
+	struct stat sbuf;
+	off_t size;
+
+	fd = open(file, O_RDONLY | O_BINARY);
+	if (fd < 0)
+		return -1;
+	if (fstat(fd, &sbuf) < 0) {
+		close(fd);
+		return -1;
+	}
+	size = sbuf.st_size;
+	close(fd);
+
+	return size;
 }
 
 /*
@@ -347,7 +367,7 @@ NXTARG:		;
 		ifd = open (params.imagefile, O_RDONLY|O_BINARY);
 	} else {
 		ifd = open (params.imagefile,
-			O_RDWR|O_CREAT|O_TRUNC|O_BINARY, 0666);
+			O_RDWR|O_CREAT|O_TRUNC|O_BINARY, 0644);
 	}
 
 	if (ifd < 0) {
@@ -429,7 +449,8 @@ NXTARG:		;
 						*sep = '\0';
 					}
 
-					if (stat (file, &sbuf) < 0) {
+					sbuf.st_size = get_file_size(file);
+					if (sbuf.st_size < 0) {
 						fprintf (stderr, "%s: Can't stat %s: %s\n",
 							 params.cmdname, file, strerror(errno));
 						exit (EXIT_FAILURE);

@@ -124,6 +124,7 @@ static int read_system_map(FILE *fin)
 	int alloced;
 
 	for (linenum = 1, alloced = func_count = 0;; linenum++) {
+		struct func_info *new_list;
 		int fields = 0;
 
 		if (fgets(buff, sizeof(buff), fin))
@@ -145,9 +146,17 @@ static int read_system_map(FILE *fin)
 
 		if (func_count == alloced) {
 			alloced += 256;
-			func_list = realloc(func_list,
-					sizeof(struct func_info) * alloced);
-			assert(func_list);
+			if ((size_t)alloced > ((size_t)-1) / sizeof(*func_list)) {
+				error("Function table too large\n");
+				return -1;
+			}
+			new_list = realloc(func_list,
+					  sizeof(struct func_info) * alloced);
+			if (!new_list) {
+				error("Cannot grow function table\n");
+				return -1;
+			}
+			func_list = new_list;
 		}
 		if (!func_count)
 			start = offset;
@@ -224,7 +233,12 @@ static int read_calls(FILE *fin, int count)
 	int i;
 
 	notice("call count: %d\n", count);
-	call_list = (struct trace_call *)calloc(count, sizeof(*call_data));
+	if (count < 0 ||
+	    (size_t)count > ((size_t)-1) / sizeof(*call_list)) {
+		error("Call list too large\n");
+		return -1;
+	}
+	call_list = calloc(count, sizeof(*call_list));
 	if (!call_list) {
 		error("Cannot allocate call_list\n");
 		return -1;
@@ -444,9 +458,10 @@ static int read_trace_config(FILE *fin)
 
 		err = regcomp(&line->regex, tok, REG_NOSUB);
 		if (err) {
+			err = regex_report_error(&line->regex, err, "compile",
+						 tok);
 			free(line);
-			return regex_report_error(&line->regex, err, "compile",
-						  tok);
+			return err;
 		}
 
 		/* link this new one to the end of the list */
@@ -594,7 +609,7 @@ int main(int argc, char *argv[])
 			break;
 
 		case 'v':
-			verbose = atoi(optarg);
+			verbose = strtoul(optarg, NULL, 10);
 			break;
 
 		default:

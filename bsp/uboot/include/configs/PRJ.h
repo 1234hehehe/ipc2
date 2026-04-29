@@ -485,56 +485,12 @@
 /**
  * Boot arguments definitions.
  */
-#if defined(CONFIG_DDR3_W631GU6NG) || defined(CONFIG_DDR3_NK5CC64M16HQ3) || defined(CONFIG_LPDDR3_W63AH6N2B_BJ)
-#define BOOTARGS_COMMON "console=ttyS1,115200n8 mem=65536K@0x0 rmem=65536K@0x4000000"
-#elif defined(CONFIG_DDR3_W632GU6NG)
-#define BOOTARGS_COMMON "console=ttyS1,115200n8 mem=128M@0x0 rmem=128M@0x8000000"
-#elif defined(CONFIG_DDR2_W9751V6NG) || defined(CONFIG_DDR2_M14D5121632A)
-#define BOOTARGS_COMMON "console=ttyS1,115200n8 mem=40960K@0x0 rmem=24576K@0x2900000"
-#elif defined(CONFIG_DDR3_W638GU6QB)
-#define BOOTARGS_COMMON "console=ttyS1,115200n8 mem=256M@0x0 mem=768M@0x50000000"
-/* #define BOOTARGS_COMMON "console=ttyS1,115200n8 mem=256M@0x0 mem=256M@0x50000000" */
-#else
-#define BOOTARGS_COMMON "console=ttyS1,115200n8 mem=106M@0x0 rmem=22M@0x6a00000"
-#endif
+#define BOOTARGS_COMMON "console=ttyS1,115200n8 mem=88064K@0x0 rmem=43008K@0x5600000"
 
-#ifdef CONFIG_FAST_BOOT
-	#ifdef CONFIG_SPL_MMC_SUPPORT
-		#define CONFIG_BOOTARGS BOOTARGS_COMMON " init=/linuxrc root=/dev/mmcblk0p2 rw rootdelay=1"
-	#elif defined(CONFIG_SFC_NOR)
-		#ifdef CONFIG_OF_LIBFDT
-			#define CONFIG_BOOTARGS BOOTARGS_COMMON " init=/linuxrc rootfstype=squashfs root=/dev/mtdblock2 rw mtdparts=sfc0_nor:256k(boot),2560k(kernel),2048k(root),64k(dtb),-(appfs) lpj=11968512 quiet"
-		#else
-			#define CONFIG_BOOTARGS BOOTARGS_COMMON " init=/linuxrc rootfstype=squashfs root=/dev/mtdblock2 rw mtdparts=sfc0_nor:256k(boot),2560k(kernel),2048k(root),-(appfs) lpj=11968512 quiet"
-		#endif
-	#elif defined(CONFIG_SFC_NAND)
-		#define CONFIG_BOOTARGS BOOTARGS_COMMON " init=/linuxrc ubi.mtd=2 root=ubi0:rootfs rootfstype=ubifs rw mtdparts=sfc0_nand:1M(uboot),3M(kernel),20M(root),-(appfs) lpj=11968512 quiet"
-	#endif
-#else
-	#ifdef CONFIG_SPL_MMC_SUPPORT
-		#define CONFIG_BOOTARGS BOOTARGS_COMMON " init=/linuxrc root=/dev/mmcblk0p2 rw rootdelay=1"
-	#elif defined(CONFIG_SFC_NOR)
-		#ifdef CONFIG_OF_LIBFDT
-			#define CONFIG_BOOTARGS BOOTARGS_COMMON " init=/linuxrc rootfstype=squashfs root=/dev/mtdblock2 rw mtdparts=sfc0_nor:256k(boot),2560k(kernel),2048k(root),64k(dtb),-(appfs)"
-		#else
-			#ifdef CONFIG_RAMROOTFS
-				#ifdef CONFIG_CUSTOM
-					#define CONFIG_BOOTARGS BOOTARGS_COMMON " rdinit=/linuxrc root=/dev/ram0 rw mtdparts=sfc0_nor:256k(uboot),64k(factory),2560k(config),3072k(kernel),1024k(media),-(appfs) quiet"
-				#else
-					#define CONFIG_BOOTARGS BOOTARGS_COMMON " rdinit=/linuxrc root=/dev/ram0 rw mtdparts=sfc0_nor:256k(uboot),64k(factory),512k(config),2560k(kernel),-(appfs) quiet"
-				#endif
-			#else //CONFIG_RAMROOTFS
-				#ifdef CONFIG_CUSTOM
-					#define CONFIG_BOOTARGS BOOTARGS_COMMON " rdinit=/linuxrc root=/dev/mtdblock4 fstype=squashfs mtdparts=sfc0_nor:256k(uboot),64k(factory),2560k(config),1536k(kernel),1536k(rootfs),1024k(media),-(appfs) quiet"
-				#else
-					#define CONFIG_BOOTARGS BOOTARGS_COMMON " rdinit=/linuxrc root=/dev/mtdblock4 fstype=squashfs mtdparts=sfc0_nor:256k(uboot),64k(factory),512k(config),1216k(kernel),1152k(rootfs),-(appfs) quiet"
-				#endif
-			#endif //CONFIG_RAMROOTFS
-		#endif
-	#elif defined(CONFIG_SFC_NAND)
-		#define CONFIG_BOOTARGS BOOTARGS_COMMON " init=/linuxrc ubi.mtd=2 root=ubi0:rootfs rootfstype=ubifs rw mtdparts=sfc0_nand:1M(uboot),3M(kernel),20M(root),-(appfs)"
-	#endif
-#endif
+#define CONFIG_BOOTARGS BOOTARGS_COMMON " rdinit=/linuxrc rootfstype=squashfs root=/dev/mtdblock4 mtdparts=sfc0_nor:256k(uboot),64k(factory),2048k(config),1728k(kernel),1344k(rootfs),1024k(media),-(appfs) quiet"
+
+#define CONFIG_BOOTCOMMAND "sf0 probe;sf0 read 0x81000000 0x250000 0x1B0000;bootm 0x81000000"
+
 #define CONFIG_MD5
 
 /**
@@ -542,10 +498,6 @@
  */
 #define CONFIG_CMD_WATCHDOG
 #define CONFIG_BOOTDELAY 1
-
-#ifdef CONFIG_SPL_MMC_SUPPORT
-    #define CONFIG_BOOTCOMMAND "mmc read 0x80600000 0x1800 0x3000; bootm 0x80600000"
-#endif  /* CONFIG_SPL_MMC_SUPPORT */
 
 /*#define CONFIG_BIG_SPL*/
 #ifdef CONFIG_BIG_SPL
@@ -563,17 +515,6 @@
 /* #define CONFIG_SPL_LIBCOMMON_SUPPORT */
 
 
-#ifdef CONFIG_SFC_NOR
-#ifdef CONFIG_OF_LIBFDT
-	#define CONFIG_BOOTCOMMAND "sf0 probe;sf0 read 0x80600000 0x40000 0x280000;sf0 read 0x83000000 0x540000 0x10000;bootm 0x80600000 - 0x83000000"
-#else
-	#define CONFIG_BOOTCOMMAND "sf0 probe;sf0 read 0x80600000 0x140000 0x280000;bootm 0x80600000"
-#endif
-#endif /* CONFIG_SFC_NOR */
-
-#ifdef CONFIG_SFC_NAND
-	#define CONFIG_BOOTCOMMAND "nand read 0x80600000 0x100000 0x300000;bootm 0x80600000"
-#endif /* CONFIG_SFC_NAND */
 
 
 

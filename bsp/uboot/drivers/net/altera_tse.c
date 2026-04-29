@@ -956,7 +956,8 @@ int altera_tse_initialize(u8 dev_num, int mac_base,
 	dev->send = tse_eth_send;
 	dev->recv = tse_eth_rx;
 	dev->write_hwaddr = tse_set_mac_address;
-	sprintf(dev->name, "%s-%hu", "ALTERA_TSE", dev_num);
+	snprintf(dev->name, sizeof(dev->name), "%s-%hu",
+		 "ALTERA_TSE", dev_num);
 
 	eth_register(dev);
 

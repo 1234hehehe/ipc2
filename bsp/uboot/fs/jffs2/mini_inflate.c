@@ -138,6 +138,7 @@ static int read_symbol(struct bitstream *stream, struct huffman_set *set)
 {
 	int bits = 0;
 	int code = 0;
+	int index;
 	while (!(set->count[bits] && code < set->first[bits] +
 					     set->count[bits])) {
 		code = (code << 1) + pull_bit(stream);
@@ -147,7 +148,12 @@ static int read_symbol(struct bitstream *stream, struct huffman_set *set)
 			return -1;
 		}
 	}
-	return set->symbols[set->pos[bits] + code - set->first[bits]];
+	index = set->pos[bits] + code - set->first[bits];
+	if (index < 0 || index >= set->num_symbols) {
+		stream->error = CODE_NOT_FOUND;
+		return -1;
+	}
+	return set->symbols[index];
 }
 
 /* decompress a stream of data encoded with the passed length and distance
@@ -283,6 +289,10 @@ static void decompress_dynamic(struct bitstream *stream, unsigned char *dest)
 						last_code;
 					lengths->count[last_code]++;
 				} else { /* wrap to the distance table */
+					if (curr_code - hlit >= hdist) {
+						stream->error = CODE_NOT_FOUND;
+						return;
+					}
 					distance->lengths[curr_code - hlit] =
 						last_code;
 					distance->count[last_code]++;
@@ -293,6 +303,10 @@ static void decompress_dynamic(struct bitstream *stream, unsigned char *dest)
 		} else { /* same, but more times */
 			curr_code += 11 + pull_bits(stream, 7);
 			last_code = 0;
+		}
+		if (curr_code > hlit + hdist) {
+			stream->error = CODE_NOT_FOUND;
+			return;
 		}
 	}
 	fill_code_tables(lengths);
@@ -312,6 +326,10 @@ static void decompress_dynamic(struct bitstream *stream, unsigned char *dest)
 		} else if (symbol == 16) {
 			length = 3 + pull_bits(stream, 2);
 			for (;length; length--, curr_code++) {
+				if (curr_code >= hdist) {
+					stream->error = CODE_NOT_FOUND;
+					return;
+				}
 				distance->lengths[curr_code] =
 					last_code;
 				distance->count[last_code]++;
@@ -322,6 +340,10 @@ static void decompress_dynamic(struct bitstream *stream, unsigned char *dest)
 		} else {
 			curr_code += 11 + pull_bits(stream, 7);
 			last_code = 0;
+		}
+		if (curr_code > hdist) {
+			stream->error = CODE_NOT_FOUND;
+			return;
 		}
 	}
 	fill_code_tables(distance);

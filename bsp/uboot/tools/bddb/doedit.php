@@ -20,7 +20,7 @@
 		$ethaddr=$_REQUEST['ethaddr'];
 		if (!eth_addr_is_valid($ethaddr))
 			die("ethaddr is invalid ('$ethaddr')");
-		$query.=" ethaddr='$ethaddr',";
+		$query.=" ethaddr='" . bddb_sql($ethaddr) . "',";
 	}
 
 	if (isset($_REQUEST['date'])) {
@@ -29,21 +29,21 @@
 		if (!checkdate($m, $d, $y) || $y < 1999)
 			die("date is invalid (input '$date', " .
 				"yyyy-mm-dd '$y-$m-$d')");
-		$query.=" date='$date'";
+		$query.=" date='" . bddb_sql($date) . "'";
 	}
 
 	if (isset($_REQUEST['batch'])) {
 		$batch=$_REQUEST['batch'];
 		if (strlen($batch) > 32)
 			die("batch field too long (>32)");
-		$query.=", batch='$batch'";
+		$query.=", batch='" . bddb_sql($batch) . "'";
 	}
 
 	if (isset($_REQUEST['type'])) {
 		$type=$_REQUEST['type'];
 		if (!in_array($type, $type_vals))
 			die("Invalid type ($type) specified");
-		$query.=", type='$type'";
+		$query.=", type='" . bddb_sql($type) . "'";
 	}
 
 	if (isset($_REQUEST['rev'])) {
@@ -57,12 +57,13 @@
 		$location=$_REQUEST['location'];
 		if (strlen($location) > 64)
 			die("location field too long (>64)");
-		$query.=", location='$location'";
+		$query.=", location='" . bddb_sql($location) . "'";
 	}
 
-	if (isset($_REQUEST['comments']))
+	if (isset($_REQUEST['comments'])) {
 		$comments=$_REQUEST['comments'];
-		$query.=", comments='" . rawurlencode($comments) . "'";
+		$query.=", comments='" . bddb_sql(rawurlencode($comments)) . "'";
+	}
 
 	$query.=gather_enum_multi_query("sdram", 4);
 
@@ -87,19 +88,19 @@
 
 	if (isset($_REQUEST['cputyp'])) {
 		$cputyp=$_REQUEST['cputyp'];
-		$query.=", cputyp='$cputyp'";
+		$query.=", cputyp='" . bddb_sql($cputyp) . "'";
 		if (!isset($_REQUEST['cpuspd']) || $_REQUEST['cpuspd'] == '')
 			die("must specify cpu speed if cpu type is defined");
 		$cpuspd=$_REQUEST['cpuspd'];
-		$query.=", cpuspd='$cpuspd'";
+		$query.=", cpuspd='" . bddb_sql($cpuspd) . "'";
 		if (!isset($_REQUEST['cpmspd']) || $_REQUEST['cpmspd'] == '')
 			die("must specify cpm speed if cpu type is defined");
 		$cpmspd=$_REQUEST['cpmspd'];
-		$query.=", cpmspd='$cpmspd'";
+		$query.=", cpmspd='" . bddb_sql($cpmspd) . "'";
 		if (!isset($_REQUEST['busspd']) || $_REQUEST['busspd'] == '')
 			die("must specify bus speed if cpu type is defined");
 		$busspd=$_REQUEST['busspd'];
-		$query.=", busspd='$busspd'";
+		$query.=", busspd='" . bddb_sql($busspd) . "'";
 	}
 	else {
 		if (isset($_REQUEST['cpuspd']))
@@ -126,7 +127,7 @@
 		$hschout = 0;
 	if (isset($_REQUEST['hstype'])) {
 		$hstype=$_REQUEST['hstype'];
-		$query.=", hstype='$hstype'";
+		$query.=", hstype='" . bddb_sql($hstype) . "'";
 	}
 	else {
 		if ($_REQUEST['hschin'] != 0)
@@ -149,7 +150,7 @@
 		echo "\t\t\tThe following error was encountered:\n";
 		echo "\t\t</p>\n";
 		echo "\t\t<center>\n";
-		printf("\t\t\t<b>%s</b>\n", $errstr);
+		printf("\t\t\t<b>%s</b>\n", bddb_html($errstr));
 		echo "\t\t</center>\n";
 		echo "\t</font>\n";
 	}

@@ -167,7 +167,7 @@ int xilinx_ll_temac_mdio_initialize(bd_t *bis, struct ll_temac_mdio_info *info)
 
 	/* use given name or generate its own unique name */
 	if (info->name) {
-		strncpy(bus->name, info->name, MDIO_NAME_LEN);
+		snprintf(bus->name, sizeof(bus->name), "%s", info->name);
 	} else {
 		snprintf(bus->name, MDIO_NAME_LEN, "lltemii.%p", info->regs);
 		info->name = bus->name;

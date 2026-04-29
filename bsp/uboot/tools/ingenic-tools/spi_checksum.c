@@ -48,6 +48,12 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
+	if (strstr(argv[1], "../") || strstr(argv[1], "/..") ||
+	    strcmp(argv[1], "..") == 0) {
+		printf("Refuse unsafe path: %s\n", argv[1]);
+		return 1;
+	}
+
 	fd = open(argv[1], O_RDWR);
 	if (fd < 0) {
 		printf("Open %s Error\n", argv[1]);

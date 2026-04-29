@@ -326,7 +326,8 @@ natsemi_initialize(bd_t * bis)
 		}
 		memset(dev, 0, sizeof(*dev));
 
-		sprintf(dev->name, "dp83815#%d", card_number);
+		snprintf(dev->name, sizeof(dev->name),
+			 "dp83815#%d", card_number);
 		dev->iobase = bus_to_phys(iobase);
 #ifdef NATSEMI_DEBUG
 		printf("natsemi: NatSemi ns8381[56] @ %#x\n", dev->iobase);

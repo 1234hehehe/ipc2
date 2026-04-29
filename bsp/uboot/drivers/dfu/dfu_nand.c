@@ -171,8 +171,12 @@ int dfu_fill_entity_nand(struct dfu_entity *dfu, char *s)
 		dev = simple_strtoul(s, &s, 10);
 		s++;
 		part = simple_strtoul(s, &s, 10);
+		if (part <= 0) {
+			printf("Invalid NAND partition %d\n", part);
+			return -1;
+		}
 
-		sprintf(mtd_id, "%s%d,%d", "nand", dev, part - 1);
+		snprintf(mtd_id, sizeof(mtd_id), "nand%d,%d", dev, part - 1);
 		printf("using id '%s'\n", mtd_id);
 
 		mtdparts_init();

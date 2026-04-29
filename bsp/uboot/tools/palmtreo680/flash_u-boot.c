@@ -105,7 +105,11 @@ int main(int argc, char * const argv[])
 
 	printf("IMPORTANT: These blocks must be in an erased state!\n");
 	printf("Do you want to proceed?\n");
-	scanf("%s", response);
+	if (!fgets(response, sizeof(response), stdin)) {
+		printf("Failed to read response\n");
+		close(devfd);
+		return EXIT_FAILURE;
+	}
 	if ((response[0] != 'y') && (response[0] != 'Y')) {
 		printf("Exiting\n");
 		close(devfd);

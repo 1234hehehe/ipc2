@@ -439,7 +439,7 @@ int i2c_read(uchar chip, uint addr, int alen, uchar *buffer, int len)
 	uchar xaddr[4];
 	int ret;
 
-	if (alen > 4) {
+	if (alen < 0 || alen > 4) {
 		debug("I2C read: addr len %d not supported\n", alen);
 		return 1;
 	}
@@ -482,7 +482,7 @@ int i2c_write(uchar chip, uint addr, int alen, uchar *buffer, int len)
 	struct s3c24x0_i2c *i2c;
 	uchar xaddr[4];
 
-	if (alen > 4) {
+	if (alen < 0 || alen > 4) {
 		debug("I2C write: addr len %d not supported\n", alen);
 		return 1;
 	}

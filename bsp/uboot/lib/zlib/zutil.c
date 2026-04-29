@@ -53,6 +53,8 @@ voidpf zcalloc(voidpf opaque, unsigned items, unsigned size)
 {
 	if (opaque)
 		items += size - size; /* make compiler happy */
+	if (size && items > (unsigned)-1 / size)
+		return Z_NULL;
 	return sizeof(uInt) > 2 ? (voidpf)malloc(items * size) :
 		(voidpf)calloc(items, size);
 }

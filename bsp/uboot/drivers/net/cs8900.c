@@ -328,7 +328,8 @@ int cs8900_initialize(u8 dev_num, int base_addr)
 	/* Load MAC address from EEPROM */
 	cs8900_get_enetaddr(dev);
 
-	sprintf(dev->name, "%s-%hu", CS8900_DRIVERNAME, dev_num);
+	snprintf(dev->name, sizeof(dev->name), "%s-%hu",
+		 CS8900_DRIVERNAME, dev_num);
 
 	eth_register(dev);
 	return 0;

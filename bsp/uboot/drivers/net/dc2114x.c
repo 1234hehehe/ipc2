@@ -289,9 +289,11 @@ int dc21x4x_initialize(bd_t *bis)
 		memset(dev, 0, sizeof(*dev));
 
 #ifdef CONFIG_TULIP_FIX_DAVICOM
-		sprintf(dev->name, "Davicom#%d", card_number);
+		snprintf(dev->name, sizeof(dev->name),
+			 "Davicom#%d", card_number);
 #else
-		sprintf(dev->name, "dc21x4x#%d", card_number);
+		snprintf(dev->name, sizeof(dev->name),
+			 "dc21x4x#%d", card_number);
 #endif
 
 #ifdef CONFIG_TULIP_USE_IO

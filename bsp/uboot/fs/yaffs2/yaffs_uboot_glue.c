@@ -410,7 +410,8 @@ void cmd_yaffs_ls(const char *mountpt, int longlist)
 
 	for (i = 0; (de = yaffs_readdir(d)) != NULL; i++) {
 		if (longlist) {
-			sprintf(tempstr, "%s/%s", mountpt, de->d_name);
+			snprintf(tempstr, sizeof(tempstr), "%s/%s",
+				 mountpt, de->d_name);
 			yaffs_lstat(tempstr, &stat);
 			printf("%-25s\t%7ld",
 					de->d_name,

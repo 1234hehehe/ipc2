@@ -696,7 +696,8 @@ int asix_eth_get_info(struct usb_device *dev, struct ueth_data *ss,
 		debug("%s: missing parameter.\n", __func__);
 		return 0;
 	}
-	sprintf(eth->name, "%s%d", ASIX_BASE_NAME, curr_eth_dev++);
+	snprintf(eth->name, sizeof(eth->name), "%s%d",
+		 ASIX_BASE_NAME, curr_eth_dev++);
 	eth->init = asix_init;
 	eth->send = asix_send;
 	eth->recv = asix_recv;

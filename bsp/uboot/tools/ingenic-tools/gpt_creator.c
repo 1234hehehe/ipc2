@@ -18,8 +18,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include <fcntl.h>
+#include <limits.h>
 #include <sys/stat.h>
+#ifdef _WIN32
+#include <direct.h>
+#else
+#include <unistd.h>
+#endif
 
 #include <u-boot/zlib.h>
 
@@ -437,6 +444,9 @@ u64 parse_size(char *sz)
 {
 	u64 n;
 
+	if (!sz || !*sz)
+		return 0;
+
 	int l = strlen(sz);
 
 #ifdef _WIN32
@@ -445,8 +455,8 @@ u64 parse_size(char *sz)
 	n = strtoull(sz, 0, 10);
 #endif
 
-	if (l) {
-		switch(sz[l-1]){
+	if (l > 0) {
+		switch (sz[l - 1]) {
 		case 'k':
 		case 'K':
 			n *= 1024;
@@ -464,6 +474,91 @@ u64 parse_size(char *sz)
 	return n;
 }
 
+static int path_is_within_base(const char *base, const char *path)
+{
+	size_t base_len;
+
+	if (!base || !path)
+		return 0;
+
+	base_len = strlen(base);
+	if (strncmp(base, path, base_len))
+		return 0;
+
+	return path[base_len] == '\0' || path[base_len] == '/';
+}
+
+static int resolve_safe_path(const char *path, char *resolved, size_t resolved_size,
+			     int must_exist)
+{
+	char cwd[PATH_MAX];
+	char candidate[PATH_MAX];
+	char parent[PATH_MAX];
+	char parent_real[PATH_MAX];
+	const char *leaf;
+	char *sep;
+	int ret;
+
+	if (!path || !*path || !resolved || resolved_size == 0)
+		return -1;
+
+	if (strstr(path, "../") || strstr(path, "/..") || strcmp(path, "..") == 0)
+		return -1;
+
+#ifdef _WIN32
+	if (!_getcwd(cwd, sizeof(cwd)))
+#else
+	if (!getcwd(cwd, sizeof(cwd)))
+#endif
+		return -1;
+
+	ret = snprintf(candidate, sizeof(candidate), "%s%s%s",
+		       (path[0] == '/') ? "" : cwd,
+		       (path[0] == '/') ? "" : "/",
+		       path);
+	if (ret < 0 || ret >= (int)sizeof(candidate))
+		return -1;
+
+	if (must_exist) {
+		if (!realpath(candidate, resolved))
+			return -1;
+		return path_is_within_base(cwd, resolved) ? 0 : -1;
+	}
+
+	ret = snprintf(parent, sizeof(parent), "%s", candidate);
+	if (ret < 0 || ret >= (int)sizeof(parent))
+		return -1;
+
+	sep = strrchr(parent, '/');
+	if (sep) {
+		leaf = sep + 1;
+		if (*leaf == '\0' || !strcmp(leaf, ".") || !strcmp(leaf, ".."))
+			return -1;
+		if (sep == parent)
+			sep[1] = '\0';
+		else
+			*sep = '\0';
+	} else {
+		leaf = parent;
+		if (*leaf == '\0' || !strcmp(leaf, ".") || !strcmp(leaf, ".."))
+			return -1;
+		ret = snprintf(parent, sizeof(parent), "%s", cwd);
+		if (ret < 0 || ret >= (int)sizeof(parent))
+			return -1;
+	}
+
+	if (!realpath(parent, parent_real))
+		return -1;
+	if (!path_is_within_base(cwd, parent_real))
+		return -1;
+
+	ret = snprintf(resolved, resolved_size, "%s/%s", parent_real, leaf);
+	if (ret < 0 || ret >= (int)resolved_size)
+		return -1;
+
+	return 0;
+}
+
 int main(int argc, char **argv)
 {
 	struct ptable ptbl;
@@ -472,6 +567,9 @@ int main(int argc, char **argv)
 	u64 gpt_header_lba = GPT_PRIMARY_PARTITION_TABLE_LBA;
 	char * str_disk_size, * str_gpt_lba, *str_custom_signature;
 	char * mbr_file_name, * gpt_file_name, * config_file_name;
+	char config_path[PATH_MAX];
+	char mbr_path[PATH_MAX];
+	char gpt_path[PATH_MAX];
 	group_t * partitions;
 	u32 crc, custom_signature;
 	FILE* fd = NULL;
@@ -481,9 +579,16 @@ int main(int argc, char **argv)
 	if (argc != 4)
 		return usage();
 
-	config_file_name = argv[1];
-	mbr_file_name = argv[2];
-	gpt_file_name = argv[3];
+	if (resolve_safe_path(argv[1], config_path, sizeof(config_path), 1) ||
+	    resolve_safe_path(argv[2], mbr_path, sizeof(mbr_path), 0) ||
+	    resolve_safe_path(argv[3], gpt_path, sizeof(gpt_path), 0)) {
+		fprintf(stderr, "unsafe file path\n");
+		return -1;
+	}
+
+	config_file_name = config_path;
+	mbr_file_name = mbr_path;
+	gpt_file_name = gpt_path;
 
 	fd = fopen(config_file_name, "r");
 	if (fd == NULL) {

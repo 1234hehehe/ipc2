@@ -637,7 +637,8 @@ int ks8851_mll_initialize(u8 dev_num, int base_addr)
 	dev->send = ks8851_mll_send;
 	dev->recv = ks8851_mll_recv;
 	dev->write_hwaddr = ks8851_mll_write_hwaddr;
-	sprintf(dev->name, "%s-%hu", DRIVERNAME, dev_num);
+	snprintf(dev->name, sizeof(dev->name), "%s-%hu",
+		 DRIVERNAME, dev_num);
 
 	eth_register(dev);
 

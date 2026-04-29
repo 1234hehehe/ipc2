@@ -639,7 +639,7 @@ int xilinx_axiemac_initialize(bd_t *bis, unsigned long base_addr,
 	}
 	priv = dev->priv;
 
-	sprintf(dev->name, "aximac.%lx", base_addr);
+	snprintf(dev->name, sizeof(dev->name), "aximac.%lx", base_addr);
 
 	dev->iobase = base_addr;
 	priv->dmatx = (struct axidma_reg *)dma_addr;

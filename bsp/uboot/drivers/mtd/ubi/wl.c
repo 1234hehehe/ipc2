@@ -1459,7 +1459,8 @@ int ubi_wl_init_scan(struct ubi_device *ubi, struct ubi_scan_info *si)
 	ubi->max_ec = si->max_ec;
 	INIT_LIST_HEAD(&ubi->works);
 
-	sprintf(ubi->bgt_name, UBI_BGT_NAME_PATTERN, ubi->ubi_num);
+	snprintf(ubi->bgt_name, sizeof(ubi->bgt_name),
+		 UBI_BGT_NAME_PATTERN, ubi->ubi_num);
 
 	err = -ENOMEM;
 	ubi->lookuptbl = kzalloc(ubi->peb_count * sizeof(void *), GFP_KERNEL);

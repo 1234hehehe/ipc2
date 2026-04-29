@@ -144,7 +144,7 @@ static void ddrp_params_creator_lpddr2(struct ddrp_reg *ddrp, struct ddr_params 
 	ddrp->mr1.lpddr2.nWR = tmp - 2;
 	if(!(p->bl == 4 || p->bl == 8 || p->bl == 16)) {
 		out_error("BL(%d) should is 4 or 8 or 16\n", p->bl);
-		assert(1);
+		return;
 	}
 	tmp = p->bl;
 	while (tmp >>= 1) count++;
@@ -154,7 +154,7 @@ static void ddrp_params_creator_lpddr2(struct ddrp_reg *ddrp, struct ddr_params 
 	   tmp > 8)
 	{
 		out_error("the PHY don't support the RL(%d) \n",p->private_params.lpddr2_params.RL);
-		assert(1);
+		return;
 	}
 
 	rl = tmp;
@@ -163,7 +163,7 @@ static void ddrp_params_creator_lpddr2(struct ddrp_reg *ddrp, struct ddr_params 
 	   tmp > 4)
 	{
 		out_error("the PHY don't support the WL(%d) \n",p->private_params.lpddr2_params.WL);
-		assert(1);
+		return;
 	}
 	wl = tmp;
 
@@ -192,7 +192,7 @@ static void ddrp_params_creator_lpddr2(struct ddrp_reg *ddrp, struct ddr_params 
 	default:
 		out_error("the PHY don't support the WL(%d) or RL(%d)\n",
 			  p->private_params.lpddr2_params.WL,p->private_params.lpddr2_params.RL);
-		assert(1);
+		return;
 	}
 	ddrp->mr2.lpddr2.RL_WL = tmp;
 

@@ -103,13 +103,14 @@ int main(int argc, char *argv[])
 
 	if (argc > 2) {
 		if (strcmp("-o", argv[argc - 2]) == 0) {
-			strcpy(mbr_name, argv[argc - 1]);
+			snprintf(mbr_name, sizeof(mbr_name), "%s",
+				 argv[argc - 1]);
 			argc -= 2;
 		}else {
-			strcpy(mbr_name, "mbr.bin");
+			snprintf(mbr_name, sizeof(mbr_name), "%s", "mbr.bin");
 		}
 	}else {
-		strcpy(mbr_name, "mbr.bin");
+		snprintf(mbr_name, sizeof(mbr_name), "%s", "mbr.bin");
 	}
 
 	printf("argc = %d\n", argc);
@@ -144,7 +145,7 @@ int main(int argc, char *argv[])
 	memcpy(block+0x1e2,&tab_item[2].type,sizeof(unsigned char));
 	memcpy(block+0x1f2,&tab_item[3].type,sizeof(unsigned char));
 
-	fd = open(mbr_name,O_RDWR | O_TRUNC | O_CREAT,0666);
+	fd = open(mbr_name, O_RDWR | O_TRUNC | O_CREAT, 0644);
 	if(fd < 0)
 	{
 		printf("open %s failed.\n",mbr_name);

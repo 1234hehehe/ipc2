@@ -314,7 +314,7 @@ static int dfu_fill_entity(struct dfu_entity *dfu, char *s, int alt,
 
 	debug("%s: %s interface: %s num: %d\n", __func__, s, interface, num);
 	st = strsep(&s, " ");
-	strcpy(dfu->name, st);
+	snprintf(dfu->name, sizeof(dfu->name), "%s", st);
 
 	dfu->dev_num = num;
 	dfu->alt = alt;
@@ -357,7 +357,11 @@ int dfu_config_entities(char *env, char *interface, int num)
 	dfu_alt_num = dfu_find_alt_num(env);
 	debug("%s: dfu_alt_num=%d\n", __func__, dfu_alt_num);
 
-	dfu = calloc(sizeof(*dfu), dfu_alt_num);
+	if (dfu_alt_num <= 0 ||
+	    (size_t)dfu_alt_num > ((size_t)-1) / sizeof(*dfu))
+		return -1;
+
+	dfu = calloc(dfu_alt_num, sizeof(*dfu));
 	if (!dfu)
 		return -1;
 	for (i = 0; i < dfu_alt_num; i++) {

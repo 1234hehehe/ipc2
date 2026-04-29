@@ -16,7 +16,7 @@
 
 	if (!isset($_REQUEST['logno']) || $_REQUEST['logno'] == 0)
 		die("the log entry number not specified!");
-	$logno=$_REQUEST['logno'];
+	$logno=intval($_REQUEST['logno']);
 
 	mysql_query("delete from log where serno=$serno and logno=$logno");
 
@@ -27,15 +27,15 @@
 		echo "\t\t\tThe following error was encountered:\n";
 		echo "\t\t</p>\n";
 		echo "\t\t<center>\n";
-		printf("\t\t\t<b>%s</b>\n", $errstr);
+		printf("\t\t\t<b>%s</b>\n", bddb_html($errstr));
 		echo "\t\t</center>\n";
 		echo "\t</font>\n";
 	}
 	else {
 		echo "\t<font size=+2>\n";
 		echo "\t\t<p>\n";
-		echo "\t\t\tThe log entry with log number <b>$logno</b>\n";
-		echo "\t\t\tand serial number <b>$serno</b> ";
+		echo "\t\t\tThe log entry with log number <b>" . bddb_html($logno) . "</b>\n";
+		echo "\t\t\tand serial number <b>" . bddb_html($serno) . "</b> ";
 		echo "was successfully deleted\n";
 		echo "\t\t</p>\n";
 		echo "\t</font>\n";

@@ -343,7 +343,8 @@ ns8382x_initialize(bd_t * bis)
 		}
 		memset(dev, 0, sizeof(*dev));
 
-		sprintf(dev->name, "dp8382x#%d", card_number);
+		snprintf(dev->name, sizeof(dev->name),
+			 "dp8382x#%d", card_number);
 		dev->iobase = bus_to_phys(iobase);
 		dev->priv = (void *) devno;
 		dev->init = ns8382x_init;

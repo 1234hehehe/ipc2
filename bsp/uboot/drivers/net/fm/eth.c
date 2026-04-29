@@ -671,6 +671,12 @@ int fm_eth_initialize(struct ccsr_fman *reg, struct fm_eth_info *info)
 	fm_eth->num = num;
 	fm_eth->type = info->type;
 
+	if (info->rx_port_id <= 0 || info->tx_port_id <= 0) {
+		free(fm_eth);
+		free(dev);
+		return 0;
+	}
+
 	fm_eth->rx_port = (void *)&reg->port[info->rx_port_id - 1].fm_bmi;
 	fm_eth->tx_port = (void *)&reg->port[info->tx_port_id - 1].fm_bmi;
 
@@ -683,9 +689,11 @@ int fm_eth_initialize(struct ccsr_fman *reg, struct fm_eth_info *info)
 
 	/* keep same as the manual, we call FMAN1, FMAN2, DTSEC1, DTSEC2, etc */
 	if (fm_eth->type == FM_ETH_1G_E)
-		sprintf(dev->name, "FM%d@DTSEC%d", info->index, num + 1);
+		snprintf(dev->name, sizeof(dev->name),
+			 "FM%d@DTSEC%d", info->index, num + 1);
 	else
-		sprintf(dev->name, "FM%d@TGEC%d", info->index, num + 1);
+		snprintf(dev->name, sizeof(dev->name),
+			 "FM%d@TGEC%d", info->index, num + 1);
 
 	devlist[num_controllers++] = dev;
 	dev->iobase = 0;

@@ -354,10 +354,16 @@ int gpio_alloc(u32 baseaddr, const char *name, u32 gpio_no)
 /* Dual channel gpio is one IP with two independent channels */
 int gpio_alloc_dual(u32 baseaddr, const char *name, u32 gpio_no0, u32 gpio_no1)
 {
+	char dual_name[GPIO_NAME_SIZE];
 	int ret;
 
 	ret = gpio_alloc(baseaddr, name, gpio_no0);
-	gpio_alloc(baseaddr + 8, strcat((char *)name, "_1"), gpio_no1);
+	if (name) {
+		snprintf(dual_name, sizeof(dual_name), "%s_1", name);
+		gpio_alloc(baseaddr + 8, dual_name, gpio_no1);
+	} else {
+		gpio_alloc(baseaddr + 8, NULL, gpio_no1);
+	}
 
 	/* Return the first gpio allocated for this device */
 	return ret;

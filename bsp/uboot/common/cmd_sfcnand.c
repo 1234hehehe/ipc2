@@ -46,7 +46,7 @@ int do_sfcnand(cmd_tbl_t * cmdtp, int flag, int argc, char * const argv[])
 		/* modify partion table : sfcnand pt index name offset size manger_mode */
 		/* nand pt index name offset size manager_mode */
 		index = (unsigned int)simple_strtoul(argv[2], NULL, 0);
-		memcpy(name, argv[3], strlen(argv[3]));
+		snprintf(name, sizeof(name), "%s", argv[3]);
 		offset = (unsigned int)simple_strtoul(argv[4], NULL, 16);
 		size = (unsigned int)simple_strtoul(argv[5], NULL, 16);
 		manager_mode = (unsigned int)simple_strtoul(argv[6], NULL, 0);

@@ -194,7 +194,8 @@ int mii_discover_phy(struct eth_device *dev)
 					       phyinfo[i].phyid,
 					       phyinfo[i].strid);
 #endif
-					strcpy(info->phy_name, phyinfo[i].strid);
+					snprintf(info->phy_name, 32, "%s",
+						 phyinfo[i].strid);
 					info->phyname_init = 1;
 					found = 1;
 					break;
@@ -205,7 +206,7 @@ int mii_discover_phy(struct eth_device *dev)
 #ifdef ET_DEBUG
 				printf("0x%08x\n", phytype);
 #endif
-				strcpy(info->phy_name, "unknown");
+				snprintf(info->phy_name, 32, "%s", "unknown");
 				info->phyname_init = 1;
 				break;
 			}

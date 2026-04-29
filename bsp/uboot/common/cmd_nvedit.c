@@ -407,18 +407,28 @@ int do_env_ask(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 	}
 
 	if (argc <= 2) {
-		sprintf(message, "Please enter '%s': ", argv[1]);
+		snprintf(message, sizeof(message),
+			 "Please enter '%s': ", argv[1]);
 	} else {
 		/* env_ask envname message1 ... messagen [size] */
 		for (i = 2, pos = 0; i < argc; i++) {
-			if (pos)
-				message[pos++] = ' ';
+			int written;
 
-			strcpy(message + pos, argv[i]);
-			pos += strlen(argv[i]);
+			written = snprintf(message + pos,
+					   sizeof(message) - pos,
+					   "%s%s", pos ? " " : "", argv[i]);
+			if (written < 0 || written >= sizeof(message) - pos) {
+				pos = sizeof(message) - 1;
+				break;
+			}
+			pos += written;
 		}
-		message[pos++] = ' ';
-		message[pos] = '\0';
+		if (pos + 1 < sizeof(message)) {
+			message[pos++] = ' ';
+			message[pos] = '\0';
+		} else {
+			message[sizeof(message) - 1] = '\0';
+		}
 	}
 
 	if (size >= CONFIG_SYS_CBSIZE)
@@ -607,7 +617,7 @@ static int do_env_edit(cmd_tbl_t *cmdtp, int flag, int argc,
 	/* Set read buffer to initial value or empty sting */
 	init_val = getenv(argv[1]);
 	if (init_val)
-		sprintf(buffer, "%s", init_val);
+		snprintf(buffer, sizeof(buffer), "%s", init_val);
 	else
 		buffer[0] = '\0';
 

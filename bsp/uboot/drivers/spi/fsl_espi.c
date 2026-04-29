@@ -196,6 +196,10 @@ int spi_xfer(struct spi_slave *slave, unsigned int bitlen, const void *data_out,
 	max_tran_len = fsl->max_transfer_length;
 	switch (flags) {
 	case SPI_XFER_BEGIN:
+		if (data_len > sizeof(fsl->cmd_buf) || !data_out) {
+			debug("SF: Invalid command phase length.\n");
+			return 1;
+		}
 		cmd_len = fsl->cmd_len = data_len;
 		memcpy(cmd_buf, data_out, cmd_len);
 		return 0;
@@ -205,7 +209,11 @@ int spi_xfer(struct spi_slave *slave, unsigned int bitlen, const void *data_out,
 			spi_cs_deactivate(slave);
 			return 0;
 		}
-		buf_len = 2 * cmd_len + min(data_len, max_tran_len);
+		if (cmd_len > (((size_t)-1) - data_len) / 2) {
+			debug("SF: Requested transfer is too large.\n");
+			return 1;
+		}
+		buf_len = 2 * cmd_len + data_len;
 		len = cmd_len + data_len;
 		rx_offset = cmd_len;
 		buffer = (unsigned char *)malloc(buf_len);
@@ -219,7 +227,15 @@ int spi_xfer(struct spi_slave *slave, unsigned int bitlen, const void *data_out,
 		break;
 	case SPI_XFER_BEGIN | SPI_XFER_END:
 		len = data_len;
-		buffer = (unsigned char *)malloc(len * 2);
+		if (data_len && !data_out) {
+			debug("SF: Missing transfer buffer.\n");
+			return 1;
+		}
+		if ((size_t)len > ((size_t)-1) / 2) {
+			debug("SF: Requested transfer is too large.\n");
+			return 1;
+		}
+		buffer = (unsigned char *)malloc((size_t)len * 2);
 		if (!buffer) {
 			debug("SF: Failed to malloc memory.\n");
 			return 1;

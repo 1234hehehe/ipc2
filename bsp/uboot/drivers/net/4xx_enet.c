@@ -847,8 +847,18 @@ int ppc_4xx_eth_setup_bridge(int devnum, bd_t * bis)
 
 static inline void *malloc_aligned(u32 size, u32 align)
 {
-	return (void *)(((u32)malloc(size + align) + align - 1) &
-			~(align - 1));
+	void *mem;
+	ulong ptr;
+
+	if (!align || size > (u32)-1 - align)
+		return NULL;
+
+	mem = malloc(size + align);
+	if (!mem)
+		return NULL;
+
+	ptr = (ulong)mem;
+	return (void *)((ptr + align - 1) & ~(align - 1));
 }
 
 static int ppc_4xx_eth_init (struct eth_device *dev, bd_t * bis)
@@ -2021,7 +2031,8 @@ int ppc_4xx_eth_initialize (bd_t * bis)
 		hw->devnum = eth_num;
 		hw->print_speed = 1;
 
-		sprintf (dev->name, "ppc_4xx_eth%d", eth_num - CONFIG_EMAC_NR_START);
+		snprintf(dev->name, sizeof(dev->name), "ppc_4xx_eth%d",
+			 eth_num - CONFIG_EMAC_NR_START);
 		dev->priv = (void *) hw;
 		dev->init = ppc_4xx_eth_init;
 		dev->halt = ppc_4xx_eth_halt;

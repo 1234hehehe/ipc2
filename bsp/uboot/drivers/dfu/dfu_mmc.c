@@ -55,8 +55,8 @@ static int mmc_block_op(enum dfu_mmc_op op, struct dfu_entity *dfu,
 		return -EINVAL;
 	}
 
-	sprintf(cmd_buf, "mmc %s %p %x %x",
-		op == DFU_OP_READ ? "read" : "write",
+	snprintf(cmd_buf, sizeof(cmd_buf), "mmc %s %p %x %x",
+		 op == DFU_OP_READ ? "read" : "write",
 		 buf, blk_start, blk_count);
 
 	debug("%s: %s 0x%p\n", __func__, cmd_buf, cmd_buf);
@@ -86,20 +86,24 @@ static int mmc_file_op(enum dfu_mmc_op op, struct dfu_entity *dfu,
 
 	switch (dfu->layout) {
 	case DFU_FS_FAT:
-		sprintf(cmd_buf, "fat%s mmc %d:%d 0x%x %s",
-			op == DFU_OP_READ ? "load" : "write",
-			dfu->data.mmc.dev, dfu->data.mmc.part,
-			(unsigned int) buf, dfu->name);
+		snprintf(cmd_buf, sizeof(cmd_buf), "fat%s mmc %d:%d 0x%x %s",
+			 op == DFU_OP_READ ? "load" : "write",
+			 dfu->data.mmc.dev, dfu->data.mmc.part,
+			 (unsigned int)buf, dfu->name);
 		if (op == DFU_OP_WRITE)
-			sprintf(cmd_buf + strlen(cmd_buf), " %lx", *len);
+			snprintf(cmd_buf + strlen(cmd_buf),
+				 sizeof(cmd_buf) - strlen(cmd_buf),
+				 " %lx", *len);
 		break;
 	case DFU_FS_EXT4:
-		sprintf(cmd_buf, "ext4%s mmc %d:%d 0x%x /%s",
-			op == DFU_OP_READ ? "load" : "write",
-			dfu->data.mmc.dev, dfu->data.mmc.part,
-			(unsigned int) buf, dfu->name);
+		snprintf(cmd_buf, sizeof(cmd_buf), "ext4%s mmc %d:%d 0x%x /%s",
+			 op == DFU_OP_READ ? "load" : "write",
+			 dfu->data.mmc.dev, dfu->data.mmc.part,
+			 (unsigned int)buf, dfu->name);
 		if (op == DFU_OP_WRITE)
-			sprintf(cmd_buf + strlen(cmd_buf), " %ld", *len);
+			snprintf(cmd_buf + strlen(cmd_buf),
+				 sizeof(cmd_buf) - strlen(cmd_buf),
+				 " %ld", *len);
 		break;
 	default:
 		printf("%s: Layout (%s) not (yet) supported!\n", __func__,

@@ -69,8 +69,18 @@ int main (int argc, char **argv)
 
 		/* create a copy, so we can blank out the sha1 sum */
 		data = malloc (len);
+		if (!data) {
+			fprintf(stderr, "%s: Can't allocate %d bytes\n",
+				cmdname, len);
+			exit(EXIT_FAILURE);
+		}
 		memcpy (data, ptr, len);
 		off = SHA1_SUM_POS;
+		if (len < SHA1_SUM_LEN || len < -off) {
+			fprintf(stderr, "%s: %s is too small for SHA1 trailer\n",
+				cmdname, imagefile);
+			exit(EXIT_FAILURE);
+		}
 		ptroff = &data[len +  off];
 		for (i = 0; i < SHA1_SUM_LEN; i++) {
 			ptroff[i] = 0;
