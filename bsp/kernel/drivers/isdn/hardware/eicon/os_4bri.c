@@ -236,7 +236,8 @@ int diva_4bri_init_card(diva_os_xdi_adapter_t *a)
 	/*
 	  Register I/O port
 	*/
-	sprintf(&a->port_name[0], "DIVA 4BRI %ld", (long) a->xdi_adapter.serialNo);
+	snprintf(&a->port_name[0], sizeof(a->port_name), "DIVA 4BRI %ld",
+		 (long)a->xdi_adapter.serialNo);
 
 	if (diva_os_register_io_port(a, 1, a->resources.pci.bar[1],
 				     bar_length[1], &a->port_name[0], 1)) {
@@ -431,8 +432,9 @@ int diva_4bri_init_card(diva_os_xdi_adapter_t *a)
 	  Set IRQ handler
 	*/
 	a->xdi_adapter.irq_info.irq_nr = a->resources.pci.irq;
-	sprintf(a->xdi_adapter.irq_info.irq_name, "DIVA 4BRI %ld",
-		(long) a->xdi_adapter.serialNo);
+	snprintf(a->xdi_adapter.irq_info.irq_name,
+		 sizeof(a->xdi_adapter.irq_info.irq_name),
+		 "DIVA 4BRI %ld", (long)a->xdi_adapter.serialNo);
 
 	if (diva_os_register_irq(a, a->xdi_adapter.irq_info.irq_nr,
 				 a->xdi_adapter.irq_info.irq_name)) {

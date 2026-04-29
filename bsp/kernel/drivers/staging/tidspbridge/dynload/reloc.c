@@ -135,6 +135,9 @@ int dload_repack(struct dload_state *dlthis, rvalue val, tgt_au_t *data,
 	 */
 	if (sgn) {
 		unsigned tmp = (val >> fieldsz) + (sgn & 0x1);
+
+		if (sgn > ARRAY_SIZE(ovf_limit))
+			return 1;
 		if (tmp > ovf_limit[sgn - 1])
 			return 1;
 	}

@@ -487,7 +487,10 @@ inline int find_type_by_name(const char *name, const char *type)
 					continue;
 				}
 				free(filename);
-				fscanf(nameFile, "%s", thisname);
+				if (fscanf(nameFile, "%29s", thisname) != 1) {
+					fclose(nameFile);
+					continue;
+				}
 				fclose(nameFile);
 				if (strcmp(name, thisname) == 0) {
 					closedir(dp);

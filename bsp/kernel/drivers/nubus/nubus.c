@@ -637,13 +637,13 @@ static int __init nubus_get_vendorinfo(struct nubus_board* board,
 	{
 		char name[64];
 		
-		/* These are all strings, we think */
-		nubus_get_rsrc_str(name, &ent, 64);
-		if (ent.type > 5)
-			ent.type = 5;
-		printk(KERN_INFO "    %s: %s\n",
-		       vendor_fields[ent.type-1], name);
-	}
+			/* These are all strings, we think */
+			nubus_get_rsrc_str(name, &ent, 64);
+			if (ent.type < 1 || ent.type > 5)
+				ent.type = 6;
+			printk(KERN_INFO "    %s: %s\n",
+			       vendor_fields[ent.type-1], name);
+		}
 	return 0;
 }
 

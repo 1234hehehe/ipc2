@@ -302,8 +302,8 @@ void key_string2key( char *ks, KEY_STRCT *key )
     /* character string */
     else
     {
-        strcpy( (char *)key->key, ks );
-        key->len = l;
+        strlcpy((char *)key->key, ks, sizeof(key->key));
+        key->len = min_t(int, l, sizeof(key->key) - 1);
     }
 
     return;
@@ -796,7 +796,7 @@ hcf_8 * wl_print_wpa_ie( hcf_8 *buffer, int length )
         sprintf( row_buf, "%02x%02x%02x%02x",
                  buffer[count*rowsize], buffer[count*rowsize+1],
                  buffer[count*rowsize+2], buffer[count*rowsize+3]);
-        strcat( output, row_buf );
+        strlcat(output, row_buf, sizeof(output));
     }
 
     memset( row_buf, 0, sizeof( row_buf ));
@@ -805,7 +805,7 @@ hcf_8 * wl_print_wpa_ie( hcf_8 *buffer, int length )
     /* Format the remainder */
     for( count = 0; count < remainder; count++ ) {
         sprintf( row_buf, "%02x", buffer[(rows*rowsize)+count]);
-        strcat( output, row_buf );
+        strlcat(output, row_buf, sizeof(output));
     }
 
     return output;
@@ -1155,10 +1155,13 @@ void wl_process_probe_response( struct wl_private *lp )
 
             if( probe_rsp->rawData[1] > 0 ) {
                 char ssid[HCF_MAX_NAME_LEN];
+                size_t ssid_len;
 
                 memset( ssid, 0, sizeof( ssid ));
-                strncpy( ssid, &probe_rsp->rawData[2],
-                            probe_rsp->rawData[1] );
+                ssid_len = min_t(size_t, probe_rsp->rawData[1],
+                                 sizeof(ssid) - 1);
+                memcpy(ssid, &probe_rsp->rawData[2], ssid_len);
+                ssid[ssid_len] = '\0';
 
                 DBG_TRACE( DbgInfo, "(%s) SSID        : %s\n",
                             lp->dev->name, ssid );
@@ -1460,4 +1463,3 @@ int wl_get_tallies(struct wl_private *lp,
 
     return ret;
 }
-

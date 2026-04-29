@@ -186,9 +186,10 @@ static ssize_t show_available_freqs(struct cpufreq_policy *policy, char *buf)
 	for (i = 0; (table[i].frequency != CPUFREQ_TABLE_END); i++) {
 		if (table[i].frequency == CPUFREQ_ENTRY_INVALID)
 			continue;
-		count += sprintf(&buf[count], "%d ", table[i].frequency);
+		count += scnprintf(&buf[count], PAGE_SIZE - count, "%d ",
+				   table[i].frequency);
 	}
-	count += sprintf(&buf[count], "\n");
+	count += scnprintf(&buf[count], PAGE_SIZE - count, "\n");
 
 	return count;
 

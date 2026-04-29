@@ -283,7 +283,7 @@ static int prism2_fwapply(const struct ihex_binrec *rfptr, wlandevice_t *wlandev
 	memset(&getmsg, 0, sizeof(getmsg));
 	getmsg.msgcode = DIDmsg_dot11req_mibget;
 	getmsg.msglen = sizeof(getmsg);
-	strcpy(getmsg.devname, wlandev->name);
+	strlcpy(getmsg.devname, wlandev->name, sizeof(getmsg.devname));
 
 	getmsg.mibattribute.did = DIDmsg_dot11req_mibget_mibattribute;
 	getmsg.mibattribute.status = P80211ENUM_msgitem_status_data_ok;
@@ -737,7 +737,7 @@ static int plugimage(struct imgchunk *fchunk, unsigned int nfchunks,
 
 		if (j == -1) {	/* plug the filename */
 			memset(dest, 0, s3plug[i].len);
-			strncpy(dest, PRISM2_USB_FWFILE, s3plug[i].len - 1);
+			strlcpy(dest, PRISM2_USB_FWFILE, s3plug[i].len);
 		} else {	/* plug a PDR */
 			memcpy(dest, &(pda->rec[j]->data), s3plug[i].len);
 		}
@@ -772,7 +772,7 @@ static int read_cardpda(struct pda *pda, wlandevice_t *wlandev)
 	/* set up the msg */
 	msg.msgcode = DIDmsg_p2req_readpda;
 	msg.msglen = sizeof(msg);
-	strcpy(msg.devname, wlandev->name);
+	strlcpy(msg.devname, wlandev->name, sizeof(msg.devname));
 	msg.pda.did = DIDmsg_p2req_readpda_pda;
 	msg.pda.len = HFA384x_PDA_LEN_MAX;
 	msg.pda.status = P80211ENUM_msgitem_status_no_value;
@@ -1005,7 +1005,7 @@ static int writeimage(wlandevice_t *wlandev, struct imgchunk *fchunk,
 
 	/* Initialize the messages */
 	memset(rstmsg, 0, sizeof(*rstmsg));
-	strcpy(rstmsg->devname, wlandev->name);
+	strlcpy(rstmsg->devname, wlandev->name, sizeof(rstmsg->devname));
 	rstmsg->msgcode = DIDmsg_p2req_ramdl_state;
 	rstmsg->msglen = sizeof(*rstmsg);
 	rstmsg->enable.did = DIDmsg_p2req_ramdl_state_enable;
@@ -1019,7 +1019,7 @@ static int writeimage(wlandevice_t *wlandev, struct imgchunk *fchunk,
 	rstmsg->resultcode.len = sizeof(u32);
 
 	memset(rwrmsg, 0, sizeof(*rwrmsg));
-	strcpy(rwrmsg->devname, wlandev->name);
+	strlcpy(rwrmsg->devname, wlandev->name, sizeof(rwrmsg->devname));
 	rwrmsg->msgcode = DIDmsg_p2req_ramdl_write;
 	rwrmsg->msglen = sizeof(*rwrmsg);
 	rwrmsg->addr.did = DIDmsg_p2req_ramdl_write_addr;

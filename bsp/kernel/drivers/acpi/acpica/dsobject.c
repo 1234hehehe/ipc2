@@ -440,7 +440,8 @@ acpi_ds_build_internal_package_obj(struct acpi_walk_state *walk_state,
 	 * Package is truncated if num_elements is less than the list length.
 	 */
 	arg = op->common.value.arg;
-	arg = arg->common.next;
+	if (arg)
+		arg = arg->common.next;
 	for (i = 0; arg && (i < element_count); i++) {
 		if (arg->common.aml_opcode == AML_INT_RETURN_VALUE_OP) {
 			if (arg->common.node->type == ACPI_TYPE_METHOD) {

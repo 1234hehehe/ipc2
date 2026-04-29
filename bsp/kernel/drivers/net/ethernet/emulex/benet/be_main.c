@@ -2458,7 +2458,8 @@ static int be_msix_register(struct be_adapter *adapter)
 	int status, i, vec;
 
 	for_all_evt_queues(adapter, eqo, i) {
-		sprintf(eqo->desc, "%s-q%d", netdev->name, i);
+		snprintf(eqo->desc, sizeof(eqo->desc), "%s-q%d",
+			 netdev->name, i);
 		vec = be_msix_vec_get(adapter, eqo);
 		status = request_irq(vec, be_msix, 0, eqo->desc, eqo);
 		if (status)
@@ -2610,9 +2611,11 @@ static int be_rx_qs_create(struct be_adapter *adapter)
 	if (be_multi_rxq(adapter)) {
 		for (j = 0; j < 128; j += adapter->num_rx_qs - 1) {
 			for_all_rss_queues(adapter, rxo, i) {
-				if ((j + i) >= 128)
+				unsigned int rss_index = j + i;
+
+				if (rss_index >= ARRAY_SIZE(rsstable))
 					break;
-				rsstable[j + i] = rxo->rss_id;
+				rsstable[rss_index] = rxo->rss_id;
 			}
 		}
 		adapter->rss_flags = RSS_ENABLE_TCP_IPV4 | RSS_ENABLE_IPV4 |

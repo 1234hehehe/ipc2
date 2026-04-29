@@ -136,7 +136,7 @@ struct iscsi_tiqn *iscsit_add_tiqn(unsigned char *buf)
 		return ERR_PTR(-ENOMEM);
 	}
 
-	sprintf(tiqn->tiqn, "%s", buf);
+	strlcpy(tiqn->tiqn, buf, sizeof(tiqn->tiqn));
 	INIT_LIST_HEAD(&tiqn->tiqn_list);
 	INIT_LIST_HEAD(&tiqn->tiqn_tpg_list);
 	spin_lock_init(&tiqn->tiqn_state_lock);
@@ -366,7 +366,7 @@ struct iscsi_np *iscsit_add_np(
 		np->np_port = ntohs(sock_in6->sin6_port);
 	} else {
 		sock_in = (struct sockaddr_in *)sockaddr;
-		sprintf(np->np_ip, "%s", ip_str);
+		strlcpy(np->np_ip, ip_str, sizeof(np->np_ip));
 		np->np_port = ntohs(sock_in->sin_port);
 	}
 

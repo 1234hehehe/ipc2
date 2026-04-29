@@ -68,17 +68,33 @@ static int parse_status(char *value)
 	c++;
 
 	while (*c != '\0') {
+		char *newline;
+		char *busid;
+		int consumed = 0;
 		int port, status, speed, devid;
 		unsigned long socket;
 		char lbusid[SYSFS_BUS_ID_SIZE];
 
-		ret = sscanf(c, "%d %d %d %x %lx %s\n",
+		ret = sscanf(c, "%d %d %d %x %lx %n",
 				&port, &status, &speed,
-				&devid, &socket, lbusid);
+				&devid, &socket, &consumed);
 
 		if (ret < 5) {
 			dbg("sscanf failed: %d", ret);
 			BUG();
+		}
+		lbusid[0] = '\0';
+		busid = c + consumed;
+		while (*busid == ' ')
+			busid++;
+		newline = strchr(busid, '\n');
+		if (newline) {
+			size_t len = newline - busid;
+
+			if (len >= sizeof(lbusid))
+				len = sizeof(lbusid) - 1;
+			memcpy(lbusid, busid, len);
+			lbusid[len] = '\0';
 		}
 
 		dbg("port %d status %d speed %d devid %x",

@@ -362,6 +362,9 @@ static void wmi_evt_connect(struct wil6210_priv *wil, int id, void *d, int len)
 	int ch; /* channel number */
 	struct station_info sinfo;
 	u8 *assoc_req_ie, *assoc_resp_ie;
+	size_t payload_len;
+	size_t assoc_req_off;
+	size_t assoc_resp_off;
 	size_t assoc_req_ielen, assoc_resp_ielen;
 	/* capinfo(u16) + listen_interval(u16) + IEs */
 	const size_t assoc_req_ie_offset = sizeof(u16) * 2;
@@ -380,6 +383,7 @@ static void wmi_evt_connect(struct wil6210_priv *wil, int id, void *d, int len)
 			evt->assoc_req_len, evt->assoc_resp_len);
 		return;
 	}
+	payload_len = len - sizeof(*evt);
 	ch = evt->channel + 1;
 	wil_dbg_wmi(wil, "Connect %pM channel [%d] cid %d\n",
 		    evt->bssid, ch, evt->cid);
@@ -387,17 +391,21 @@ static void wmi_evt_connect(struct wil6210_priv *wil, int id, void *d, int len)
 			 evt->assoc_info, len - sizeof(*evt), true);
 
 	/* figure out IE's */
-	assoc_req_ie = &evt->assoc_info[evt->beacon_ie_len +
-					assoc_req_ie_offset];
+	assoc_req_off = evt->beacon_ie_len + assoc_req_ie_offset;
+	if (assoc_req_off > payload_len)
+		assoc_req_off = payload_len;
+	assoc_req_ie = &evt->assoc_info[assoc_req_off];
 	assoc_req_ielen = evt->assoc_req_len - assoc_req_ie_offset;
 	if (evt->assoc_req_len <= assoc_req_ie_offset) {
 		assoc_req_ie = NULL;
 		assoc_req_ielen = 0;
 	}
 
-	assoc_resp_ie = &evt->assoc_info[evt->beacon_ie_len +
-					 evt->assoc_req_len +
-					 assoc_resp_ie_offset];
+	assoc_resp_off = evt->beacon_ie_len + evt->assoc_req_len +
+			 assoc_resp_ie_offset;
+	if (assoc_resp_off > payload_len)
+		assoc_resp_off = payload_len;
+	assoc_resp_ie = &evt->assoc_info[assoc_resp_off];
 	assoc_resp_ielen = evt->assoc_resp_len - assoc_resp_ie_offset;
 	if (evt->assoc_resp_len <= assoc_resp_ie_offset) {
 		assoc_resp_ie = NULL;

@@ -370,6 +370,9 @@ static int xencons_connect_backend(struct xenbus_device *dev,
 	if (irq < 0)
 		return irq;
 	info->irq = irq;
+	if (!dev->nodename || !*dev->nodename)
+		return -ENODEV;
+
 	devid = dev->nodename[strlen(dev->nodename) - 1] - '0';
 	info->hvc = hvc_alloc(xenbus_devid_to_vtermno(devid),
 			irq, &domU_hvc_ops, 256);
@@ -427,6 +430,9 @@ static int xencons_probe(struct xenbus_device *dev,
 {
 	int ret, devid;
 	struct xencons_info *info;
+
+	if (!dev->nodename || !*dev->nodename)
+		return -ENODEV;
 
 	devid = dev->nodename[strlen(dev->nodename) - 1] - '0';
 	if (devid == 0)

@@ -44,7 +44,7 @@ static ssize_t dm_attr_name_show(struct mapped_device *md, char *buf)
 	if (dm_copy_name_and_uuid(md, buf, NULL))
 		return -EIO;
 
-	strcat(buf, "\n");
+	strlcat(buf, "\n", PAGE_SIZE);
 	return strlen(buf);
 }
 
@@ -53,13 +53,13 @@ static ssize_t dm_attr_uuid_show(struct mapped_device *md, char *buf)
 	if (dm_copy_name_and_uuid(md, NULL, buf))
 		return -EIO;
 
-	strcat(buf, "\n");
+	strlcat(buf, "\n", PAGE_SIZE);
 	return strlen(buf);
 }
 
 static ssize_t dm_attr_suspended_show(struct mapped_device *md, char *buf)
 {
-	sprintf(buf, "%d\n", dm_suspended_md(md));
+	scnprintf(buf, PAGE_SIZE, "%d\n", dm_suspended_md(md));
 
 	return strlen(buf);
 }

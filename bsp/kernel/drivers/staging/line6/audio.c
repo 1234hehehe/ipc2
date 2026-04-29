@@ -31,12 +31,14 @@ int line6_init_audio(struct usb_line6 *line6)
 
 	line6->card = card;
 
-	strcpy(card->id, line6->properties->id);
-	strcpy(card->driver, DRIVER_NAME);
-	strcpy(card->shortname, line6->properties->name);
+	strlcpy(card->id, line6->properties->id, sizeof(card->id));
+	strlcpy(card->driver, DRIVER_NAME, sizeof(card->driver));
+	strlcpy(card->shortname, line6->properties->name,
+		sizeof(card->shortname));
 	/* longname is 80 chars - see asound.h */
-	sprintf(card->longname, "Line6 %s at USB %s", line6->properties->name,
-		dev_name(line6->ifcdev));
+	snprintf(card->longname, sizeof(card->longname),
+		 "Line6 %s at USB %s", line6->properties->name,
+		 dev_name(line6->ifcdev));
 	return 0;
 }
 

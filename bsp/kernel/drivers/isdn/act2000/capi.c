@@ -698,8 +698,9 @@ actcapi_dispatch(struct work_struct *work)
 				cmd.parm.setup.si1 = msg->msg.connect_ind.si1;
 				cmd.parm.setup.si2 = msg->msg.connect_ind.si2;
 				if (card->ptype == ISDN_PTYPE_EURO)
-					strcpy(cmd.parm.setup.eazmsn,
-					       act2000_find_eaz(card, msg->msg.connect_ind.eaz));
+					strlcpy(cmd.parm.setup.eazmsn,
+						act2000_find_eaz(card, msg->msg.connect_ind.eaz),
+						sizeof(cmd.parm.setup.eazmsn));
 				else {
 					cmd.parm.setup.eazmsn[0] = msg->msg.connect_ind.eaz;
 					cmd.parm.setup.eazmsn[1] = 0;
@@ -907,10 +908,17 @@ actcapi_dispatch(struct work_struct *work)
 		case 0xff02:
 			/* MANUFACTURER_IND */
 			if (msg->msg.manuf_msg == 3) {
+				size_t copy_len;
+
 				memset(tmp, 0, sizeof(tmp));
-				strncpy(tmp,
-					&msg->msg.manufacturer_ind_err.errstring,
-					msg->hdr.len - 16);
+				copy_len = min_t(size_t,
+						 msg->hdr.len > 16 ?
+						 msg->hdr.len - 16 : 0,
+						 sizeof(tmp) - 1);
+				memcpy(tmp,
+				       &msg->msg.manufacturer_ind_err.errstring,
+				       copy_len);
+				tmp[copy_len] = '\0';
 				if (msg->msg.manufacturer_ind_err.errcode)
 					printk(KERN_WARNING "act2000: %s\n", tmp);
 				else {
@@ -997,7 +1005,8 @@ static void dump_skb(struct sk_buff *skb) {
 	int i;
 
 	for (i = 0; i < skb->len; i++) {
-		t += sprintf(t, "%02x ", *p++ & 0xff);
+		t += scnprintf(t, sizeof(tmp) - (t - tmp), "%02x ",
+			       *p++ & 0xff);
 		if ((i & 0x0f) == 8) {
 			printk(KERN_DEBUG "dump: %s\n", tmp);
 			t = tmp;
@@ -1087,7 +1096,9 @@ actcapi_debug_msg(struct sk_buff *skb, int direction)
 			int j;
 			char *p = tmp;
 			for (j = 0; j < l; j++)
-				p += sprintf(p, "%02x ", msg->msg.info_ind.el.display[j]);
+				p += scnprintf(p, sizeof(tmp) - (p - tmp),
+					       "%02x ",
+					       msg->msg.info_ind.el.display[j]);
 			printk(KERN_DEBUG " D = '%s'\n", tmp);
 		}
 		break;
@@ -1132,15 +1143,24 @@ actcapi_debug_msg(struct sk_buff *skb, int direction)
 		       msg->msg.manufacturer_ind_err.manuf_msg);
 		switch (msg->msg.manufacturer_ind_err.manuf_msg) {
 		case 3:
+		{
+			size_t copy_len;
+
 			printk(KERN_DEBUG " Contr = %d\n",
 			       msg->msg.manufacturer_ind_err.controller);
 			printk(KERN_DEBUG " Code = 0x%08x\n",
 			       msg->msg.manufacturer_ind_err.errcode);
 			memset(tmp, 0, sizeof(tmp));
-			strncpy(tmp, &msg->msg.manufacturer_ind_err.errstring,
-				msg->hdr.len - 16);
+			copy_len = min_t(size_t,
+					 msg->hdr.len > 16 ?
+					 msg->hdr.len - 16 : 0,
+					 sizeof(tmp) - 1);
+			memcpy(tmp, &msg->msg.manufacturer_ind_err.errstring,
+			       copy_len);
+			tmp[copy_len] = '\0';
 			printk(KERN_DEBUG " Emsg = '%s'\n", tmp);
 			break;
+		}
 		}
 		break;
 	case 30:

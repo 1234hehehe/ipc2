@@ -254,6 +254,9 @@ ssize_t r2hb_hb_group_mode_store(struct r2hb_hb_group *group,
 	int ret;
 	size_t len;
 
+	if (!count)
+		return -EINVAL;
+
 	len = (page[count - 1] == '\n') ? count - 1 : count;
 	if (!len)
 		return -EINVAL;

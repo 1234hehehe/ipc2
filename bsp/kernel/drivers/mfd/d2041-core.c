@@ -626,6 +626,9 @@ static ssize_t d2041_ioctl_write(struct file *file, const char __user *buffer,
 	}
 
 	/* chop of '\n' introduced by echo at the end of the input */
+	if (!len)
+		return -EINVAL;
+
 	if (cmd[len - 1] == '\n')
 		cmd[len - 1] = '\0';
 

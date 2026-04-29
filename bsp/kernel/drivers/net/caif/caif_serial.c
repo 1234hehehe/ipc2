@@ -321,7 +321,7 @@ static int ldisc_open(struct tty_struct *tty)
 	if (!capable(CAP_SYS_ADMIN) && !capable(CAP_SYS_TTY_CONFIG))
 		return -EPERM;
 
-	sprintf(name, "cf%s", tty->name);
+	snprintf(name, sizeof(name), "cf%s", tty->name);
 	dev = alloc_netdev(sizeof(*ser), name, caifdev_setup);
 	if (!dev)
 		return -ENOMEM;

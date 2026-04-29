@@ -126,6 +126,8 @@ static void epat_read_block( PIA *pi, char * buf, int count )
 		break;
 
 	case 2: w0(0x27); w2(1); w2(0x25); w0(0);
+		if (count < 1)
+			break;
 		ph = 0;
 		for(k=0;k<count-1;k++) {
 			w2(0x24+ph);
@@ -137,12 +139,16 @@ static void epat_read_block( PIA *pi, char * buf, int count )
 		break;
 
 	case 3: w3(0x80); w2(0x24);
+		if (count < 1)
+			break;
 		for(k=0;k<count-1;k++) buf[k] = r4();
 		w2(4); w3(0xa0); w2(0x24); buf[count-1] = r4();
 		w2(4);
 		break;
 
 	case 4: w3(0x80); w2(0x24);
+		if (count < 2)
+			break;
 		for(k=0;k<(count/2)-1;k++) ((u16 *)buf)[k] = r4w();
 		buf[count-2] = r4();
 		w2(4); w3(0xa0); w2(0x24); buf[count-1] = r4();
@@ -150,6 +156,8 @@ static void epat_read_block( PIA *pi, char * buf, int count )
 		break;
 
 	case 5: w3(0x80); w2(0x24);
+		if (count < 4)
+			break;
 		for(k=0;k<(count/4)-1;k++) ((u32 *)buf)[k] = r4l();
 		for(k=count-4;k<count-1;k++) buf[k] = r4();
 		w2(4); w3(0xa0); w2(0x24); buf[count-1] = r4();

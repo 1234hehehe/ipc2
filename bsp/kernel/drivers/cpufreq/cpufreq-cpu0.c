@@ -249,6 +249,10 @@ static int cpu0_cpufreq_probe(struct platform_device *pdev)
 		 */
 		for (i = 0; freq_table[i].frequency != CPUFREQ_TABLE_END; i++)
 			;
+		if (!i) {
+			ret = -EINVAL;
+			goto out_free_table;
+		}
 		rcu_read_lock();
 		opp = opp_find_freq_exact(cpu_dev,
 				freq_table[0].frequency * 1000, true);

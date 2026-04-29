@@ -258,7 +258,6 @@ static char *error_path(struct xenbus_device *dev)
 static void xenbus_va_dev_error(struct xenbus_device *dev, int err,
 				const char *fmt, va_list ap)
 {
-	int ret;
 	unsigned int len;
 	char *printf_buffer = NULL;
 	char *path_buffer = NULL;
@@ -268,10 +267,8 @@ static void xenbus_va_dev_error(struct xenbus_device *dev, int err,
 	if (printf_buffer == NULL)
 		goto fail;
 
-	len = sprintf(printf_buffer, "%i ", -err);
-	ret = vsnprintf(printf_buffer+len, PRINTF_BUFFER_SIZE-len, fmt, ap);
-
-	BUG_ON(len + ret > PRINTF_BUFFER_SIZE-1);
+	len = scnprintf(printf_buffer, PRINTF_BUFFER_SIZE, "%i ", -err);
+	vscnprintf(printf_buffer + len, PRINTF_BUFFER_SIZE - len, fmt, ap);
 
 	dev_err(&dev->dev, "%s\n", printf_buffer);
 

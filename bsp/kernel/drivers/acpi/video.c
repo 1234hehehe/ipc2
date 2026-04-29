@@ -304,6 +304,8 @@ video_set_cur_state(struct thermal_cooling_device *cooling_dev, unsigned long st
 		return -EINVAL;
 
 	state = video->brightness->count - state;
+	if (!state || state > video->brightness->count)
+		return -EINVAL;
 	level = video->brightness->levels[state -1];
 	return acpi_video_device_lcd_set_level(video, level);
 }
@@ -505,6 +507,9 @@ acpi_video_bqc_value_to_level(struct acpi_video_device *device,
 		 */
 		if (device->brightness->flags._BCL_reversed)
 			bqc_value = device->brightness->count - 3 - bqc_value;
+
+		if (bqc_value + 2 >= device->brightness->count)
+			return bqc_value;
 
 		level = device->brightness->levels[bqc_value + 2];
 	} else {

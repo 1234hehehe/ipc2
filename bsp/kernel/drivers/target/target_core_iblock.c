@@ -566,21 +566,25 @@ static ssize_t iblock_show_configfs_dev_params(struct se_device *dev, char *b)
 	ssize_t bl = 0;
 
 	if (bd)
-		bl += sprintf(b + bl, "iBlock device: %s",
+		bl += scnprintf(b + bl, PAGE_SIZE - bl, "iBlock device: %s",
 				bdevname(bd, buf));
 	if (ib_dev->ibd_flags & IBDF_HAS_UDEV_PATH)
-		bl += sprintf(b + bl, "  UDEV PATH: %s",
+		bl += scnprintf(b + bl, PAGE_SIZE - bl, "  UDEV PATH: %s",
 				ib_dev->ibd_udev_path);
-	bl += sprintf(b + bl, "  readonly: %d\n", ib_dev->ibd_readonly);
+	bl += scnprintf(b + bl, PAGE_SIZE - bl, "  readonly: %d\n",
+			ib_dev->ibd_readonly);
 
-	bl += sprintf(b + bl, "        ");
+	bl += scnprintf(b + bl, PAGE_SIZE - bl, "        ");
 	if (bd) {
-		bl += sprintf(b + bl, "Major: %d Minor: %d  %s\n",
-			MAJOR(bd->bd_dev), MINOR(bd->bd_dev), (!bd->bd_contains) ?
-			"" : (bd->bd_holder == ib_dev) ?
-			"CLAIMED: IBLOCK" : "CLAIMED: OS");
+		bl += scnprintf(b + bl, PAGE_SIZE - bl,
+				"Major: %d Minor: %d  %s\n",
+				MAJOR(bd->bd_dev), MINOR(bd->bd_dev),
+				(!bd->bd_contains) ? "" :
+				(bd->bd_holder == ib_dev) ?
+				"CLAIMED: IBLOCK" : "CLAIMED: OS");
 	} else {
-		bl += sprintf(b + bl, "Major: 0 Minor: 0\n");
+		bl += scnprintf(b + bl, PAGE_SIZE - bl,
+				"Major: 0 Minor: 0\n");
 	}
 
 	return bl;

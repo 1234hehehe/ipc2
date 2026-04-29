@@ -61,6 +61,9 @@ static void ninja32_set_piomode(struct ata_port *ap, struct ata_device *adev)
 	static u16 pio_timing[5] = {
 		0xd6, 0x85, 0x44, 0x33, 0x13
 	};
+	if (adev->pio_mode < XFER_PIO_0 || adev->pio_mode > XFER_PIO_4)
+		return;
+
 	iowrite8(pio_timing[adev->pio_mode - XFER_PIO_0],
 		 ap->ioaddr.bmdma_addr + 0x1f);
 	ap->private_data = adev;

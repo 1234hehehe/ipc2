@@ -934,7 +934,9 @@ static void mt_post_parse(struct mt_device *td)
 
 	if (td->touches_by_report > 0) {
 		int field_count_per_touch = f->length / td->touches_by_report;
-		td->last_slot_field = f->usages[field_count_per_touch - 1];
+		if (field_count_per_touch > 0 &&
+		    field_count_per_touch <= f->length)
+			td->last_slot_field = f->usages[field_count_per_touch - 1];
 	}
 
 	if (td->cc_index < 0)

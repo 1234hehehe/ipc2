@@ -832,7 +832,7 @@ static void pd_probe_drive(struct pd_unit *disk)
 	struct gendisk *p = alloc_disk(1 << PD_BITS);
 	if (!p)
 		return;
-	strcpy(p->disk_name, disk->name);
+	strlcpy(p->disk_name, disk->name, sizeof(p->disk_name));
 	p->fops = &pd_fops;
 	p->major = major;
 	p->first_minor = (disk - pd) << PD_BITS;

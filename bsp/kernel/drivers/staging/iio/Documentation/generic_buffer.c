@@ -266,6 +266,10 @@ int main(int argc, char **argv)
 	if (ret < 0)
 		goto error_free_buf_dir_name;
 	scan_size = size_from_channelarray(channels, num_channels);
+	if (scan_size && buf_len > SIZE_MAX / scan_size) {
+		ret = -ENOMEM;
+		goto error_free_buf_dir_name;
+	}
 	data = malloc(scan_size*buf_len);
 	if (!data) {
 		ret = -ENOMEM;

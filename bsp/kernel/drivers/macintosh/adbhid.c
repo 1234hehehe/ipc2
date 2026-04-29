@@ -770,7 +770,8 @@ adbhid_input_register(int id, int default_id, int original_handler_id,
 		goto fail;
 	}
 
-	sprintf(hid->phys, "adb%d:%d.%02x/input", id, default_id, original_handler_id);
+	snprintf(hid->phys, sizeof(hid->phys), "adb%d:%d.%02x/input",
+		 id, default_id, original_handler_id);
 
 	hid->input = input_dev;
 	hid->id = default_id;

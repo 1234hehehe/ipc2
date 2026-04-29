@@ -118,6 +118,7 @@ static int ci_qheads_show(struct seq_file *s, void *data)
 	struct ci13xxx *ci = s->private;
 	unsigned long flags;
 	unsigned i, j;
+	unsigned half_ep = ci->hw_ep_max / 2;
 
 	if (ci->role != CI_ROLE_GADGET) {
 		seq_printf(s, "not in gadget mode\n");
@@ -125,10 +126,11 @@ static int ci_qheads_show(struct seq_file *s, void *data)
 	}
 
 	spin_lock_irqsave(&ci->lock, flags);
-	for (i = 0; i < ci->hw_ep_max/2; i++) {
+	for (i = 0; i < half_ep; i++) {
 		struct ci13xxx_ep *mEpRx = &ci->ci13xxx_ep[i];
-		struct ci13xxx_ep *mEpTx =
-			&ci->ci13xxx_ep[i + ci->hw_ep_max/2];
+		struct ci13xxx_ep *mEpTx = &ci->ci13xxx_ep[half_ep];
+
+		mEpTx += i;
 		seq_printf(s, "EP=%02i: RX=%08X TX=%08X\n",
 			   i, (u32)mEpRx->qh.dma, (u32)mEpTx->qh.dma);
 		for (j = 0; j < (sizeof(struct ci13xxx_qh)/sizeof(u32)); j++)

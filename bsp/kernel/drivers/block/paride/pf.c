@@ -294,7 +294,7 @@ static void __init pf_init_units(void)
 		snprintf(pf->name, PF_NAMELEN, "%s%d", name, unit);
 		disk->major = major;
 		disk->first_minor = unit;
-		strcpy(disk->disk_name, pf->name);
+		strlcpy(disk->disk_name, pf->name, sizeof(disk->disk_name));
 		disk->fops = &pf_fops;
 		if (!(*drives[unit])[D_PRT])
 			pf_drive_count++;

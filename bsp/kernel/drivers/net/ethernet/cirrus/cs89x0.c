@@ -690,7 +690,7 @@ net_rx(struct net_device *dev)
 	skb_reserve(skb, 2);	/* longword align L3 header */
 
 	readwords(lp, RX_FRAME_PORT, skb_put(skb, length), length >> 1);
-	if (length & 1)
+	if ((length & 1) && length > 0)
 		skb->data[length-1] = ioread16(lp->virt_addr + RX_FRAME_PORT);
 
 	cs89_dbg(3, debug, "%s: received %d byte packet of type %x\n",

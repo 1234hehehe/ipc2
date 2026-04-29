@@ -144,6 +144,9 @@ static int pasemi_i2c_xfer_msg(struct i2c_adapter *adapter,
 			msg->buf[i] = rd & MRXFIFO_DATA_M;
 		}
 	} else {
+		if (!msg->len)
+			return 0;
+
 		for (i = 0; i < msg->len - 1; i++)
 			TXFIFO_WR(smbus, msg->buf[i]);
 

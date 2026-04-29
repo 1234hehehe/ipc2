@@ -646,7 +646,8 @@ static ssize_t max1363_monitor_show_freq(struct device *dev,
 					char *buf)
 {
 	struct max1363_state *st = iio_priv(dev_to_iio_dev(dev));
-	return sprintf(buf, "%d\n", max1363_monitor_speeds[st->monitor_speed]);
+	return scnprintf(buf, PAGE_SIZE, "%d\n",
+			 max1363_monitor_speeds[st->monitor_speed]);
 }
 
 static ssize_t max1363_monitor_store_freq(struct device *dev,

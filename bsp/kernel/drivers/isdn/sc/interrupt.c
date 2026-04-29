@@ -47,13 +47,18 @@ irqreturn_t interrupt_handler(int dummy, void *card_inst)
 		 * Push the message to the adapter structure for
 		 * send_and_receive to snoop
 		 */
-		if (sc_adapter[card]->want_async_messages)
-			memcpy(&(sc_adapter[card]->async_msg),
-			       &rcvmsg, sizeof(RspMessage));
+			if (sc_adapter[card]->want_async_messages)
+				memcpy(&(sc_adapter[card]->async_msg),
+				       &rcvmsg, sizeof(RspMessage));
 
-		channel = (unsigned int) rcvmsg.phy_link_no;
+			channel = (unsigned int) rcvmsg.phy_link_no;
+			if (!channel || channel > sc_adapter[card]->nChannels) {
+				pr_debug("%s: invalid channel %u\n",
+					 sc_adapter[card]->devicename, channel);
+				continue;
+			}
 
-		/*
+			/*
 		 * Trap Invalid request messages
 		 */
 		if (IS_CM_MESSAGE(rcvmsg, 0, 0, Invalid)) {

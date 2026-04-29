@@ -165,6 +165,11 @@ int wl1251_acx_fw_version(struct wl1251 *wl, char *buf, size_t len)
 		goto out;
 	}
 
+	if (!len) {
+		ret = -EINVAL;
+		goto out;
+	}
+
 	/* be careful with the buffer sizes */
 	strncpy(buf, rev->fw_version, min(len, sizeof(rev->fw_version)));
 

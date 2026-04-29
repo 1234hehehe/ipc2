@@ -241,8 +241,10 @@ static int snd_line6_new_midi(struct snd_line6_midi *line6midi)
 
 	rmidi->private_data = line6midi;
 	rmidi->private_free = line6_cleanup_midi;
-	strcpy(rmidi->id, line6midi->line6->properties->id);
-	strcpy(rmidi->name, line6midi->line6->properties->name);
+	strlcpy(rmidi->id, line6midi->line6->properties->id,
+		sizeof(rmidi->id));
+	strlcpy(rmidi->name, line6midi->line6->properties->name,
+		sizeof(rmidi->name));
 
 	rmidi->info_flags =
 	    SNDRV_RAWMIDI_INFO_OUTPUT |

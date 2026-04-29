@@ -740,12 +740,12 @@ static void diva_register_appl(struct capi_ctr *ctrl, __u16 appl,
 			return;
 	}
 
-	DBG_TRC(("application register Id=%d", appl))
+	if (!application || !appl || appl > MAX_APPL) {
+		DBG_ERR(("CAPI_REGISTER - invalid appl.Id %d", appl))
+			return;
+	}
 
-		if (appl > MAX_APPL) {
-			DBG_ERR(("CAPI_REGISTER - appl.Id exceeds MAX_APPL"))
-				return;
-		}
+	DBG_TRC(("application register Id=%d", appl))
 
 	if (nconn <= 0)
 		nconn = ctrl->profile.nbchannel * -nconn;
@@ -848,8 +848,15 @@ static void diva_register_appl(struct capi_ctr *ctrl, __u16 appl,
 static void diva_release_appl(struct capi_ctr *ctrl, __u16 appl)
 {
 	diva_os_spin_lock_magic_t old_irql;
-	APPL *this = &application[appl - 1];
+	APPL *this;
 	void *mem_to_free = NULL;
+
+	if (!application || !appl || appl > MAX_APPL) {
+		DBG_ERR(("CAPI_RELEASE - invalid appl.Id %d", appl))
+			return;
+	}
+
+	this = &application[appl - 1];
 
 	DBG_TRC(("application %d(%d) cleanup", this->Id, appl))
 
@@ -880,14 +887,20 @@ static u16 diva_send_message(struct capi_ctr *ctrl,
 {
 	int i = 0;
 	word ret = 0;
+	word appl_id;
 	diva_os_spin_lock_magic_t old_irql;
 	CAPI_MSG *msg = (CAPI_MSG *) DIVA_MESSAGE_BUFFER_DATA(dmb);
-	APPL *this = &application[GET_WORD(&msg->header.appl_id) - 1];
+	APPL *this;
 	diva_card *card = ctrl->driverdata;
 	__u32 length = DIVA_MESSAGE_BUFFER_LEN(dmb);
 	word clength = GET_WORD(&msg->header.length);
 	word command = GET_WORD(&msg->header.command);
 	u16 retval = CAPI_NOERROR;
+
+	appl_id = GET_WORD(&msg->header.appl_id);
+	if (!application || !appl_id || appl_id > MAX_APPL)
+		return CAPI_ILLAPPNR;
+	this = &application[appl_id - 1];
 
 	if (diva_os_in_irq()) {
 		DBG_ERR(("CAPI_SEND_MSG - in irq context !"))

@@ -95,7 +95,7 @@ static void create_impulse_test_signal(struct snd_line6_pcm *line6pcm,
 			po += bytes_per_frame;
 		}
 	}
-	if (--line6pcm->impulse_count <= 0) {
+	if (bytes_per_frame > 0 && --line6pcm->impulse_count <= 0) {
 		((unsigned char *)(urb_out->transfer_buffer))[bytes_per_frame -
 							      1] =
 		    line6pcm->impulse_volume;

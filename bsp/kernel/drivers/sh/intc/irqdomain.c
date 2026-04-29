@@ -49,6 +49,9 @@ void __init intc_irq_domain_init(struct intc_desc_int *d,
 	/*
 	 * Quick linear revmap check
 	 */
+	if (!hw->nr_vectors)
+		return;
+
 	irq_base = evt2irq(hw->vectors[0].vect);
 	irq_end = evt2irq(hw->vectors[hw->nr_vectors - 1].vect);
 

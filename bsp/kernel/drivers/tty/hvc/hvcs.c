@@ -356,7 +356,7 @@ static ssize_t hvcs_partner_vtys_show(struct device *dev, struct device_attribut
 	int retval;
 
 	spin_lock_irqsave(&hvcsd->lock, flags);
-	retval = sprintf(buf, "%X\n", hvcsd->p_unit_address);
+	retval = scnprintf(buf, PAGE_SIZE, "%X\n", hvcsd->p_unit_address);
 	spin_unlock_irqrestore(&hvcsd->lock, flags);
 	return retval;
 }
@@ -370,7 +370,7 @@ static ssize_t hvcs_partner_clcs_show(struct device *dev, struct device_attribut
 	int retval;
 
 	spin_lock_irqsave(&hvcsd->lock, flags);
-	retval = sprintf(buf, "%s\n", &hvcsd->p_location_code[0]);
+	retval = scnprintf(buf, PAGE_SIZE, "%s\n", &hvcsd->p_location_code[0]);
 	spin_unlock_irqrestore(&hvcsd->lock, flags);
 	return retval;
 }
@@ -395,7 +395,7 @@ static ssize_t hvcs_current_vty_show(struct device *dev, struct device_attribute
 	int retval;
 
 	spin_lock_irqsave(&hvcsd->lock, flags);
-	retval = sprintf(buf, "%s\n", &hvcsd->p_location_code[0]);
+	retval = scnprintf(buf, PAGE_SIZE, "%s\n", &hvcsd->p_location_code[0]);
 	spin_unlock_irqrestore(&hvcsd->lock, flags);
 	return retval;
 }
@@ -449,7 +449,7 @@ static ssize_t hvcs_vterm_state_show(struct device *dev, struct device_attribute
 	int retval;
 
 	spin_lock_irqsave(&hvcsd->lock, flags);
-	retval = sprintf(buf, "%d\n", hvcsd->connected);
+	retval = scnprintf(buf, PAGE_SIZE, "%d\n", hvcsd->connected);
 	spin_unlock_irqrestore(&hvcsd->lock, flags);
 	return retval;
 }
@@ -464,7 +464,7 @@ static ssize_t hvcs_index_show(struct device *dev, struct device_attribute *attr
 	int retval;
 
 	spin_lock_irqsave(&hvcsd->lock, flags);
-	retval = sprintf(buf, "%d\n", hvcsd->index);
+	retval = scnprintf(buf, PAGE_SIZE, "%d\n", hvcsd->index);
 	spin_unlock_irqrestore(&hvcsd->lock, flags);
 	return retval;
 }

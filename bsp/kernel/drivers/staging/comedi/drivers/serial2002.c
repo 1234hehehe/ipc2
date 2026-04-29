@@ -568,7 +568,7 @@ static int serial2002_open(struct comedi_device *dev)
 	int result;
 	char port[20];
 
-	sprintf(port, "/dev/ttyS%d", devpriv->port);
+	snprintf(port, sizeof(port), "/dev/ttyS%d", devpriv->port);
 	devpriv->tty = filp_open(port, O_RDWR, 0);
 	if (IS_ERR(devpriv->tty)) {
 		result = (int)PTR_ERR(devpriv->tty);

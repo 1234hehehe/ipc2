@@ -674,11 +674,13 @@ static ssize_t fd_show_configfs_dev_params(struct se_device *dev, char *b)
 	struct fd_dev *fd_dev = FD_DEV(dev);
 	ssize_t bl = 0;
 
-	bl = sprintf(b + bl, "TCM FILEIO ID: %u", fd_dev->fd_dev_id);
-	bl += sprintf(b + bl, "        File: %s  Size: %llu  Mode: %s\n",
-		fd_dev->fd_dev_name, fd_dev->fd_dev_size,
-		(fd_dev->fbd_flags & FDBD_HAS_BUFFERED_IO_WCE) ?
-		"Buffered-WCE" : "O_DSYNC");
+	bl = scnprintf(b + bl, PAGE_SIZE - bl, "TCM FILEIO ID: %u",
+		       fd_dev->fd_dev_id);
+	bl += scnprintf(b + bl, PAGE_SIZE - bl,
+			"        File: %s  Size: %llu  Mode: %s\n",
+			fd_dev->fd_dev_name, fd_dev->fd_dev_size,
+			(fd_dev->fbd_flags & FDBD_HAS_BUFFERED_IO_WCE) ?
+			"Buffered-WCE" : "O_DSYNC");
 	return bl;
 }
 

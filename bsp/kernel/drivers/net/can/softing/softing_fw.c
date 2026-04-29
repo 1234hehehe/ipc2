@@ -131,14 +131,26 @@ static int fw_parse(const uint8_t **pmem, uint16_t *ptype, uint32_t *paddr,
 	*plen = le16_to_cpup((void *)&mem[6]);
 	*pdat = &mem[8];
 	/* verify checksum */
-	end = &mem[8 + *plen];
+	{
+		size_t record_len = (size_t)*plen + 8;
+
+		if (record_len < *plen)
+			return -EINVAL;
+		end = &mem[record_len];
+	}
 	checksum[0] = le16_to_cpup((void *)end);
 	for (checksum[1] = 0; mem < end; ++mem)
 		checksum[1] += *mem;
 	if (checksum[0] != checksum[1])
 		return -EINVAL;
 	/* increment */
-	*pmem += 10 + *plen;
+	{
+		size_t total_len = (size_t)*plen + 10;
+
+		if (total_len < *plen)
+			return -EINVAL;
+		*pmem += total_len;
+	}
 	return 0;
 }
 
@@ -191,9 +203,17 @@ int softing_load_fw(const char *file, struct softing *card,
 			goto failed;
 		}
 
-		if ((addr + len + offset) > size)
+		if (offset >= 0) {
+			if ((u32)offset > size || addr > size - offset)
+				goto failed;
+		} else if (addr < (u32)(-offset)) {
 			goto failed;
-		memcpy_toio(&dpram[addr + offset], dat, len);
+		}
+
+		addr += offset;
+		if (len > size - addr)
+			goto failed;
+		memcpy_toio(&dpram[addr], dat, len);
 		/* be sure to flush caches from IO space */
 		mb();
 		if (len > buflen) {
@@ -207,7 +227,7 @@ int softing_load_fw(const char *file, struct softing *card,
 			buf = new_buf;
 		}
 		/* verify record data */
-		memcpy_fromio(buf, &dpram[addr + offset], len);
+		memcpy_fromio(buf, &dpram[addr], len);
 		if (memcmp(buf, dat, len)) {
 			/* is not ok */
 			dev_alert(&card->pdev->dev, "DPRAM readback failed\n");

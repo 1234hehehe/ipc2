@@ -545,6 +545,9 @@ static void bcsp_complete_rx_pkt(struct hci_uart *hu)
 
 static u16 bscp_get_crc(struct bcsp_struct *bcsp)
 {
+	if (!bcsp->rx_skb || bcsp->rx_skb->len < 2)
+		return 0;
+
 	return get_unaligned_be16(&bcsp->rx_skb->data[bcsp->rx_skb->len - 2]);
 }
 

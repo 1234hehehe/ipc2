@@ -26,7 +26,7 @@ static void debug_printf(char *fmt, ...)
 	va_list ap;
 
 	va_start(ap, fmt);
-	vsprintf(buffer, fmt, ap);
+	vsnprintf(buffer, sizeof(buffer), fmt, ap);
 	va_end(ap);
 
 	printascii(buffer);

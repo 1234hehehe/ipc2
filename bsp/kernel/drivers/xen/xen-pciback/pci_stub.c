@@ -350,7 +350,8 @@ static int pcistub_init_device(struct pci_dev *dev)
 	 * Setup name for fake IRQ handler. It will only be enabled
 	 * once the device is turned on by the guest.
 	 */
-	sprintf(dev_data->irq_name, DRV_NAME "[%s]", pci_name(dev));
+	snprintf(dev_data->irq_name, sizeof(dev_data->irq_name),
+		 DRV_NAME "[%s]", pci_name(dev));
 
 	dev_dbg(&dev->dev, "initializing config\n");
 

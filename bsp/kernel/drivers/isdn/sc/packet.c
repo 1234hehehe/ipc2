@@ -33,6 +33,8 @@ int sndpkt(int devId, int channel, int ack, struct sk_buff *data)
 		pr_debug("invalid param: %d is not a valid card id\n", card);
 		return -ENODEV;
 	}
+	if (channel < 0 || channel >= sc_adapter[card]->nChannels)
+		return -EINVAL;
 
 	pr_debug("%s: sndpkt: frst = 0x%lx nxt = %d  f = %d n = %d\n",
 		 sc_adapter[card]->devicename,
@@ -99,6 +101,9 @@ void rcvpkt(int card, RspMessage *rcvmsg)
 		pr_debug("invalid param: %d is not a valid card id\n", card);
 		return;
 	}
+	if (rcvmsg->phy_link_no <= 0 ||
+	    rcvmsg->phy_link_no > sc_adapter[card]->nChannels)
+		return;
 
 	switch (rcvmsg->rsp_status) {
 	case 0x01:
@@ -152,6 +157,8 @@ int setup_buffers(int card, int c)
 		pr_debug("invalid param: %d is not a valid card id\n", card);
 		return -ENODEV;
 	}
+	if (c <= 0 || c > sc_adapter[card]->nChannels)
+		return -EINVAL;
 
 	/*
 	 * Calculate the buffer offsets (send/recv/send/recv)

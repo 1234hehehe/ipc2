@@ -1071,7 +1071,8 @@ static int i2o_block_probe(struct device *dev)
 	/* setup gendisk */
 	gd = i2o_blk_dev->gd;
 	gd->first_minor = unit << 4;
-	sprintf(gd->disk_name, "i2o/hd%c", 'a' + unit);
+	snprintf(gd->disk_name, sizeof(gd->disk_name), "i2o/hd%c",
+		 'a' + unit);
 	gd->driverfs_dev = &i2o_dev->device;
 
 	/* setup request queue */

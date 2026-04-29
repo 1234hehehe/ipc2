@@ -214,7 +214,7 @@ static ssize_t sprintf_ipaddr(char *buf, u8 *ip)
 
 static ssize_t sprintf_string(char *str, int len, char *buf)
 {
-	return sprintf(str, "%.*s\n", len, buf);
+	return scnprintf(str, PAGE_SIZE, "%.*s\n", len, buf);
 }
 
 /*

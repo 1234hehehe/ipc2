@@ -157,6 +157,9 @@ static void _rtl92d_phy_get_power_base(struct ieee80211_hw *hw,
 	u8 legacy_pwrdiff, ht20_pwrdiff;
 	u8 i, powerlevel[2];
 
+	if (channel < 1 || channel > CHANNEL_MAX_NUMBER)
+		return;
+
 	for (i = 0; i < 2; i++) {
 		powerlevel[i] = ppowerlevel[i];
 		legacy_pwrdiff = rtlefuse->txpwr_legacyhtdiff[i][channel - 1];
@@ -196,6 +199,9 @@ static u8 _rtl92d_phy_get_chnlgroup_bypg(u8 chnlindex)
 		161, 163, 165
 	};
 
+	if (chnlindex >= ARRAY_SIZE(channel_info))
+		return 0;
+
 	if (channel_info[chnlindex] <= 3)	/* Chanel 1-3 */
 		group = 0;
 	else if (channel_info[chnlindex] <= 9)	/* Channel 4-9 */
@@ -222,6 +228,9 @@ static void _rtl92d_get_txpower_writeval_by_regulatory(struct ieee80211_hw *hw,
 	struct rtl_efuse *rtlefuse = rtl_efuse(rtl_priv(hw));
 	u8 i, chnlgroup = 0, pwr_diff_limit[4];
 	u32 writeval = 0, customer_limit, rf;
+
+	if (channel < 1 || channel > CHANNEL_MAX_NUMBER)
+		return;
 
 	for (rf = 0; rf < 2; rf++) {
 		switch (rtlefuse->eeprom_regulatory) {

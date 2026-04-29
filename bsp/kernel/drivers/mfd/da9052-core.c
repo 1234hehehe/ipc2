@@ -422,7 +422,9 @@ int da9052_adc_read_temp(struct da9052 *da9052)
 	if (tbat <= 0)
 		return tbat;
 
-	/* ARRAY_SIZE check is not needed since TBAT is a 8-bit register */
+	if (tbat > ARRAY_SIZE(tbat_lookup))
+		return -EINVAL;
+
 	return tbat_lookup[tbat - 1];
 }
 EXPORT_SYMBOL_GPL(da9052_adc_read_temp);

@@ -504,7 +504,8 @@ static void sata_rcar_bmdma_fill_sg(struct ata_queued_cmd *qc)
 	}
 
 	/* end-of-table flag */
-	prd[pi - 1].addr |= cpu_to_le32(SATA_RCAR_DTEND);
+	if (pi > 0)
+		prd[pi - 1].addr |= cpu_to_le32(SATA_RCAR_DTEND);
 }
 
 static void sata_rcar_qc_prep(struct ata_queued_cmd *qc)

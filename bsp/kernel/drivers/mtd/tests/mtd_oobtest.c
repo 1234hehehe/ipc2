@@ -533,7 +533,7 @@ static int __init mtd_oobtest_init(void)
 		errcnt += 1;
 	}
 
-	if (bbt[ebcnt - 1])
+	if (ebcnt > 0 && bbt[ebcnt - 1])
 		pr_info("skipping end of device tests because last "
 		       "block is bad\n");
 	else {

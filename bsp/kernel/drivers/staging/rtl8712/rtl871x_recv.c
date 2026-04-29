@@ -163,7 +163,7 @@ sint r8712_recvframe_chkmic(struct _adapter *adapter,
 	u8 miccode[8];
 	u8 bmic_err = false;
 	u8 *pframe, *payload, *pframemic;
-	u8   *mickey, idx, *iv;
+	u8   *mickey, idx, *iv, key_idx;
 	struct	sta_info *stainfo;
 	struct	rx_pkt_attrib *prxattrib = &precvframe->u.hdr.attrib;
 	struct	security_priv *psecuritypriv = &adapter->securitypriv;
@@ -175,9 +175,15 @@ sint r8712_recvframe_chkmic(struct _adapter *adapter,
 			if (IS_MCAST(prxattrib->ra)) {
 				iv = precvframe->u.hdr.rx_data +
 				     prxattrib->hdrlen;
+				if (prxattrib->iv_len < 4)
+					return _FAIL;
 				idx = iv[3];
-				mickey = &psecuritypriv->XGrprxmickey[(((idx >>
-					 6) & 0x3)) - 1].skey[0];
+				key_idx = (idx >> 6) & 0x3;
+				if (!key_idx || key_idx >
+				    ARRAY_SIZE(psecuritypriv->XGrprxmickey))
+					return _FAIL;
+				mickey = &psecuritypriv->XGrprxmickey[
+					key_idx - 1].skey[0];
 				if (psecuritypriv->binstallGrpkey == false)
 					return _FAIL;
 			} else

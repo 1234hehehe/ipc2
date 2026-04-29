@@ -39,6 +39,9 @@ static uint profile_numbers[5] = {0, 1, 2, 3, 4};
 
 static void kone_profile_activated(struct kone_device *kone, uint new_profile)
 {
+	if (!new_profile || new_profile > ARRAY_SIZE(kone->profiles))
+		return;
+
 	kone->actual_profile = new_profile;
 	kone->actual_dpi = kone->profiles[new_profile - 1].startup_dpi;
 }
@@ -789,6 +792,8 @@ static void kone_keep_values_up_to_date(struct kone_device *kone,
 {
 	switch (event->event) {
 	case kone_mouse_event_switch_profile:
+		if (!event->value || event->value > ARRAY_SIZE(kone->profiles))
+			break;
 		kone->actual_dpi = kone->profiles[event->value - 1].
 				startup_dpi;
 	case kone_mouse_event_osd_profile:

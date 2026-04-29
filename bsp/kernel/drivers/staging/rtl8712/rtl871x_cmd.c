@@ -706,10 +706,19 @@ u8 r8712_setstakey_cmd(struct _adapter *padapter, u8 *psta, u8 unicast_key)
 			       psetstakey_para->algorithm, false);
 	if (unicast_key == true)
 		memcpy(&psetstakey_para->key, &sta->x_UncstKey, 16);
-	else
+	else {
+		if (!psecuritypriv->XGrpKeyid ||
+		    psecuritypriv->XGrpKeyid >
+		    ARRAY_SIZE(psecuritypriv->XGrpKey)) {
+			kfree((u8 *)ph2c);
+			kfree((u8 *)psetstakey_para);
+			kfree((u8 *)psetstakey_rsp);
+			return _FAIL;
+		}
 		memcpy(&psetstakey_para->key,
 			&psecuritypriv->XGrpKey[
 			psecuritypriv->XGrpKeyid - 1]. skey, 16);
+	}
 	r8712_enqueue_cmd(pcmdpriv, ph2c);
 	return _SUCCESS;
 }

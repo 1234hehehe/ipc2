@@ -65,6 +65,7 @@ static int usb_console_setup(struct console *co, char *options)
 	struct usb_serial *serial;
 	struct usb_serial_port *port;
 	int retval;
+	int port_num;
 	struct tty_struct *tty = NULL;
 	struct ktermios dummy;
 
@@ -119,7 +120,12 @@ static int usb_console_setup(struct console *co, char *options)
 	if (retval)
 		goto error_get_interface;
 
-	port = serial->port[co->index - serial->minor];
+	port_num = co->index - serial->minor;
+	if (port_num < 0 || port_num >= serial->num_ports) {
+		retval = -ENODEV;
+		goto error_get_interface;
+	}
+	port = serial->port[port_num];
 	tty_port_tty_set(&port->port, NULL);
 
 	info->port = port;
@@ -310,4 +316,3 @@ void usb_serial_console_exit(void)
 		usbcons_info.port = NULL;
 	}
 }
-

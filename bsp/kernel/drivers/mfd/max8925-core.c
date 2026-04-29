@@ -475,6 +475,10 @@ static struct max8925_irq_data max8925_irqs[] = {
 static inline struct max8925_irq_data *irq_to_max8925(struct max8925_chip *chip,
 						      int irq)
 {
+	if (irq < chip->irq_base ||
+	    irq >= chip->irq_base + ARRAY_SIZE(max8925_irqs))
+		return NULL;
+
 	return &max8925_irqs[irq - chip->irq_base];
 }
 
@@ -624,14 +628,23 @@ static void max8925_irq_sync_unlock(struct irq_data *data)
 static void max8925_irq_enable(struct irq_data *data)
 {
 	struct max8925_chip *chip = irq_data_get_irq_chip_data(data);
-	max8925_irqs[data->irq - chip->irq_base].enable
-		= max8925_irqs[data->irq - chip->irq_base].offs;
+	struct max8925_irq_data *irq_data = irq_to_max8925(chip, data->irq);
+
+	if (!irq_data)
+		return;
+
+	irq_data->enable = irq_data->offs;
 }
 
 static void max8925_irq_disable(struct irq_data *data)
 {
 	struct max8925_chip *chip = irq_data_get_irq_chip_data(data);
-	max8925_irqs[data->irq - chip->irq_base].enable = 0;
+	struct max8925_irq_data *irq_data = irq_to_max8925(chip, data->irq);
+
+	if (!irq_data)
+		return;
+
+	irq_data->enable = 0;
 }
 
 static struct irq_chip max8925_irq_chip = {

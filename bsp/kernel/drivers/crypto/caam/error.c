@@ -260,7 +260,7 @@ char *caam_jr_strstatus(char *outstr, u32 status)
 	};
 	u32 ssrc = status >> JRSTA_SSRC_SHIFT;
 
-	sprintf(outstr, "%s: ", status_src[ssrc].error);
+	snprintf(outstr, CAAM_ERROR_STR_MAX, "%s: ", status_src[ssrc].error);
 
 	if (status_src[ssrc].report_ssed)
 		status_src[ssrc].report_ssed(status, outstr);

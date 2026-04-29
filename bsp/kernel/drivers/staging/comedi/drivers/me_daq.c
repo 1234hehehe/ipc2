@@ -426,6 +426,8 @@ static int me2600_xilinx_download(struct comedi_device *dev,
 	    (((unsigned int)data[1] & 0xff) << 16) +
 	    (((unsigned int)data[2] & 0xff) << 8) +
 	    ((unsigned int)data[3] & 0xff);
+	if (file_length > size - 16)
+		return -EINVAL;
 
 	/*
 	 * Loop for writing firmware byte by byte to xilinx

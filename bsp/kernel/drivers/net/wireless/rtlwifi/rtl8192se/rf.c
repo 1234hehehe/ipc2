@@ -46,6 +46,9 @@ static void _rtl92s_get_powerbase(struct ieee80211_hw *hw, u8 *p_pwrlevel,
 	u8 legacy_pwrdiff = 0, ht20_pwrdiff = 0;
 	u8 i, pwrlevel[4];
 
+	if (chnl < 1 || chnl > CHANNEL_MAX_NUMBER)
+		return;
+
 	for (i = 0; i < 2; i++)
 		pwrlevel[i] = p_pwrlevel[i];
 

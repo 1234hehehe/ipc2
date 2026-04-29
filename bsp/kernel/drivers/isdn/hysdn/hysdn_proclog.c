@@ -58,7 +58,8 @@ hysdn_card_errlog(hysdn_card *card, tErrLogEntry *logp, int maxsize)
 {
 	char buf[ERRLOG_TEXT_SIZE + 40];
 
-	sprintf(buf, "LOG 0x%08lX 0x%08lX : %s\n", logp->ulErrType, logp->ulErrSubtype, logp->ucText);
+	snprintf(buf, sizeof(buf), "LOG 0x%08lX 0x%08lX : %s\n",
+		 logp->ulErrType, logp->ulErrSubtype, logp->ucText);
 	put_log_buffer(card, buf);	/* output the string */
 }				/* hysdn_card_errlog */
 
@@ -70,19 +71,27 @@ hysdn_addlog(hysdn_card *card, char *fmt, ...)
 {
 	struct procdata *pd = card->proclog;
 	char *cp;
+	size_t remaining;
 	va_list args;
 
 	if (!pd)
 		return;		/* log structure non existent */
 
 	cp = pd->logtmp;
-	cp += sprintf(cp, "HYSDN: card %d ", card->myid);
+	remaining = sizeof(pd->logtmp);
+	cp += scnprintf(cp, remaining, "HYSDN: card %d ", card->myid);
+	remaining = sizeof(pd->logtmp) - (cp - (char *)pd->logtmp);
 
 	va_start(args, fmt);
-	cp += vsprintf(cp, fmt, args);
+	cp += vscnprintf(cp, remaining, fmt, args);
 	va_end(args);
-	*cp++ = '\n';
-	*cp = 0;
+	remaining = sizeof(pd->logtmp) - (cp - (char *)pd->logtmp);
+	if (remaining > 1) {
+		*cp++ = '\n';
+		*cp = 0;
+	} else {
+		pd->logtmp[sizeof(pd->logtmp) - 1] = '\0';
+	}
 
 	if (card->debug_flags & DEB_OUT_SYSLOG)
 		printk(KERN_INFO "%s", pd->logtmp);
@@ -103,6 +112,7 @@ put_log_buffer(hysdn_card *card, char *cp)
 	struct log_data *ib;
 	struct procdata *pd = card->proclog;
 	int i;
+	size_t cp_len;
 	unsigned long flags;
 
 	if (!pd)
@@ -114,9 +124,12 @@ put_log_buffer(hysdn_card *card, char *cp)
 	if (pd->if_used <= 0)
 		return;		/* no open file for read */
 
-	if (!(ib = kmalloc(sizeof(struct log_data) + strlen(cp), GFP_ATOMIC)))
+	cp_len = strlen(cp) + 1;
+	ib = kmalloc(sizeof(*ib) + cp_len - sizeof(ib->log_start),
+		     GFP_ATOMIC);
+	if (!ib)
 		return;	/* no memory */
-	strcpy(ib->log_start, cp);	/* set output string */
+	memcpy(ib->log_start, cp, cp_len);	/* set output string */
 	ib->next = NULL;
 	ib->proc_ctrl = pd;	/* point to own control structure */
 	spin_lock_irqsave(&card->hysdn_lock, flags);
@@ -327,7 +340,8 @@ hysdn_proclog_init(hysdn_card *card)
 	/* create a cardlog proc entry */
 
 	if ((pd = kzalloc(sizeof(struct procdata), GFP_KERNEL)) != NULL) {
-		sprintf(pd->log_name, "%s%d", PROC_LOG_BASENAME, card->myid);
+		snprintf(pd->log_name, sizeof(pd->log_name), "%s%d",
+			 PROC_LOG_BASENAME, card->myid);
 		pd->log = proc_create_data(pd->log_name,
 				      S_IFREG | S_IRUGO | S_IWUSR, hysdn_proc_entry,
 				      &log_fops, card);

@@ -782,8 +782,9 @@ static void iscsit_handle_time2retain_timeout(unsigned long data)
 
 	if (tiqn) {
 		spin_lock(&tiqn->sess_err_stats.lock);
-		strcpy(tiqn->sess_err_stats.last_sess_fail_rem_name,
-			(void *)sess->sess_ops->InitiatorName);
+		strlcpy(tiqn->sess_err_stats.last_sess_fail_rem_name,
+			(void *)sess->sess_ops->InitiatorName,
+			sizeof(tiqn->sess_err_stats.last_sess_fail_rem_name));
 		tiqn->sess_err_stats.last_sess_failure_type =
 				ISCSI_SESS_ERR_CXN_TIMEOUT;
 		tiqn->sess_err_stats.cxn_timeout_errors++;

@@ -129,7 +129,7 @@ void __init of_cpu_clk_setup(struct device_node *node)
 		struct clk_init_data init;
 		struct clk *clk;
 		struct clk *parent_clk;
-		char *clk_name = kzalloc(5, GFP_KERNEL);
+		char *clk_name = kzalloc(16, GFP_KERNEL);
 		int cpu, err;
 
 		if (WARN_ON(!clk_name))
@@ -139,7 +139,7 @@ void __init of_cpu_clk_setup(struct device_node *node)
 		if (WARN_ON(err))
 			goto bail_out;
 
-		sprintf(clk_name, "cpu%d", cpu);
+		snprintf(clk_name, 16, "cpu%d", cpu);
 		parent_clk = of_clk_get(node, 0);
 
 		cpuclk[cpu].parent_name = __clk_get_name(parent_clk);

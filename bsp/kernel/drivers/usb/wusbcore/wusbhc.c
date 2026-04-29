@@ -103,7 +103,8 @@ static ssize_t wusb_chid_show(struct device *dev,
 		chid = &wusb_ckhdid_zero;
 
 	result += ckhdid_printf(buf, PAGE_SIZE, chid);
-	result += sprintf(buf + result, "\n");
+	if (result < PAGE_SIZE)
+		result += scnprintf(buf + result, PAGE_SIZE - result, "\n");
 
 	return result;
 }

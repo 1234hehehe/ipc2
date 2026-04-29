@@ -139,28 +139,28 @@ static ssize_t dbgfs_state(struct file *file, char __user *user_buf,
 		return 0;
 
 	/* Print out debug information. */
-	len += snprintf((buf + len), (DEBUGFS_BUF_SIZE - len),
+	len += scnprintf(buf + len, DEBUGFS_BUF_SIZE - len,
 			"CAIF SPI debug information:\n");
 
-	len += snprintf((buf + len), (DEBUGFS_BUF_SIZE - len), FLAVOR);
+	len += scnprintf(buf + len, DEBUGFS_BUF_SIZE - len, FLAVOR);
 
-	len += snprintf((buf + len), (DEBUGFS_BUF_SIZE - len),
+	len += scnprintf(buf + len, DEBUGFS_BUF_SIZE - len,
 			"STATE: %d\n", cfspi->dbg_state);
-	len += snprintf((buf + len), (DEBUGFS_BUF_SIZE - len),
+	len += scnprintf(buf + len, DEBUGFS_BUF_SIZE - len,
 			"Previous CMD: 0x%x\n", cfspi->pcmd);
-	len += snprintf((buf + len), (DEBUGFS_BUF_SIZE - len),
+	len += scnprintf(buf + len, DEBUGFS_BUF_SIZE - len,
 			"Current CMD: 0x%x\n", cfspi->cmd);
-	len += snprintf((buf + len), (DEBUGFS_BUF_SIZE - len),
+	len += scnprintf(buf + len, DEBUGFS_BUF_SIZE - len,
 			"Previous TX len: %d\n", cfspi->tx_ppck_len);
-	len += snprintf((buf + len), (DEBUGFS_BUF_SIZE - len),
+	len += scnprintf(buf + len, DEBUGFS_BUF_SIZE - len,
 			"Previous RX len: %d\n", cfspi->rx_ppck_len);
-	len += snprintf((buf + len), (DEBUGFS_BUF_SIZE - len),
+	len += scnprintf(buf + len, DEBUGFS_BUF_SIZE - len,
 			"Current TX len: %d\n", cfspi->tx_cpck_len);
-	len += snprintf((buf + len), (DEBUGFS_BUF_SIZE - len),
+	len += scnprintf(buf + len, DEBUGFS_BUF_SIZE - len,
 			"Current RX len: %d\n", cfspi->rx_cpck_len);
-	len += snprintf((buf + len), (DEBUGFS_BUF_SIZE - len),
+	len += scnprintf(buf + len, DEBUGFS_BUF_SIZE - len,
 			"Next TX len: %d\n", cfspi->tx_npck_len);
-	len += snprintf((buf + len), (DEBUGFS_BUF_SIZE - len),
+	len += scnprintf(buf + len, DEBUGFS_BUF_SIZE - len,
 			"Next RX len: %d\n", cfspi->rx_npck_len);
 
 	if (len > DEBUGFS_BUF_SIZE)
@@ -178,23 +178,23 @@ static ssize_t print_frame(char *buf, size_t size, char *frm,
 	int len = 0;
 	int i;
 	for (i = 0; i < count; i++) {
-		len += snprintf((buf + len), (size - len),
+		len += scnprintf(buf + len, size - len,
 					"[0x" BYTE_HEX_FMT "]",
 					frm[i]);
 		if ((i == cut) && (count > (cut * 2))) {
 			/* Fast forward. */
 			i = count - cut;
-			len += snprintf((buf + len), (size - len),
+			len += scnprintf(buf + len, size - len,
 					"--- %u bytes skipped ---\n",
 					(int)(count - (cut * 2)));
 		}
 
 		if ((!(i % 10)) && i) {
-			len += snprintf((buf + len), (DEBUGFS_BUF_SIZE - len),
+			len += scnprintf(buf + len, DEBUGFS_BUF_SIZE - len,
 					"\n");
 		}
 	}
-	len += snprintf((buf + len), (DEBUGFS_BUF_SIZE - len), "\n");
+	len += scnprintf(buf + len, DEBUGFS_BUF_SIZE - len, "\n");
 	return len;
 }
 
@@ -212,17 +212,17 @@ static ssize_t dbgfs_frame(struct file *file, char __user *user_buf,
 		return 0;
 
 	/* Print out debug information. */
-	len += snprintf((buf + len), (DEBUGFS_BUF_SIZE - len),
+	len += scnprintf(buf + len, DEBUGFS_BUF_SIZE - len,
 			"Current frame:\n");
 
-	len += snprintf((buf + len), (DEBUGFS_BUF_SIZE - len),
+	len += scnprintf(buf + len, DEBUGFS_BUF_SIZE - len,
 			"Tx data (Len: %d):\n", cfspi->tx_cpck_len);
 
 	len += print_frame((buf + len), (DEBUGFS_BUF_SIZE - len),
 			   cfspi->xfer.va_tx[0],
 			   (cfspi->tx_cpck_len + SPI_CMD_SZ), 100);
 
-	len += snprintf((buf + len), (DEBUGFS_BUF_SIZE - len),
+	len += scnprintf(buf + len, DEBUGFS_BUF_SIZE - len,
 			"Rx data (Len: %d):\n", cfspi->rx_cpck_len);
 
 	len += print_frame((buf + len), (DEBUGFS_BUF_SIZE - len),
@@ -291,7 +291,7 @@ static spinlock_t cfspi_list_lock;
 /* SPI uplink head alignment. */
 static ssize_t show_up_head_align(struct device_driver *driver, char *buf)
 {
-	return sprintf(buf, "%d\n", spi_up_head_align);
+	return scnprintf(buf, PAGE_SIZE, "%d\n", spi_up_head_align);
 }
 
 static DRIVER_ATTR(up_head_align, S_IRUSR, show_up_head_align, NULL);
@@ -299,7 +299,7 @@ static DRIVER_ATTR(up_head_align, S_IRUSR, show_up_head_align, NULL);
 /* SPI uplink tail alignment. */
 static ssize_t show_up_tail_align(struct device_driver *driver, char *buf)
 {
-	return sprintf(buf, "%d\n", spi_up_tail_align);
+	return scnprintf(buf, PAGE_SIZE, "%d\n", spi_up_tail_align);
 }
 
 static DRIVER_ATTR(up_tail_align, S_IRUSR, show_up_tail_align, NULL);
@@ -307,7 +307,7 @@ static DRIVER_ATTR(up_tail_align, S_IRUSR, show_up_tail_align, NULL);
 /* SPI downlink head alignment. */
 static ssize_t show_down_head_align(struct device_driver *driver, char *buf)
 {
-	return sprintf(buf, "%d\n", spi_down_head_align);
+	return scnprintf(buf, PAGE_SIZE, "%d\n", spi_down_head_align);
 }
 
 static DRIVER_ATTR(down_head_align, S_IRUSR, show_down_head_align, NULL);
@@ -315,7 +315,7 @@ static DRIVER_ATTR(down_head_align, S_IRUSR, show_down_head_align, NULL);
 /* SPI downlink tail alignment. */
 static ssize_t show_down_tail_align(struct device_driver *driver, char *buf)
 {
-	return sprintf(buf, "%d\n", spi_down_tail_align);
+	return scnprintf(buf, PAGE_SIZE, "%d\n", spi_down_tail_align);
 }
 
 static DRIVER_ATTR(down_tail_align, S_IRUSR, show_down_tail_align, NULL);
@@ -323,7 +323,7 @@ static DRIVER_ATTR(down_tail_align, S_IRUSR, show_down_tail_align, NULL);
 /* SPI frame alignment. */
 static ssize_t show_frame_align(struct device_driver *driver, char *buf)
 {
-	return sprintf(buf, "%d\n", spi_frm_align);
+	return scnprintf(buf, PAGE_SIZE, "%d\n", spi_frm_align);
 }
 
 static DRIVER_ATTR(frame_align, S_IRUSR, show_frame_align, NULL);

@@ -236,10 +236,10 @@ int spk_set_num_var(int input, struct st_var_header *var, int how)
 	else
 		cp = buf;
 	if (!var_data->u.n.out_str)
-		l = sprintf(cp, var_data->u.n.synth_fmt, (int)val);
+		l = scnprintf(cp, 32, var_data->u.n.synth_fmt, (int)val);
 	else
-		l = sprintf(cp,
-			var_data->u.n.synth_fmt, var_data->u.n.out_str[val]);
+		l = scnprintf(cp, 32, var_data->u.n.synth_fmt,
+			      var_data->u.n.out_str[val]);
 	synth_printf("%s", cp);
 	return ret;
 }
@@ -258,10 +258,11 @@ int spk_set_string_var(const char *page, struct st_var_header *var, int len)
 		if (!var->p_val)
 			var->p_val = var_data->u.s.default_val;
 		if (var->p_val != var_data->u.s.default_val)
-			strcpy((char *)var->p_val, var_data->u.s.default_val);
+			strlcpy((char *)var->p_val,
+				var_data->u.s.default_val, MAXVARLEN + 1);
 		return -ERESTART;
 	} else if (var->p_val)
-		strcpy((char *)var->p_val, page);
+		strlcpy((char *)var->p_val, page, MAXVARLEN + 1);
 	else
 		return -E2BIG;
 	return 0;

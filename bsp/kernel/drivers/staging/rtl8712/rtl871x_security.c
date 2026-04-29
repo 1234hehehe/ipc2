@@ -657,7 +657,7 @@ u32 r8712_tkip_decrypt(struct _adapter *padapter, u8 *precvframe)
 	u8 crc[4];
 	struct arc4context mycontext;
 	u32 length, prwskeylen;
-	u8 *pframe, *payload, *iv, *prwskey, idx = 0;
+	u8 *pframe, *payload, *iv, *prwskey, idx = 0, key_idx;
 	union pn48 txpn;
 	struct	sta_info *stainfo;
 	struct	rx_pkt_attrib *prxattrib = &((union recv_frame *)
@@ -677,9 +677,15 @@ u32 r8712_tkip_decrypt(struct _adapter *padapter, u8 *precvframe)
 				 u.hdr.len - prxattrib->hdrlen -
 				 prxattrib->iv_len;
 			if (IS_MCAST(prxattrib->ra)) {
+				if (prxattrib->iv_len < 4)
+					return _FAIL;
 				idx = iv[3];
+				key_idx = (idx >> 6) & 0x3;
+				if (!key_idx ||
+				    key_idx > ARRAY_SIZE(psecuritypriv->XGrpKey))
+					return _FAIL;
 				prwskey = &psecuritypriv->XGrpKey[
-					 ((idx >> 6) & 0x3) - 1].skey[0];
+					key_idx - 1].skey[0];
 				if (psecuritypriv->binstallGrpkey == false)
 					return _FAIL;
 			} else
@@ -695,6 +701,8 @@ u32 r8712_tkip_decrypt(struct _adapter *padapter, u8 *precvframe)
 			/* 4 decrypt payload include icv */
 			arcfour_init(&mycontext, rc4key, 16);
 			arcfour_encrypt(&mycontext, payload, payload, length);
+			if (length < 4)
+				return _FAIL;
 			*((u32 *)crc) = cpu_to_le32(getcrc32(payload,
 					length - 4));
 			if (crc[3] != payload[length - 1] ||
@@ -1374,14 +1382,20 @@ u32 r8712_aes_decrypt(struct _adapter *padapter, u8 *precvframe)
 	if ((prxattrib->encrypt == _AES_)) {
 		stainfo = r8712_get_stainfo(&padapter->stapriv,
 					    &prxattrib->ta[0]);
-		if (stainfo != NULL) {
-			if (IS_MCAST(prxattrib->ra)) {
-				iv = pframe+prxattrib->hdrlen;
-				idx = iv[3];
-				prwskey = &psecuritypriv->XGrpKey[
-					  ((idx >> 6) & 0x3) - 1].skey[0];
-				if (psecuritypriv->binstallGrpkey == false)
-					return _FAIL;
+			if (stainfo != NULL) {
+				if (IS_MCAST(prxattrib->ra)) {
+					iv = pframe+prxattrib->hdrlen;
+					if (prxattrib->iv_len < 4)
+						return _FAIL;
+					idx = iv[3];
+					key_idx = (idx >> 6) & 0x3;
+					if (!key_idx ||
+					    key_idx > ARRAY_SIZE(psecuritypriv->XGrpKey))
+						return _FAIL;
+					prwskey = &psecuritypriv->XGrpKey[
+						  key_idx - 1].skey[0];
+					if (psecuritypriv->binstallGrpkey == false)
+						return _FAIL;
 
 			} else
 				prwskey = &stainfo->x_UncstKey.skey[0];

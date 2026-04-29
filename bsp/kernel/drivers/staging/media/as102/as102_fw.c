@@ -85,13 +85,18 @@ static int parse_hex_line(unsigned char *fw_data, unsigned char *addr,
 			break;
 		case  4:
 		case  5:
-			if (*addr_has_changed)
-				addr[(count - 4)] = dst;
-			else
-				data[(count - 4)] = dst;
+			if (count >= 4) {
+				unsigned int offset = count - 4;
+
+				if (*addr_has_changed)
+					addr[offset] = dst;
+				else
+					data[offset] = dst;
+			}
 			break;
 		default:
-			data[(count - 4)] = dst;
+			if (count >= 4)
+				data[count - 4] = dst;
 			break;
 		}
 		count++;

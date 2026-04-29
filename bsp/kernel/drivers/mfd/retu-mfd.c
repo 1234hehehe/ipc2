@@ -234,7 +234,7 @@ static int retu_probe(struct i2c_client *i2c, const struct i2c_device_id *id)
 	struct retu_dev *rdev;
 	int ret;
 
-	if (i2c->addr > ARRAY_SIZE(retu_data))
+	if (!i2c->addr || i2c->addr > ARRAY_SIZE(retu_data))
 		return -ENODEV;
 	rdat = &retu_data[i2c->addr - 1];
 

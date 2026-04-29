@@ -292,21 +292,25 @@ _func_enter_;
 		RT_TRACE(_module_mlme_osdep_c_,_drv_info_,("rtw_report_sec_ie, authmode=%d\n", authmode));
 
 		buff = rtw_malloc(IW_CUSTOM_MAX);
+		if (!buff)
+			return;
 
 		_rtw_memset(buff,0,IW_CUSTOM_MAX);
 
 		p=buff;
 
-		p+=sprintf(p,"ASSOCINFO(ReqIEs=");
+		p += scnprintf(p, IW_CUSTOM_MAX - (p - buff),
+			       "ASSOCINFO(ReqIEs=");
 
 		len = sec_ie[1]+2;
 		len =  (len < IW_CUSTOM_MAX) ? len:IW_CUSTOM_MAX;
 
 		for(i=0;i<len;i++){
-			p+=sprintf(p,"%02x",sec_ie[i]);
+			p += scnprintf(p, IW_CUSTOM_MAX - (p - buff),
+				       "%02x", sec_ie[i]);
 		}
 
-		p+=sprintf(p,")");
+		p += scnprintf(p, IW_CUSTOM_MAX - (p - buff), ")");
 
 		_rtw_memset(&wrqu,0,sizeof(wrqu));
 
@@ -399,7 +403,7 @@ void rtw_indicate_sta_assoc_event(_adapter *padapter, struct sta_info *psta)
 	if(psta==NULL)
 		return;
 
-	if(psta->aid > NUM_STA)
+	if (psta->aid == 0 || psta->aid > NUM_STA)
 		return;
 
 	if(pstapriv->sta_aid[psta->aid - 1] != psta)
@@ -426,7 +430,7 @@ void rtw_indicate_sta_disassoc_event(_adapter *padapter, struct sta_info *psta)
 	if(psta==NULL)
 		return;
 
-	if(psta->aid > NUM_STA)
+	if (psta->aid == 0 || psta->aid > NUM_STA)
 		return;
 
 	if(pstapriv->sta_aid[psta->aid - 1] != psta)
@@ -611,4 +615,3 @@ void hostapd_mode_unload(_adapter *padapter)
 
 #endif
 #endif
-

@@ -642,8 +642,8 @@ static ssize_t show_fw_ver(struct device *dev, struct device_attribute *attr,
 	struct pci_dev *pdev = to_pci_dev(dev);
 	struct timberdale_device *priv = pci_get_drvdata(pdev);
 
-	return sprintf(buf, "%d.%d.%d\n", priv->fw.major, priv->fw.minor,
-		priv->fw.config);
+	return scnprintf(buf, PAGE_SIZE, "%d.%d.%d\n", priv->fw.major,
+			 priv->fw.minor, priv->fw.config);
 }
 
 static DEVICE_ATTR(fw_ver, S_IRUGO, show_fw_ver, NULL);

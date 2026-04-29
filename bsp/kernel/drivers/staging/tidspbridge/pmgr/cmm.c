@@ -727,6 +727,9 @@ static void add_to_free_list(struct cmm_allocator *allocator,
 static struct cmm_allocator *get_allocator(struct cmm_object *cmm_mgr_obj,
 					   u32 ul_seg_id)
 {
+	if (!cmm_mgr_obj || !ul_seg_id || ul_seg_id > CMM_MAXGPPSEGS)
+		return NULL;
+
 	return cmm_mgr_obj->pa_gppsm_seg_tab[ul_seg_id - 1];
 }
 
@@ -865,7 +868,7 @@ void *cmm_xlator_translate(struct cmm_xlatorobject *xlator, void *paddr,
 
 	cmm_mgr_obj = (struct cmm_object *)xlator_obj->cmm_mgr;
 	/* get this translator's default SM allocator */
-	allocator = cmm_mgr_obj->pa_gppsm_seg_tab[xlator_obj->seg_id - 1];
+	allocator = get_allocator(cmm_mgr_obj, xlator_obj->seg_id);
 	if (!allocator)
 		goto loop_cont;
 

@@ -468,14 +468,29 @@ static struct pm121_cpu_state *pm121_cpu_state;
  *
  */
 
+static int pm121_mach_model_index(void)
+{
+	int index = pm121_mach_model - 2;
+
+	if (index < 0 || index >= PM121_NUM_CONFIGS)
+		return -EINVAL;
+
+	return index;
+}
+
 /* correction the value using the output-low-bound correction algo */
 static s32 pm121_correct(s32 new_setpoint,
 			 unsigned int control_id,
 			 s32 min)
 {
+	int model_index = pm121_mach_model_index();
 	s32 new_min;
 	struct pm121_correction *correction;
-	correction = &corrections[control_id][pm121_mach_model - 2];
+
+	if (model_index < 0)
+		return max3(new_setpoint, min, 0);
+
+	correction = &corrections[control_id][model_index];
 
 	new_min = (average_power * correction->slope) >> 16;
 	new_min += correction->offset;
@@ -487,6 +502,9 @@ static s32 pm121_correct(s32 new_setpoint,
 static s32 pm121_connect(unsigned int control_id, s32 setpoint)
 {
 	s32 new_min, value, new_setpoint;
+
+	if (!pm121_connection)
+		return setpoint;
 
 	if (pm121_connection->control_id == control_id) {
 		controls[control_id]->ops->get_value(controls[control_id],
@@ -578,6 +596,7 @@ static void pm121_create_sys_fans(int loop_id)
 
 static void pm121_sys_fans_tick(int loop_id)
 {
+	int model_index = pm121_mach_model_index();
 	struct pm121_sys_param *param;
 	struct pm121_sys_state *st;
 	struct wf_sensor *sensor;
@@ -585,7 +604,14 @@ static void pm121_sys_fans_tick(int loop_id)
 	s32 temp, new_setpoint;
 	int rc;
 
-	param = &(pm121_sys_all_params[loop_id][pm121_mach_model-2]);
+	if (model_index < 0) {
+		printk(KERN_WARNING "windfarm: unsupported machine model %d\n",
+		       pm121_mach_model);
+		pm121_failure_state |= FAILURE_SENSOR;
+		return;
+	}
+
+	param = &(pm121_sys_all_params[loop_id][model_index]);
 	st = pm121_sys_state[loop_id];
 	sensor = *(param->sensor);
 	control = controls[param->control_id];
@@ -962,6 +988,7 @@ static struct notifier_block pm121_events = {
 
 static int pm121_init_pm(void)
 {
+	int model_index;
 	const struct smu_sdbp_header *hdr;
 
 	hdr = smu_get_sdb_partition(SMU_SDB_SENSORTREE_ID, NULL);
@@ -971,7 +998,14 @@ static int pm121_init_pm(void)
 		pm121_mach_model = st->model_id;
 	}
 
-	pm121_connection = &pm121_connections[pm121_mach_model - 2];
+	model_index = pm121_mach_model_index();
+	if (model_index < 0) {
+		printk(KERN_WARNING "pm121: unsupported machine model ID %d\n",
+		       pm121_mach_model);
+		return -EINVAL;
+	}
+
+	pm121_connection = &pm121_connections[model_index];
 
 	printk(KERN_INFO "pm121: Initializing for iMac G5 iSight model ID %d\n",
 	       pm121_mach_model);
@@ -1036,4 +1070,3 @@ module_exit(pm121_exit);
 MODULE_AUTHOR("Étienne Bersac <bersace@gmail.com>");
 MODULE_DESCRIPTION("Thermal control logic for iMac G5 (iSight)");
 MODULE_LICENSE("GPL");
-

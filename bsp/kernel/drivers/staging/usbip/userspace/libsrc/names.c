@@ -212,10 +212,10 @@ static int new_vendor(const char *name, u_int16_t vendorid)
 	for (; v; v = v->next)
 		if (v->vendorid == vendorid)
 			return -1;
-	v = my_malloc(sizeof(struct vendor) + strlen(name));
+	v = my_malloc(sizeof(struct vendor) + strlen(name) + 1);
 	if (!v)
 		return -1;
-	strcpy(v->name, name);
+	memcpy(v->name, name, strlen(name) + 1);
 	v->vendorid = vendorid;
 	v->next = vendors[h];
 	vendors[h] = v;
@@ -232,10 +232,10 @@ static int new_product(const char *name, u_int16_t vendorid,
 	for (; p; p = p->next)
 		if (p->vendorid == vendorid && p->productid == productid)
 			return -1;
-	p = my_malloc(sizeof(struct product) + strlen(name));
+	p = my_malloc(sizeof(struct product) + strlen(name) + 1);
 	if (!p)
 		return -1;
-	strcpy(p->name, name);
+	memcpy(p->name, name, strlen(name) + 1);
 	p->vendorid = vendorid;
 	p->productid = productid;
 	p->next = products[h];
@@ -252,10 +252,10 @@ static int new_class(const char *name, u_int8_t classid)
 	for (; c; c = c->next)
 		if (c->classid == classid)
 			return -1;
-	c = my_malloc(sizeof(struct class) + strlen(name));
+	c = my_malloc(sizeof(struct class) + strlen(name) + 1);
 	if (!c)
 		return -1;
-	strcpy(c->name, name);
+	memcpy(c->name, name, strlen(name) + 1);
 	c->classid = classid;
 	c->next = classes[h];
 	classes[h] = c;
@@ -271,10 +271,10 @@ static int new_subclass(const char *name, u_int8_t classid, u_int8_t subclassid)
 	for (; s; s = s->next)
 		if (s->classid == classid && s->subclassid == subclassid)
 			return -1;
-	s = my_malloc(sizeof(struct subclass) + strlen(name));
+	s = my_malloc(sizeof(struct subclass) + strlen(name) + 1);
 	if (!s)
 		return -1;
-	strcpy(s->name, name);
+	memcpy(s->name, name, strlen(name) + 1);
 	s->classid = classid;
 	s->subclassid = subclassid;
 	s->next = subclasses[h];
@@ -294,10 +294,10 @@ static int new_protocol(const char *name, u_int8_t classid, u_int8_t subclassid,
 		if (p->classid == classid && p->subclassid == subclassid
 		    && p->protocolid == protocolid)
 			return -1;
-	p = my_malloc(sizeof(struct protocol) + strlen(name));
+	p = my_malloc(sizeof(struct protocol) + strlen(name) + 1);
 	if (!p)
 		return -1;
-	strcpy(p->name, name);
+	memcpy(p->name, name, strlen(name) + 1);
 	p->classid = classid;
 	p->subclassid = subclassid;
 	p->protocolid = protocolid;

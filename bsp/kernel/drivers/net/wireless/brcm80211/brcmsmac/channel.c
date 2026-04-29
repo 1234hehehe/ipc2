@@ -345,8 +345,13 @@ struct brcms_cm_info *brcms_c_channel_mgr_attach(struct brcms_c_info *wlc)
 
 	/* store the country code for passing up as a regulatory hint */
 	wlc_cm->world_regd = brcms_world_regd(ccode, ccode_len);
-	if (brcms_c_country_valid(ccode))
-		strncpy(wlc->pub->srom_ccode, ccode, ccode_len);
+	if (brcms_c_country_valid(ccode)) {
+		size_t copy_len = min_t(size_t, ccode_len,
+					sizeof(wlc->pub->srom_ccode) - 1);
+
+		memcpy(wlc->pub->srom_ccode, ccode, copy_len);
+		wlc->pub->srom_ccode[copy_len] = '\0';
+	}
 
 	/*
 	 * If no custom world domain is found in the SROM, use the
@@ -359,10 +364,13 @@ struct brcms_cm_info *brcms_c_channel_mgr_attach(struct brcms_c_info *wlc)
 	}
 
 	/* save default country for exiting 11d regulatory mode */
-	strncpy(wlc->country_default, ccode, ccode_len);
+	ccode_len = min_t(size_t, ccode_len, sizeof(wlc->country_default) - 1);
+	memcpy(wlc->country_default, ccode, ccode_len);
+	wlc->country_default[ccode_len] = '\0';
 
 	/* initialize autocountry_default to driver default */
-	strncpy(wlc->autocountry_default, ccode, ccode_len);
+	memcpy(wlc->autocountry_default, ccode, ccode_len);
+	wlc->autocountry_default[ccode_len] = '\0';
 
 	brcms_c_set_country(wlc_cm, wlc_cm->world_regd);
 

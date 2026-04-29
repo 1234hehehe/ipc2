@@ -360,7 +360,7 @@ static ssize_t show_in(struct device *dev, struct device_attribute *da,
 	struct via686a_data *data = via686a_update_device(dev);
 	struct sensor_device_attribute *attr = to_sensor_dev_attr(da);
 	int nr = attr->index;
-	return sprintf(buf, "%ld\n", IN_FROM_REG(data->in[nr], nr));
+	return scnprintf(buf, PAGE_SIZE, "%ld\n", IN_FROM_REG(data->in[nr], nr));
 }
 
 static ssize_t show_in_min(struct device *dev, struct device_attribute *da,
@@ -368,7 +368,7 @@ static ssize_t show_in_min(struct device *dev, struct device_attribute *da,
 	struct via686a_data *data = via686a_update_device(dev);
 	struct sensor_device_attribute *attr = to_sensor_dev_attr(da);
 	int nr = attr->index;
-	return sprintf(buf, "%ld\n", IN_FROM_REG(data->in_min[nr], nr));
+	return scnprintf(buf, PAGE_SIZE, "%ld\n", IN_FROM_REG(data->in_min[nr], nr));
 }
 
 static ssize_t show_in_max(struct device *dev, struct device_attribute *da,
@@ -376,7 +376,7 @@ static ssize_t show_in_max(struct device *dev, struct device_attribute *da,
 	struct via686a_data *data = via686a_update_device(dev);
 	struct sensor_device_attribute *attr = to_sensor_dev_attr(da);
 	int nr = attr->index;
-	return sprintf(buf, "%ld\n", IN_FROM_REG(data->in_max[nr], nr));
+	return scnprintf(buf, PAGE_SIZE, "%ld\n", IN_FROM_REG(data->in_max[nr], nr));
 }
 
 static ssize_t set_in_min(struct device *dev, struct device_attribute *da,
@@ -437,21 +437,21 @@ static ssize_t show_temp(struct device *dev, struct device_attribute *da,
 	struct via686a_data *data = via686a_update_device(dev);
 	struct sensor_device_attribute *attr = to_sensor_dev_attr(da);
 	int nr = attr->index;
-	return sprintf(buf, "%ld\n", TEMP_FROM_REG10(data->temp[nr]));
+	return scnprintf(buf, PAGE_SIZE, "%ld\n", TEMP_FROM_REG10(data->temp[nr]));
 }
 static ssize_t show_temp_over(struct device *dev, struct device_attribute *da,
 		char *buf) {
 	struct via686a_data *data = via686a_update_device(dev);
 	struct sensor_device_attribute *attr = to_sensor_dev_attr(da);
 	int nr = attr->index;
-	return sprintf(buf, "%ld\n", TEMP_FROM_REG(data->temp_over[nr]));
+	return scnprintf(buf, PAGE_SIZE, "%ld\n", TEMP_FROM_REG(data->temp_over[nr]));
 }
 static ssize_t show_temp_hyst(struct device *dev, struct device_attribute *da,
 		char *buf) {
 	struct via686a_data *data = via686a_update_device(dev);
 	struct sensor_device_attribute *attr = to_sensor_dev_attr(da);
 	int nr = attr->index;
-	return sprintf(buf, "%ld\n", TEMP_FROM_REG(data->temp_hyst[nr]));
+	return scnprintf(buf, PAGE_SIZE, "%ld\n", TEMP_FROM_REG(data->temp_hyst[nr]));
 }
 static ssize_t set_temp_over(struct device *dev, struct device_attribute *da,
 		const char *buf, size_t count) {
@@ -509,7 +509,7 @@ static ssize_t show_fan(struct device *dev, struct device_attribute *da,
 	struct via686a_data *data = via686a_update_device(dev);
 	struct sensor_device_attribute *attr = to_sensor_dev_attr(da);
 	int nr = attr->index;
-	return sprintf(buf, "%d\n", FAN_FROM_REG(data->fan[nr],
+	return scnprintf(buf, PAGE_SIZE, "%d\n", FAN_FROM_REG(data->fan[nr],
 				DIV_FROM_REG(data->fan_div[nr])));
 }
 static ssize_t show_fan_min(struct device *dev, struct device_attribute *da,
@@ -517,7 +517,7 @@ static ssize_t show_fan_min(struct device *dev, struct device_attribute *da,
 	struct via686a_data *data = via686a_update_device(dev);
 	struct sensor_device_attribute *attr = to_sensor_dev_attr(da);
 	int nr = attr->index;
-	return sprintf(buf, "%d\n",
+	return scnprintf(buf, PAGE_SIZE, "%d\n",
 		FAN_FROM_REG(data->fan_min[nr],
 			     DIV_FROM_REG(data->fan_div[nr])));
 }
@@ -526,7 +526,8 @@ static ssize_t show_fan_div(struct device *dev, struct device_attribute *da,
 	struct via686a_data *data = via686a_update_device(dev);
 	struct sensor_device_attribute *attr = to_sensor_dev_attr(da);
 	int nr = attr->index;
-	return sprintf(buf, "%d\n", DIV_FROM_REG(data->fan_div[nr]));
+	return scnprintf(buf, PAGE_SIZE, "%d\n",
+			 DIV_FROM_REG(data->fan_div[nr]));
 }
 static ssize_t set_fan_min(struct device *dev, struct device_attribute *da,
 		const char *buf, size_t count) {
@@ -584,7 +585,7 @@ static ssize_t show_alarms(struct device *dev, struct device_attribute *attr,
 			   char *buf)
 {
 	struct via686a_data *data = via686a_update_device(dev);
-	return sprintf(buf, "%u\n", data->alarms);
+	return scnprintf(buf, PAGE_SIZE, "%u\n", data->alarms);
 }
 
 static DEVICE_ATTR(alarms, S_IRUGO, show_alarms, NULL);
@@ -594,7 +595,8 @@ static ssize_t show_alarm(struct device *dev, struct device_attribute *attr,
 {
 	int bitnr = to_sensor_dev_attr(attr)->index;
 	struct via686a_data *data = via686a_update_device(dev);
-	return sprintf(buf, "%u\n", (data->alarms >> bitnr) & 1);
+	return scnprintf(buf, PAGE_SIZE, "%u\n",
+			 (data->alarms >> bitnr) & 1);
 }
 static SENSOR_DEVICE_ATTR(in0_alarm, S_IRUGO, show_alarm, NULL, 0);
 static SENSOR_DEVICE_ATTR(in1_alarm, S_IRUGO, show_alarm, NULL, 1);
@@ -611,7 +613,7 @@ static ssize_t show_name(struct device *dev, struct device_attribute
 			 *devattr, char *buf)
 {
 	struct via686a_data *data = dev_get_drvdata(dev);
-	return sprintf(buf, "%s\n", data->name);
+	return scnprintf(buf, PAGE_SIZE, "%s\n", data->name);
 }
 static DEVICE_ATTR(name, S_IRUGO, show_name, NULL);
 

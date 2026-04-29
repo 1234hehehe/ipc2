@@ -420,9 +420,11 @@ static void card_settings(struct pcmciamtd_dev *dev, struct pcmcia_device *p_dev
 		dev->mtd_name[0] = '\0';
 		for (i = 0; i < 4; i++) {
 			if (i)
-				strcat(dev->mtd_name, " ");
+				strlcat(dev->mtd_name, " ",
+					sizeof(dev->mtd_name));
 			if (p_dev->prod_id[i])
-				strcat(dev->mtd_name, p_dev->prod_id[i]);
+				strlcat(dev->mtd_name, p_dev->prod_id[i],
+					sizeof(dev->mtd_name));
 		}
 		pr_debug("Found name: %s\n", dev->mtd_name);
 	}

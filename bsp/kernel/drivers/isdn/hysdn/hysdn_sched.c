@@ -166,7 +166,7 @@ hysdn_tx_cfgline(hysdn_card *card, unsigned char *line, unsigned short chan)
 	}			/* wait for buffer to become free */
 
 	spin_lock_irqsave(&card->hysdn_lock, flags);
-	strcpy(card->async_data, line);
+	strlcpy(card->async_data, line, sizeof(card->async_data));
 	card->async_len = strlen(line) + 1;
 	card->async_channel = chan;
 	card->async_busy = 1;	/* request transfer */

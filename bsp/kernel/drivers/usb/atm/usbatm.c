@@ -1373,12 +1373,14 @@ static int usbatm_print_packet(struct usbatm_data *instance,
 {
 	unsigned char buffer[256];
 	int i = 0, j = 0;
+	int bytes;
 
 	for (i = 0; i < len;) {
-		buffer[0] = '\0';
-		sprintf(buffer, "%.3d :", i);
+		bytes = scnprintf(buffer, sizeof(buffer), "%.3d :", i);
 		for (j = 0; (j < 16) && (i < len); j++, i++)
-			sprintf(buffer, "%s %2.2x", buffer, data[i]);
+			bytes += scnprintf(buffer + bytes,
+					   sizeof(buffer) - bytes,
+					   " %2.2x", data[i]);
 		dev_dbg(&instance->usb_intf->dev, "%s", buffer);
 	}
 	return i;

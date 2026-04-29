@@ -39,7 +39,7 @@ static ssize_t reg_show_name(struct device *dev,
 {
 	struct userspace_consumer_data *data = dev_get_drvdata(dev);
 
-	return sprintf(buf, "%s\n", data->name);
+	return scnprintf(buf, PAGE_SIZE, "%s\n", data->name);
 }
 
 static ssize_t reg_show_state(struct device *dev,

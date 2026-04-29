@@ -6,10 +6,11 @@
 #define macio_config_of_attr(field, format_string)			\
 static ssize_t								\
 field##_show (struct device *dev, struct device_attribute *attr,	\
-              char *buf)						\
+	              char *buf)						\
 {									\
 	struct macio_dev *mdev = to_macio_device (dev);			\
-	return sprintf (buf, format_string, mdev->ofdev.dev.of_node->field); \
+	return scnprintf(buf, PAGE_SIZE, format_string,			\
+			 mdev->ofdev.dev.of_node->field);		\
 }
 
 static ssize_t
@@ -26,10 +27,10 @@ compatible_show (struct device *dev, struct device_attribute *attr, char *buf)
 		*buf = '\0';
 		return 0;
 	}
-	while (cplen > 0) {
+	while (cplen > 0 && length < PAGE_SIZE) {
 		int l;
-		length += sprintf (buf, "%s\n", compat);
-		buf += length;
+		length += scnprintf(buf + length, PAGE_SIZE - length,
+				    "%s\n", compat);
 		l = strlen (compat) + 1;
 		compat += l;
 		cplen -= l;
@@ -55,7 +56,7 @@ static ssize_t devspec_show(struct device *dev,
 	struct platform_device *ofdev;
 
 	ofdev = to_platform_device(dev);
-	return sprintf(buf, "%s\n", ofdev->dev.of_node->full_name);
+	return scnprintf(buf, PAGE_SIZE, "%s\n", ofdev->dev.of_node->full_name);
 }
 
 macio_config_of_attr (name, "%s\n");

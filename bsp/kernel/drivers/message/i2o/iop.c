@@ -1055,7 +1055,7 @@ struct i2o_controller *i2o_iop_alloc(void)
 	}
 
 	c->unit = unit++;
-	sprintf(c->name, "iop%d", c->unit);
+	snprintf(c->name, sizeof(c->name), "iop%d", c->unit);
 
 	snprintf(poolname, sizeof(poolname), "i2o_%s_msg_inpool", c->name);
 	if (i2o_pool_alloc

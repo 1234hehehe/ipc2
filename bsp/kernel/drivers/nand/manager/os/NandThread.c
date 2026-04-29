@@ -10,8 +10,13 @@ PNandThread CreateThread(PThreadFunction fn,void *data,int prio,char *name)
 	char threadName[80];
 	static int index = 1;
 
-	sprintf(threadName, "%s_%d", name, index);
+	snprintf(threadName, sizeof(threadName), "%s_%d", name, index);
 	thread = kthread_create(fn, data, threadName);
+	if (IS_ERR(thread)) {
+		index++;
+		return (int)thread;
+	}
+
 	switch(prio)
 	{
 	case 0:
@@ -21,8 +26,7 @@ PNandThread CreateThread(PThreadFunction fn,void *data,int prio,char *name)
 		sched_setscheduler(thread, SCHED_FIFO, &param);
 		break;
 	}
-	if (!IS_ERR(thread))
-		wake_up_process(thread);
+	wake_up_process(thread);
 
 	index ++;
 	return (int)thread;

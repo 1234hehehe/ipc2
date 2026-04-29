@@ -279,6 +279,7 @@ to_utf8(struct tty_port *port, ushort c)
 void
 kbd_keycode(struct kbd_data *kbd, unsigned int keycode)
 {
+	unsigned short *keymap;
 	unsigned short keysym;
 	unsigned char type, value;
 
@@ -286,13 +287,24 @@ kbd_keycode(struct kbd_data *kbd, unsigned int keycode)
 		return;
 
 	if (keycode >= 384)
-		keysym = kbd->key_maps[5][keycode - 384];
+		keymap = kbd->key_maps[5];
 	else if (keycode >= 256)
-		keysym = kbd->key_maps[4][keycode - 256];
+		keymap = kbd->key_maps[4];
 	else if (keycode >= 128)
-		keysym = kbd->key_maps[1][keycode - 128];
+		keymap = kbd->key_maps[1];
 	else
-		keysym = kbd->key_maps[0][keycode];
+		keymap = kbd->key_maps[0];
+
+	if (!keymap)
+		return;
+	if (keycode >= 384)
+		keysym = keymap[keycode - 384];
+	else if (keycode >= 256)
+		keysym = keymap[keycode - 256];
+	else if (keycode >= 128)
+		keysym = keymap[keycode - 128];
+	else
+		keysym = keymap[keycode];
 
 	type = KTYP(keysym);
 	if (type >= 0xf0) {

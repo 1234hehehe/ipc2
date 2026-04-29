@@ -94,7 +94,7 @@ static void tx_data(struct b43legacy_pioqueue *queue,
 					sizeof(struct b43legacy_txhdr_fw3), &i);
 		b43legacy_pio_write(queue, B43legacy_PIO_TXDATA, data);
 	}
-	if (octets % 2)
+	if ((octets % 2) && octets > sizeof(struct b43legacy_txhdr_fw3))
 		tx_octet(queue, packet[octets -
 			 sizeof(struct b43legacy_txhdr_fw3) - 1]);
 }
@@ -103,6 +103,8 @@ static void tx_complete(struct b43legacy_pioqueue *queue,
 			struct sk_buff *skb)
 {
 	if (queue->need_workarounds) {
+		if (!skb->len)
+			return;
 		b43legacy_pio_write(queue, B43legacy_PIO_TXDATA,
 				    skb->data[skb->len - 1]);
 		b43legacy_pio_write(queue, B43legacy_PIO_TXCTL,

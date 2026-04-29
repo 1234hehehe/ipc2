@@ -161,13 +161,13 @@ act2000_set_msn(act2000_card *card, char *eazmsn)
 	}
 	/* Add a single MSN */
 	while (p) {
-		/* Found in list, replace MSN */
-		if (p->eaz == eazmsn[0]) {
-			spin_lock_irqsave(&card->lock, flags);
-			strcpy(p->msn, &eazmsn[1]);
-			spin_unlock_irqrestore(&card->lock, flags);
-			printk(KERN_DEBUG
-			       "Mapping for EAZ %c changed to %s\n",
+			/* Found in list, replace MSN */
+			if (p->eaz == eazmsn[0]) {
+				spin_lock_irqsave(&card->lock, flags);
+				strlcpy(p->msn, &eazmsn[1], sizeof(p->msn));
+				spin_unlock_irqrestore(&card->lock, flags);
+				printk(KERN_DEBUG
+				       "Mapping for EAZ %c changed to %s\n",
 			       eazmsn[0],
 			       &eazmsn[1]);
 			return 0;
@@ -176,13 +176,13 @@ act2000_set_msn(act2000_card *card, char *eazmsn)
 	}
 	/* Not found in list, add new entry */
 	p = kmalloc(sizeof(msn_entry), GFP_KERNEL);
-	if (!p)
-		return -ENOMEM;
-	p->eaz = eazmsn[0];
-	strcpy(p->msn, &eazmsn[1]);
-	p->next = card->msn_list;
-	spin_lock_irqsave(&card->lock, flags);
-	card->msn_list = p;
+		if (!p)
+			return -ENOMEM;
+		p->eaz = eazmsn[0];
+		strlcpy(p->msn, &eazmsn[1], sizeof(p->msn));
+		p->next = card->msn_list;
+		spin_lock_irqsave(&card->lock, flags);
+		card->msn_list = p;
 	spin_unlock_irqrestore(&card->lock, flags);
 	printk(KERN_DEBUG
 	       "Mapping %c -> %s added\n",
@@ -640,7 +640,8 @@ act2000_registercard(act2000_card *card)
 		return -1;
 	}
 	card->myid = card->interface.channels;
-	sprintf(card->regname, "act2000-isdn (%s)", card->interface.id);
+	snprintf(card->regname, sizeof(card->regname),
+		 "act2000-isdn (%s)", card->interface.id);
 	return 0;
 }
 

@@ -114,6 +114,10 @@ static void hysdn_pci_remove_one(struct pci_dev *akt_pcidev)
 	hysdn_card *card = pci_get_drvdata(akt_pcidev);
 
 	pci_set_drvdata(akt_pcidev, NULL);
+	if (!card) {
+		pci_disable_device(akt_pcidev);
+		return;
+	}
 
 	if (card->stopcard)
 		card->stopcard(card);
@@ -125,11 +129,11 @@ static void hysdn_pci_remove_one(struct pci_dev *akt_pcidev)
 	if (card->releasehardware)
 		card->releasehardware(card);   /* free all hardware resources */
 
-	if (card == card_root) {
+	if (card_root && card == card_root) {
 		card_root = card_root->next;
 		if (!card_root)
 			card_last = NULL;
-	} else {
+	} else if (card_root) {
 		hysdn_card *tmp = card_root;
 		while (tmp) {
 			if (tmp->next == card)

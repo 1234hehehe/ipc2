@@ -117,8 +117,13 @@ static int unbind_device(char *busid)
 	}
 
 	len = busid_attr->len;
-	val = malloc(len);
-	*val = *busid_attr->value;
+	val = malloc(len + 1);
+	if (!val) {
+		err("out of memory");
+		goto err_out;
+	}
+	memcpy(val, busid_attr->value, len);
+	val[len] = '\0';
 	sysfs_close_attribute(busid_attr);
 
 	/* notify driver of unbind */

@@ -1717,7 +1717,7 @@ static int smsc_ircc_net_open(struct net_device *dev)
 
 	/* Give self a hardware name */
 	/* It would be cool to offer the chip revision here - Jean II */
-	sprintf(hwname, "SMSC @ 0x%03x", self->io.fir_base);
+	snprintf(hwname, sizeof(hwname), "SMSC @ 0x%03x", self->io.fir_base);
 
 	/*
 	 * Open new IrLAP layer instance, now that everything should be
