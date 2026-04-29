@@ -1,12 +1,12 @@
-首先需安装交叉编译器。
+First, the cross-compiler needs to be installed.
 
-打包命令
+packaging command:
 
 ```
 make all
 ```
 
-若报错，尝试安装以下依赖项
+If an error is reported, try installing the following dependencies:
 
 ```
 sudo apt install u-boot-tools
@@ -14,7 +14,8 @@ sudo apt install lzop
 sudo apt install mtd-utils
 ```
 
-若使用 `ubuntu 22` 以上版本需手动拷贝 mkfs.jffs2到 `build/build/bin` 目录
+If using a version of `ubuntu 22` or later, you need to manually copy `mkfs.jffs2` to the `build/build/bin` directory:
+
 ```
 cp -r /usr/sbin/mkfs.jffs2 ./build/build/bin/
 ```
