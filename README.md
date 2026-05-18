@@ -12,6 +12,7 @@ If an error is reported, try installing the following dependencies:
 sudo apt install u-boot-tools
 sudo apt install lzop
 sudo apt install mtd-utils
+sudo apt install automake autoconf libtool
 ```
 
 If using a version of `ubuntu 22` or later, you need to manually copy `mkfs.jffs2` to the `build/build/bin` directory:
