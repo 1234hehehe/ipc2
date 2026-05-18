@@ -57,6 +57,7 @@ ${WORKING_PATH}:
 config: openup ${WORKING_PATH}/libssl.pc
 ${WORKING_PATH}/libssl.pc:
 	cd ${WORKING_PATH} && \
+	autoreconf -ivf && \
 	CFLAGS="${CFLAGS}" LDFLAGS="${CFLAGS}" CPPFLAGS="${CFLAGS}" CXXFLAGS="${CFLAGS}" ./configure --build=$(shell ${WORKING_PATH}/config.guess) --host=${COMPILER_NAME} --prefix=${OUT_PATH}/ssl --disable-tests;
 	
 compile: config ${WORKING_PATH}/libressl.so ${WORKING_PATH}/libressl.a

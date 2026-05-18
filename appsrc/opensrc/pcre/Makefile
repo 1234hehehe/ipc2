@@ -57,8 +57,9 @@ ${WORKING_PATH}:
 config: openup ${WORKING_PATH}/Makefile
 ${WORKING_PATH}/Makefile:
 	@cd ${WORKING_PATH} && \
+	autoreconf -ivf && \
 	sed -i -e "s/\$${*wl}*\-soname \$${*wl}*\$$soname//g" -e "s/\-soname $$soname//g" configure && \
-	CFLAGS="${CFLAGS}" LDFLAGS="${CFLAGS}" CPPFLAGS="${CFLAGS}" CXXFLAGS="${CFLAGS}" ./configure --host=${COMPILER_NAME};
+	CFLAGS="${CFLAGS}" LDFLAGS="${CFLAGS}" CPPFLAGS="${CFLAGS}" CXXFLAGS="${CFLAGS}" ./configure --host=${COMPILER_NAME} --disable-cpp;
 	
 compile: config ${WORKING_PATH}/.libs/libpcre.so ${WORKING_PATH}/.libs/libpcre.a
 ${WORKING_PATH}/.libs/libpcre.so ${WORKING_PATH}/.libs/libpcre.a:

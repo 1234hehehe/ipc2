@@ -56,6 +56,7 @@ ${WORKING_PATH}:
 config: openup ${WORKING_PATH}/Makefile
 ${WORKING_PATH}/Makefile:
 	@cd ${WORKING_PATH} && \
+	autoreconf -ivf && \
 	sed -i -e "s/\$${*wl}*\-soname \$${*wl}*\$$soname//g" -e "s/\-soname $$soname//g" configure && \
 	./configure CFLAGS="${CFLAGS} -DHAVE_CONFIG_H -DUSE_OPENSSL -I${OUT_PATH}/inc" \
 	CPPFLAGS="${CFLAGS} -DHAVE_CONFIG_H -I${OUT_PATH}/inc" \
