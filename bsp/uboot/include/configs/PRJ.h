@@ -25,7 +25,7 @@
 #ifndef __CONFIG_PRJ_H__
 #define __CONFIG_PRJ_H__
 
-#define INGENIC_UBOOT_VERSIONS "H20260203a"
+#define INGENIC_UBOOT_VERSIONS "H20260427"
 
 /**
  * Basic configuration(SOC, Cache, Stack, UART, DDR).

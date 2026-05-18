@@ -28,17 +28,10 @@ int buf_init (circbuf_t * buf, unsigned int size)
 {
 	assert (buf != NULL);
 
-	if (size > SIZE_MAX / sizeof(char)) {
-			return 0;  /* Allocation would overflow */
-	}
-
 	buf->size = 0;
 	buf->totalsize = size;
 	buf->data = (char *) malloc (sizeof (char) * size);
-
-	if (!buf->data) {
-    return 0;  /* SECURITY FIX: Check malloc return */
-	}
+	assert (buf->data != NULL);
 
 	buf->top = buf->data;
 	buf->tail = buf->data;

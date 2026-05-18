@@ -405,6 +405,7 @@ extern void board_usb_init(void);
 	eth_initialize(gd->bd);
 #endif
 
+		run_command("udp",0);
 	/* main_loop() can return to retry autoboot, if so just run it again. */
 	for (;;)
 		main_loop();
