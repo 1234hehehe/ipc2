@@ -14,7 +14,7 @@
 #include <linux/version.h>
 #include <linux/proc_ns.h>
 
-#define INGENIC_KERNEL_VERSIONS "H20250916a"
+#define INGENIC_KERNEL_VERSIONS "H20260509a"
 
 #ifndef CONFIG_KALLSYMS
 #define version(a) Version_ ## a
@@ -45,7 +45,7 @@ EXPORT_SYMBOL_GPL(init_uts_ns);
 const char linux_banner[] =
 	"Linux version " UTS_RELEASE " (" LINUX_COMPILE_BY "@"
 	LINUX_COMPILE_HOST ") (" LINUX_COMPILER ") " UTS_VERSION
-	"\nIngenic Kernel-3.10 version " INGENIC_KERNEL_VERSIONS "\n";
+	"\nIngenic Kernel-6.18.24 version " INGENIC_KERNEL_VERSIONS "\n";
 
 const char linux_proc_banner[] =
 	"%s version %s"

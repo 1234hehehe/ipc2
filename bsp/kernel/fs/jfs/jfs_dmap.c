@@ -2914,9 +2914,14 @@ static void dbAdjTree(dmtree_t * tp, int leafno, int newval)
 	int lp, pp, k;
 	int max;
 
+	if (leafno < 0 || leafno >= le32_to_cpu(tp->dmt_nleafs))
+		return;
+
 	/* pick up the index of the leaf for this leafno.
 	 */
 	lp = leafno + le32_to_cpu(tp->dmt_leafidx);
+	if (lp < 0 || lp >= TREESIZE)
+		return;
 
 	/* is the current value the same as the old value ?  if so,
 	 * there is nothing to do.

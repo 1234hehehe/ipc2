@@ -739,6 +739,11 @@ sock_unlink:
 	nfc_llcp_sock_unlink(&local->connecting_sockets, sk);
 
 put_dev:
+	kfree(llcp_sock->service_name);
+	llcp_sock->service_name = NULL;
+	nfc_llcp_local_put(llcp_sock->local);
+	llcp_sock->local = NULL;
+	llcp_sock->dev = NULL;
 	nfc_put_device(dev);
 
 error:
