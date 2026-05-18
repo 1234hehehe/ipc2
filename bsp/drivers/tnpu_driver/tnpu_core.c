@@ -27,9 +27,9 @@
 #define PRINT_TNPU_DEBUG(fmt, ...)
 #endif
 
-#if LINUX_VERSION_CODE < KERNEL_VERSION(4, 0, 0)
+//#if LINUX_VERSION_CODE < KERNEL_VERSION(4, 0, 0)
   extern void (*r4k_blast_dcache)(void);
-#endif // LINUX_VERSION
+//#endif // LINUX_VERSION
 
 #define L1_L2_CACHE_CONNECTION    (1 << 29)
 

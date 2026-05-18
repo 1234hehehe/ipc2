@@ -19,11 +19,11 @@
 #define PRINT_TNPU_DEBUG(fmt, ...)
 #endif
 
-#if LINUX_VERSION_CODE < KERNEL_VERSION(4, 0, 0)
+//#if LINUX_VERSION_CODE < KERNEL_VERSION(4, 0, 0)
     #ifndef idr_is_empty
     #define idr_is_empty(__idr) ((__idr)->top == NULL)
     #endif // idr_is_empty
-#endif // LINUX_VERSION
+//#endif // LINUX_VERSION
 
 struct tnpu_pool {
     spinlock_t lock;
@@ -406,13 +406,13 @@ void *tnpu_cma_alloc(size_t size, dma_addr_t *dma_handle)
 {
     if (bo_manage.pool != NULL)
         return tnpu_pool_dma_alloc(bo_manage.pool, size, dma_handle);
-#if LINUX_VERSION_CODE > KERNEL_VERSION(6, 0, 0)
-    return dma_alloc_wc(bo_manage.dev, size, dma_handle, GFP_KERNEL | __GFP_NOWARN);
-#elif LINUX_VERSION_CODE > KERNEL_VERSION(4, 0, 0)
-    return dma_alloc_writecombine(bo_manage.dev, size, dma_handle, GFP_KERNEL | __GFP_NOWARN);
-#else
+//#if LINUX_VERSION_CODE > KERNEL_VERSION(6, 0, 0)
+//    return dma_alloc_wc(bo_manage.dev, size, dma_handle, GFP_KERNEL | __GFP_NOWARN);
+//#elif LINUX_VERSION_CODE > KERNEL_VERSION(4, 0, 0)
+//    return dma_alloc_writecombine(bo_manage.dev, size, dma_handle, GFP_KERNEL | __GFP_NOWARN);
+//#else
     return dma_alloc_coherent(bo_manage.dev, size, dma_handle, GFP_KERNEL | __GFP_NOWARN);
-#endif
+//#endif
 }
 
 void tnpu_cma_free(size_t size, void *kvaddr, dma_addr_t dma_handle)
@@ -421,13 +421,13 @@ void tnpu_cma_free(size_t size, void *kvaddr, dma_addr_t dma_handle)
         tnpu_pool_dma_free(bo_manage.pool, (unsigned long)kvaddr, size);
         return;
     }
-#if LINUX_VERSION_CODE > KERNEL_VERSION(6, 0, 0)
-    dma_free_wc(bo_manage.dev, size, kvaddr, dma_handle);
-#elif LINUX_VERSION_CODE > KERNEL_VERSION(4, 0, 0)
-    dma_free_writecombine(bo_manage.dev, size, kvaddr, dma_handle);
-#else
+//#if LINUX_VERSION_CODE > KERNEL_VERSION(6, 0, 0)
+//    dma_free_wc(bo_manage.dev, size, kvaddr, dma_handle);
+//#elif LINUX_VERSION_CODE > KERNEL_VERSION(4, 0, 0)
+//    dma_free_writecombine(bo_manage.dev, size, kvaddr, dma_handle);
+//#else
     dma_free_coherent(bo_manage.dev, size, kvaddr, dma_handle);
-#endif
+//#endif
 }
 
 int tnpu_bo_pool_add(unsigned int paddr, unsigned int size)
